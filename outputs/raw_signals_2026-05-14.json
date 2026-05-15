@@ -1,0 +1,17 @@
+{
+  "google_trends_interest": {
+    "error": "pytrends_failed: HTTPSConnectionPool(host='trends.google.com', port=443): Max retries exceeded with url: /trends/api/widgetdata/multiline?req=%7B%22time%22%3A+%222026-05-07T20%5C%5C%3A41%5C%5C%3A12+2026-05-14T20%5C%5C%3A41%5C%5C%3A12%22%2C+%22resolution%22%3A+%22HOUR%22%2C+%22locale%22%3A+%22en-US%22%2C+%22comparisonItem%22%3A+%5B%7B%22geo%22%3A+%7B%7D%2C+%22complexKeywordsRestriction%22%3A+%7B%22keyword%22%3A+%5B%7B%22type%22%3A+%22BROAD%22%2C+%22value%22%3A+%22Royal+Pop%22%7D%5D%7D%7D%2C+%7B%22geo%22%3A+%7B%7D%2C+%22complexKeywordsRestriction%22%3A+%7B%22keyword%22%3A+%5B%7B%22type%22%3A+%22BROAD%22%2C+%22value%22%3A+%22AP+Swatch%22%7D%5D%7D%7D%2C+%7B%22geo%22%3A+%7B%7D%2C+%22complexKeywordsRestriction%22%3A+%7B%22keyword%22%3A+%5B%7B%22type%22%3A+%22BROAD%22%2C+%22value%22%3A+%22Bioceramic+watch%22%7D%5D%7D%7D%5D%2C+%22requestOptions%22%3A+%7B%22property%22%3A+%22%22%2C+%22backend%22%3A+%22CM%22%2C+%22category%22%3A+0%7D%2C+%22userConfig%22%3A+%7B%22userType%22%3A+%22USER_TYPE_SCRAPER%22%7D%7D&token=APO0_qgAAAAAageE6CYDSdr0oDxITXJ4iBJg8n-aqm4N&tz=0 (Caused by ResponseError('too many 429 error responses'))"
+  },
+  "google_trends_related_royal_pop": {
+    "error": "related_failed: HTTPSConnectionPool(host='trends.google.com', port=443): Max retries exceeded with url: /trends/api/widgetdata/relatedsearches?req=%7B%22restriction%22%3A+%7B%22geo%22%3A+%7B%7D%2C+%22time%22%3A+%222026-05-07T20%5C%5C%3A41%5C%5C%3A13+2026-05-14T20%5C%5C%3A41%5C%5C%3A13%22%2C+%22originalTimeRangeForExploreUrl%22%3A+%22now+7-d%22%2C+%22complexKeywordsRestriction%22%3A+%7B%22keyword%22%3A+%5B%7B%22type%22%3A+%22BROAD%22%2C+%22value%22%3A+%22Royal+Pop%22%7D%5D%7D%7D%2C+%22keywordType%22%3A+%22QUERY%22%2C+%22metric%22%3A+%5B%22TOP%22%2C+%22RISING%22%5D%2C+%22trendinessSettings%22%3A+%7B%22compareTime%22%3A+%222026-04-30T20%5C%5C%3A41%5C%5C%3A13+2026-05-07T20%5C%5C%3A41%5C%5C%3A13%22%7D%2C+%22requestOptions%22%3A+%7B%22property%22%3A+%22%22%2C+%22backend%22%3A+%22CM%22%2C+%22category%22%3A+0%7D%2C+%22language%22%3A+%22en%22%2C+%22userCountryCode%22%3A+%22GB%22%2C+%22userConfig%22%3A+%7B%22userType%22%3A+%22USER_TYPE_SCRAPER%22%7D%7D&token=APO0_qgAAAAAageE6cchINrB5Qlji8MdI2W8H61Xj_Bs&tz=0 (Caused by ResponseError('too many 429 error responses'))"
+  },
+  "web_search": {
+    "Royal Pop watch strap": [],
+    "AP Swatch wrist conversion": [],
+    "Helvetus Royal Pop strap": [],
+    "Wristbuddys Royal Pop": []
+  },
+  "news_search": {
+    "error": "news_failed: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=Royal+Pop+OR+AP+Swatch+watch&vqd=4-117809996531937715557665346261705205024&p=-1 403 Ratelimit"
+  }
+}

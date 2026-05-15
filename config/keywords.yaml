@@ -1,0 +1,26 @@
+primary:
+  - Royal Pop
+  - AP Swatch
+  - Bioceramic watch
+
+secondary:
+  - watch strap
+  - watch accessories
+  - limited drop
+  - colourway
+  - independent watch brand
+  - wrist conversion kit
+  - clip-in adapter
+  - silicone watch strap
+  - pocket watch wrist
+
+trends_geo: ""
+trends_timeframe: "now 7-d"
+
+reddit_subs:
+  - watches
+  - WatchExchange
+
+content_signals:
+  high_urgency_score: 7
+  spike_threshold_pct: 50

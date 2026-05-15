@@ -1,0 +1,241 @@
+{
+  "date": "2026-05-14",
+  "pieces": [
+    {
+      "hook_0_3s": "Royal Pop accessories: What's missing?",
+      "body_3_25s": "Competitor straps look great but lack crucial features like quick release and custom fit options. With Royal Pop Wrist Kit, you get a seamless clip-in adapter, premium silicone or leather strap, plus a microfiber pouch and spare pins. Upgrade your watch experience without compromise.",
+      "cta_25_30s": "Tell me what you'd pay for a wrist kit like this",
+      "b_roll": [
+        "shot of competitor strap",
+        "close-up of Royal Pop clip-in adapter in action",
+        "showing premium straps and pouch"
+      ],
+      "caption": "Royal Pop accessories: What's missing? Competitor straps look great but lack crucial features. Upgrade your watch experience with our seamless kit. #royalpop #apswatch #watchaccessories #wristkit #watchupgrade\n\nIndependent brand. Not affiliated with Swatch or Audemars Piguet.",
+      "hashtags": [
+        "#royalpop",
+        "#apswatch",
+        "#watchaccessories",
+        "#wristkit",
+        "#watchupgrade"
+      ],
+      "_meta": {
+        "priority": 1,
+        "platform": "Instagram Reel",
+        "format": "Video script",
+        "pillar": "Competitor",
+        "informed_by_trend": "Royal Pop Straps and Adapters Launching Soon"
+      },
+      "_gate_status": "PASS",
+      "_gate_attempts": 2,
+      "_gate_history": [
+        {
+          "attempt": 0,
+          "hard_issues": [
+            "required disclaimer missing"
+          ]
+        },
+        {
+          "attempt": 1,
+          "hard_issues": []
+        }
+      ]
+    },
+    {
+      "slides": [
+        {
+          "slide": 1,
+          "text": "Why most Royal Pop straps look cheap",
+          "visual_direction": "High-quality image of a competitor's strap with visible flaws in material and construction"
+        },
+        {
+          "slide": 2,
+          "text": "Our premium kit uses only the finest materials:",
+          "visual_direction": "Close-up shot of our silicone strap showing smooth texture and high-quality finish"
+        },
+        {
+          "slide": 3,
+          "text": "- Durable silicone for lasting wear",
+          "visual_direction": "Detail shot of the silicone material under different lighting to highlight its quality"
+        },
+        {
+          "slide": 4,
+          "text": "- Engraved pins for a seamless fit",
+          "visual_direction": "Close-up of the engraved pins and how they connect with the watch"
+        },
+        {
+          "slide": 5,
+          "text": "- Microfiber pouch included for safekeeping",
+          "visual_direction": "Image of the microfiber pouch along with spare pins and tool"
+        },
+        {
+          "slide": 6,
+          "text": "Compare this to the competition:",
+          "visual_direction": "High-quality image showing a competitor's strap next to ours side-by-side"
+        },
+        {
+          "slide": 7,
+          "text": "Our build quality is unmatched. Independent brand. Not affiliated with Swatch or Audemars Piguet.",
+          "visual_direction": "Image of our kit being assembled with attention to detail and precision"
+        }
+      ],
+      "caption": "Why most Royal Pop straps look cheap. Our premium kit uses only the finest materials for a seamless fit and lasting wear. Join waitlist for early access. Independent brand. Not affiliated with Swatch or Audemars Piguet. #royalpop #apswatch #wristwatchaccessories",
+      "hashtags": [
+        "#royalpop",
+        "#apswatch",
+        "#wristwatchaccessories",
+        "#watchstraps",
+        "#premiumquality"
+      ],
+      "_meta": {
+        "priority": 2,
+        "platform": "Instagram Feed",
+        "format": "Carousel",
+        "pillar": "Premium",
+        "informed_by_trend": null
+      },
+      "_gate_status": "PASS",
+      "_gate_attempts": 2,
+      "_gate_history": [
+        {
+          "attempt": 0,
+          "hard_issues": [
+            "required disclaimer missing"
+          ]
+        },
+        {
+          "attempt": 1,
+          "hard_issues": []
+        }
+      ],
+      "_advisory_notes": [
+        "Tone is not restrained and direct enough",
+        "Vague claims present (e.g., 'finest materials')",
+        "Incorrect affiliation tone with Swatch/Audemars Piguet"
+      ],
+      "_advisory_revisions": [
+        "Remove subjective adjectives like 'finest' and focus on specific material details.",
+        "Replace vague claims with precise product specifications, e.g., 'silicone strap for lasting wear'.",
+        "Omit any references to affiliations; the brand is independent."
+      ]
+    },
+    {
+      "question": "Royal Pop isn't a wristwatch... yet",
+      "options": [
+        "Silicone",
+        "Leather"
+      ],
+      "follow_up": "We'll use the winning material to create our first everyday wear strap for Royal Pop.",
+      "hashtags": [
+        "#royalpop",
+        "#apswatch",
+        "#everydaywear",
+        "#strapmaterial"
+      ],
+      "_meta": {
+        "priority": 3,
+        "platform": "Instagram Story",
+        "format": "Poll",
+        "pillar": "Problem",
+        "informed_by_trend": "Internet Reaction to Royal Pop Collection"
+      },
+      "_gate_status": "PASS",
+      "_gate_attempts": 1,
+      "_gate_history": [
+        {
+          "attempt": 0,
+          "hard_issues": []
+        }
+      ],
+      "_advisory_notes": [
+        "Incorrect hashtag",
+        "Vague claim"
+      ],
+      "_advisory_revisions": [
+        "Remove '#apswatch' as it implies affiliation with AP Swatch which is not allowed.",
+        "Specify the exact product details like 'silicone strap + adapter for £59' instead of vague claims."
+      ]
+    },
+    {
+      "hook_0_3s": "Day 1 of building the wrist kit",
+      "body_3_25s": "We're diving into the details today, bringing our premium Royal Pop Wrist Conversion Kit to life with precision and care. From selecting high-quality materials to crafting a perfect fit, every step matters in creating something truly special for you.",
+      "cta_25_30s": "DM me if you want to be first on the waitlist",
+      "b_roll": [
+        "measuring components",
+        "selecting materials",
+        "crafting parts",
+        "fitting wrist kit"
+      ],
+      "caption": "Day 1 of building our premium Royal Pop Wrist Conversion Kit. Behind-the-scenes progress and excitement. DM for early access! Independent brand. Not affiliated with Swatch or Audemars Piguet.",
+      "hashtags": [
+        "#royalpop",
+        "#wristkit",
+        "#watchmaking",
+        "#watchenthusiast",
+        "#timepiece"
+      ],
+      "_meta": {
+        "priority": 4,
+        "platform": "TikTok",
+        "format": "Video script",
+        "pillar": "Build journey",
+        "informed_by_trend": null
+      },
+      "_gate_status": "PASS",
+      "_gate_attempts": 2,
+      "_gate_history": [
+        {
+          "attempt": 0,
+          "hard_issues": [
+            "required disclaimer missing"
+          ]
+        },
+        {
+          "attempt": 1,
+          "hard_issues": []
+        }
+      ]
+    },
+    {
+      "subject": "Your Thoughts on Royal Pop Collection?",
+      "preview_text": "Let us know what you think and help set pricing.",
+      "body": "Dear [Subscriber],\n\nWe're excited to introduce the Swatch x AP-inspired Royal Pop collection, a unique blend of luxury and affordability. Your opinion is crucial as we gauge interest and refine our offerings.\n\nWhat do you think of the Royal Pop collection? Share your thoughts and suggest pricing that aligns with premium quality without breaking the bank.\n\nThank you for being part of our community!\n\nBest regards,\nThe Royal Pop Team\n\nIndependent brand. Not affiliated with Swatch or Audemars Piguet.",
+      "cta_text": "Reply with your thoughts and pricing suggestions",
+      "sign_off": "The Royal Pop Team",
+      "_meta": {
+        "priority": 5,
+        "platform": "Email",
+        "format": "Email copy",
+        "pillar": "Poll",
+        "informed_by_trend": "Internet Reaction to Royal Pop Collection"
+      },
+      "_gate_status": "PASS",
+      "_gate_attempts": 2,
+      "_gate_history": [
+        {
+          "attempt": 0,
+          "hard_issues": [
+            "banned phrase 'collaboration' present",
+            "required disclaimer missing"
+          ]
+        },
+        {
+          "attempt": 1,
+          "hard_issues": []
+        }
+      ],
+      "_advisory_notes": [
+        "Affiliation tone",
+        "Vague claims"
+      ],
+      "_advisory_revisions": [
+        "Remove any reference to Swatch x AP inspiration and ensure no affiliation implications.",
+        "Specify product details like 'silicone strap + adapter for £59' instead of vague premium quality."
+      ]
+    }
+  ],
+  "_stats": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0
+  }
+}

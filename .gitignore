@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+venv/
+.venv/
+.crewai/
+
+# don't ignore outputs — GitHub Actions commits them daily
+# (uncomment next line if you want outputs local-only)
+# outputs/*.json

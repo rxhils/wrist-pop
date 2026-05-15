@@ -1,0 +1,10 @@
+# Minimal deps for GitHub Actions runner (cloud LLM only, no Ollama/ComfyUI).
+openai>=1.30.0
+google-generativeai>=0.7.0
+pytrends==4.9.2
+ddgs==9.0.0
+praw==7.7.1
+python-dotenv==1.0.1
+pyyaml==6.0.2
+requests==2.32.3
+pillow==12.1.1

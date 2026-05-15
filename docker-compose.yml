@@ -1,0 +1,42 @@
+services:
+  agent:
+    build: .
+    container_name: pws-agent
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - COMFYUI_URL=http://host.docker.internal:8188
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    # FastAPI now runs on Windows host (port conflict + firewall reasons).
+    # Container keeps Python deps + pipeline scripts; server triggers via `docker exec`.
+    command: tail -f /dev/null
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: pws-openwebui
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_KEEP_ALIVE=10m
+      - WEBUI_AUTH=False
+      - ENABLE_OLLAMA_API=True
+      - WEBUI_NAME=Royal Pop Studio
+    volumes:
+      - openwebui_data:/app/backend/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - agent
+    restart: unless-stopped
+
+volumes:
+  openwebui_data:

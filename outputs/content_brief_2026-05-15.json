@@ -1,0 +1,61 @@
+{
+  "date": "2026-05-15",
+  "ideas": [
+    {
+      "priority": 1,
+      "platform": "Instagram Reel",
+      "format": "Video script",
+      "pillar": "Competitor",
+      "hook": "This 3D-printed Royal Pop kit just launched",
+      "angle": "Show the Cults3D wrist conversion kit side-by-side with our premium bundle, highlighting the missing tool, pouch, and finish. End with: 'Which one would you trust on your Royal Pop?'",
+      "cta": "Comment WRIST and I\u2019ll send the waitlist link",
+      "informed_by_trend": "AP x Swatch Royal Pop wrist conversion kit launches",
+      "notes": "Close-up of both kits on a Royal Pop, then side-by-side on wrist. Text overlay: 'Tool included? No / Yes'."
+    },
+    {
+      "priority": 2,
+      "platform": "Instagram Story",
+      "format": "Poll",
+      "pillar": "Poll",
+      "hook": "Leather, rubber, or metal?",
+      "angle": "Poll followers on preferred strap material for the Royal Pop wrist kit, using Wristbuddys\u2019 strap collection as visual reference. Frame as: 'We\u2019re finalizing the first colour\u2014help us decide.'",
+      "cta": "Vote now, then DM for early access",
+      "informed_by_trend": "Royal Pop strap customization and material debates",
+      "notes": "Use Wristbuddys\u2019 strap images as poll background. Add sticker: 'DM for waitlist'."
+    },
+    {
+      "priority": 3,
+      "platform": "TikTok",
+      "format": "Video script",
+      "pillar": "Premium",
+      "hook": "This is why most Royal Pop straps feel cheap",
+      "angle": "Demonstrate how generic straps lack the adapter\u2019s precision fit, showing our kit\u2019s clip-in mechanism and silicone strap texture. Contrast with a loose strap on a Royal Pop.",
+      "cta": "Join the early access list (link in bio)",
+      "informed_by_trend": "Royal Pop strap ecosystem exploding: Helvetus, Wristbuddys, Wisstraps, Delugs",
+      "notes": "Slow-motion clip of adapter snapping into place. Text overlay: 'No wobble. No gaps.'"
+    },
+    {
+      "priority": 4,
+      "platform": "Instagram Feed",
+      "format": "Caption",
+      "pillar": "Problem",
+      "hook": "The Royal Pop deserves better than a random strap",
+      "angle": "Caption announcing the waitlist: 'We\u2019re building a premium wrist conversion kit\u2014adapter, strap, tool, and pouch. No scratches. No wobble. Just a proper wristwatch. Early access opens soon.' Address the 'prefer lanyard/pocket' objection by emphasizing daily wearability.",
+      "cta": "Comment WRIST for waitlist link",
+      "informed_by_trend": null,
+      "notes": "Use a flat-lay of the kit components on a neutral background. Caption tone: direct, premium."
+    },
+    {
+      "priority": 5,
+      "platform": "Instagram Reel",
+      "format": "Video script",
+      "pillar": "Build journey",
+      "hook": "Day 2: Testing the adapter\u2019s grip",
+      "angle": "Show the adapter prototype clipping onto a Royal Pop, then shaking the watch to test security. Voiceover: 'If it\u2019s going on the wrist, it can\u2019t fall off. Here\u2019s how we\u2019re solving that.' Address the 'might scratch the watch' objection by showing the adapter\u2019s soft-touch interior.",
+      "cta": "Tell me what this should cost",
+      "informed_by_trend": null,
+      "notes": "Close-up of adapter interior material. Text overlay: 'Scratch-free. Secure.'"
+    }
+  ],
+  "summary": "Today\u2019s focus is leveraging competitor launches (Cults3D, Helvetus, Wristbuddys) to drive waitlist signups. Priority 1 contrasts our premium kit with a 3D-printed alternative, while polls and build content address objections and material preferences. All CTAs funnel to waitlist growth."
+}

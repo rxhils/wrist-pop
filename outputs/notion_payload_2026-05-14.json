@@ -1,0 +1,575 @@
+{
+  "date": "2026-05-14",
+  "db_schema_hint": {
+    "Name": "title",
+    "Date": "date",
+    "Platform": "select",
+    "Format": "select",
+    "Pillar": "select",
+    "Status": "select",
+    "Trend Source": "rich_text",
+    "Preview": "rich_text"
+  },
+  "rows": [
+    {
+      "properties": {
+        "Name": {
+          "title": [
+            {
+              "text": {
+                "content": "P1 Instagram Reel — Royal Pop accessories: What's missing?"
+              }
+            }
+          ]
+        },
+        "Date": {
+          "date": {
+            "start": "2026-05-14T12:00:00"
+          }
+        },
+        "Platform": {
+          "select": {
+            "name": "Instagram Reel"
+          }
+        },
+        "Format": {
+          "select": {
+            "name": "Video script"
+          }
+        },
+        "Pillar": {
+          "select": {
+            "name": "Competitor"
+          }
+        },
+        "Status": {
+          "select": {
+            "name": "Draft – Awaiting Approval"
+          }
+        },
+        "Trend Source": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "Royal Pop Straps and Adapters Launching Soon"
+              }
+            }
+          ]
+        },
+        "Preview": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "Royal Pop accessories: What's missing?"
+              }
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Copy"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"hook_0_3s\": \"Royal Pop accessories: What's missing?\",\n  \"body_3_25s\": \"Competitor straps look great but lack crucial features like quick release and custom fit options. With Royal Pop Wrist Kit, you get a seamless clip-in adapter, premium silicone or leather strap, plus a microfiber pouch and spare pins. Upgrade your watch experience without compromise.\",\n  \"cta_25_30s\": \"Tell me what you'd pay for a wrist kit like this\",\n  \"b_roll\": [\n    \"shot of competitor strap\",\n    \"close-up of Royal Pop clip-in adapter in action\",\n    \"showing premium straps and pouch\"\n  ],\n  \"caption\": \"Royal Pop accessories: What's missing? Competitor straps look great but lack crucial features. Upgrade your watch experience with our seamless kit. #royalpop #apswatch #watchaccessories #wristkit #watchupgrade\\n\\nIndependent brand. Not affiliated with Swatch or Audemars Piguet.\",\n  \"hashtags\": [\n    \"#royalpop\",\n    \"#apswatch\",\n    \"#watchaccessories\",\n    \"#wristkit\",\n    \"#watchupgrade\"\n  ]\n}"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Visual Brief"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"piece_priority\": 1,\n  \"platform\": \"Instagram Reel\",\n  \"format\": \"Video script\",\n  \"aspect_ratio\": \"9:16\",\n  \"shot_list\": [\n    {\n      \"id\": 1,\n      \"type\": \"ai_image\",\n      \"description\": \"Close-up of competitor strap on a wrist without showing the watch face, focusing on the strap quality and design.\",\n      \"duration_sec\": 3,\n      \"notes\": \"Ensure no brand logos or full faces are visible.\"\n    },\n    {\n      \"id\": 2,\n      \"type\": \"live_phone\",\n      \"description\": \"Close-up of Royal Pop clip-in adapter being attached to the wrist kit, showing the ease and quality of installation.\",\n      \"duration_sec\": 3,\n      \"notes\": \"Focus on the matte black or brushed steel finish.\"\n    },\n    {\n      \"id\": 3,\n      \"type\": \"ai_image\",\n      \"description\": \"A shot showcasing both premium silicone and leather straps with the microfiber pouch and spare pins laid out neatly.\",\n      \"duration_sec\": 3,\n      \"notes\": \"Arrange items in a clean, organized manner.\"\n    }\n  ],\n  \"ai_prompts\": [\n    {\n      \"for_shot_id\": 1,\n      \"tool\": \"Stable Diffusion\",\n      \"prompt\": \"Close-up of a competitor's watch strap on a wrist with high-quality material and design. No full face or brand logos visible, dark moody studio lighting.\",\n      \"negative_prompt\": \"text overlay, watermark, low quality, blurry, cartoon, illustration, AP logo, Swatch logo\"\n    },\n    {\n      \"for_shot_id\": 3,\n      \"tool\": \"Stable Diffusion\",\n      \"prompt\": \"A clean and organized arrangement of Royal Pop Wrist Kit components including premium silicone and leather straps with the microfiber pouch and spare pins. Dark moody studio lighting, no cluttered backgrounds.\",\n      \"negative_prompt\": \"text overlay, watermark, low quality, blurry, cartoon, illustration, AP logo, Swatch logo\"\n    }\n  ],\n  \"filming_note"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "Name": {
+          "title": [
+            {
+              "text": {
+                "content": "P2 Instagram Feed — Why most Royal Pop straps look cheap. Our premium kit uses o"
+              }
+            }
+          ]
+        },
+        "Date": {
+          "date": {
+            "start": "2026-05-14T13:00:00"
+          }
+        },
+        "Platform": {
+          "select": {
+            "name": "Instagram Feed"
+          }
+        },
+        "Format": {
+          "select": {
+            "name": "Carousel"
+          }
+        },
+        "Pillar": {
+          "select": {
+            "name": "Premium"
+          }
+        },
+        "Status": {
+          "select": {
+            "name": "Draft – Awaiting Approval"
+          }
+        },
+        "Trend Source": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "—"
+              }
+            }
+          ]
+        },
+        "Preview": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "Why most Royal Pop straps look cheap. Our premium kit uses only the finest materials for a seamless fit and lasting wear. Join waitlist for early access. Indepe"
+              }
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Copy"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"slides\": [\n    {\n      \"slide\": 1,\n      \"text\": \"Why most Royal Pop straps look cheap\",\n      \"visual_direction\": \"High-quality image of a competitor's strap with visible flaws in material and construction\"\n    },\n    {\n      \"slide\": 2,\n      \"text\": \"Our premium kit uses only the finest materials:\",\n      \"visual_direction\": \"Close-up shot of our silicone strap showing smooth texture and high-quality finish\"\n    },\n    {\n      \"slide\": 3,\n      \"text\": \"- Durable silicone for lasting wear\",\n      \"visual_direction\": \"Detail shot of the silicone material under different lighting to highlight its quality\"\n    },\n    {\n      \"slide\": 4,\n      \"text\": \"- Engraved pins for a seamless fit\",\n      \"visual_direction\": \"Close-up of the engraved pins and how they connect with the watch\"\n    },\n    {\n      \"slide\": 5,\n      \"text\": \"- Microfiber pouch included for safekeeping\",\n      \"visual_direction\": \"Image of the microfiber pouch along with spare pins and tool\"\n    },\n    {\n      \"slide\": 6,\n      \"text\": \"Compare this to the competition:\",\n      \"visual_direction\": \"High-quality image showing a competitor's strap next to ours side-by-side\"\n    },\n    {\n      \"slide\": 7,\n      \"text\": \"Our build quality is unmatched. Independent brand. Not affiliated with Swatch or Audemars Piguet.\",\n      \"visual_direction\": \"Image of our kit being assembled with attention to detail and precision\"\n    }\n  ],\n  \"caption\": \"Why most Royal Pop straps look cheap. Our premium kit uses only the finest materials for a seamless fit and lasting wear. Join waitlist for early access. Independent brand. Not affiliated with Swatch or Audemars Piguet. #royalpop #apswatch #wristwatchaccessories\",\n  \"hashtags\": [\n    \"#royalpop\",\n    \"#apswatch\",\n    \"#wristwatchaccessories\",\n    \"#watchstraps\",\n    "
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Visual Brief"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"piece_priority\": 2,\n  \"platform\": \"Instagram Feed\",\n  \"format\": \"Carousel\",\n  \"aspect_ratio\": \"1:1\",\n  \"shot_list\": [\n    {\n      \"id\": 1,\n      \"type\": \"ai_image\",\n      \"description\": \"High-quality image of a competitor's strap with visible flaws in material and construction\",\n      \"duration_sec\": null,\n      \"notes\": \"Focus on imperfections, low quality material\"\n    },\n    {\n      \"id\": 2,\n      \"type\": \"live_phone\",\n      \"description\": \"Close-up shot of our silicone strap showing smooth texture and high-quality finish\",\n      \"duration_sec\": 3,\n      \"notes\": \"Controlled lighting to highlight texture\"\n    },\n    {\n      \"id\": 3,\n      \"type\": \"ai_image\",\n      \"description\": \"Detail shot of the silicone material under different lighting to highlight its quality\",\n      \"duration_sec\": null,\n      \"notes\": \"Highlight smoothness and durability\"\n    },\n    {\n      \"id\": 4,\n      \"type\": \"live_phone\",\n      \"description\": \"Close-up of the engraved pins and how they connect with the watch\",\n      \"duration_sec\": 3,\n      \"notes\": \"Focus on precision fit and engraving detail\"\n    },\n    {\n      \"id\": 5,\n      \"type\": \"ai_image\",\n      \"description\": \"Image of the microfiber pouch along with spare pins and tool\",\n      \"duration_sec\": null,\n      \"notes\": \"Show all kit components neatly arranged\"\n    },\n    {\n      \"id\": 6,\n      \"type\": \"ai_image\",\n      \"description\": \"High-quality image showing a competitor's strap next to ours side-by-side\",\n      \"duration_sec\": null,\n      \"notes\": \"Direct comparison highlighting quality difference\"\n    },\n    {\n      \"id\": 7,\n      \"type\": \"live_phone\",\n      \"description\": \"Image of our kit being assembled with attention to detail and precision\",\n      \"duration_sec\": 3,\n      \"notes\": \"Highlight assembly process, focus on "
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "Name": {
+          "title": [
+            {
+              "text": {
+                "content": "P3 Instagram Story — Royal Pop isn't a wristwatch... yet"
+              }
+            }
+          ]
+        },
+        "Date": {
+          "date": {
+            "start": "2026-05-14T11:00:00"
+          }
+        },
+        "Platform": {
+          "select": {
+            "name": "Instagram Story"
+          }
+        },
+        "Format": {
+          "select": {
+            "name": "Poll"
+          }
+        },
+        "Pillar": {
+          "select": {
+            "name": "Problem"
+          }
+        },
+        "Status": {
+          "select": {
+            "name": "Draft – Awaiting Approval"
+          }
+        },
+        "Trend Source": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "Internet Reaction to Royal Pop Collection"
+              }
+            }
+          ]
+        },
+        "Preview": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "Royal Pop isn't a wristwatch... yet"
+              }
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Copy"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"question\": \"Royal Pop isn't a wristwatch... yet\",\n  \"options\": [\n    \"Silicone\",\n    \"Leather\"\n  ],\n  \"follow_up\": \"We'll use the winning material to create our first everyday wear strap for Royal Pop.\",\n  \"hashtags\": [\n    \"#royalpop\",\n    \"#apswatch\",\n    \"#everydaywear\",\n    \"#strapmaterial\"\n  ]\n}"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Visual Brief"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"piece_priority\": 3,\n  \"platform\": \"Instagram Story\",\n  \"format\": \"Poll\",\n  \"aspect_ratio\": \"9:16\",\n  \"shot_list\": [\n    {\n      \"id\": 1,\n      \"type\": \"ai_image\",\n      \"description\": \"Close-up of Royal Pop pocket watch on a dark background, showing the octagonal case and central crown from an angle that hints at its form without copying AP's design.\",\n      \"duration_sec\": null,\n      \"notes\": \"Controlled side lighting, brushed silver or black accents.\"\n    },\n    {\n      \"id\": 2,\n      \"type\": \"ai_image\",\n      \"description\": \"Silicone strap with the Royal Pop watch clipped in, showing the clip-in adapter and microfibre pouch in the background.\",\n      \"duration_sec\": null,\n      \"notes\": \"Dark moody studio setting.\"\n    },\n    {\n      \"id\": 3,\n      \"type\": \"ai_image\",\n      \"description\": \"Leather strap with the Royal Pop watch clipped in, showing the clip-in adapter and microfibre pouch in the background.\",\n      \"duration_sec\": null,\n      \"notes\": \"Dark moody studio setting.\"\n    }\n  ],\n  \"ai_prompts\": [\n    {\n      \"for_shot_id\": 1,\n      \"tool\": \"Flux\",\n      \"prompt\": \"Close-up of a dark, octagonal pocket watch with central crown and brushed silver or black accents on a dark background. The watch should hint at its form without copying AP's design.\",\n      \"negative_prompt\": \"text overlay, watermark, low quality, blurry, cartoon, illustration, AP logo, Swatch logo\"\n    },\n    {\n      \"for_shot_id\": 2,\n      \"tool\": \"Flux\",\n      \"prompt\": \"Silicone strap with a dark octagonal pocket watch clipped in on one end. The watch should hint at its form without copying AP's design. Show the clip-in adapter and microfibre pouch in the background.\",\n      \"negative_prompt\": \"text overlay, watermark, low quality, blurry, cartoon, illustration, AP logo, Swatch logo\"\n "
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "Name": {
+          "title": [
+            {
+              "text": {
+                "content": "P4 TikTok — Day 1 of building the wrist kit"
+              }
+            }
+          ]
+        },
+        "Date": {
+          "date": {
+            "start": "2026-05-14T19:00:00"
+          }
+        },
+        "Platform": {
+          "select": {
+            "name": "TikTok"
+          }
+        },
+        "Format": {
+          "select": {
+            "name": "Video script"
+          }
+        },
+        "Pillar": {
+          "select": {
+            "name": "Build journey"
+          }
+        },
+        "Status": {
+          "select": {
+            "name": "Draft – Awaiting Approval"
+          }
+        },
+        "Trend Source": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "—"
+              }
+            }
+          ]
+        },
+        "Preview": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "Day 1 of building the wrist kit"
+              }
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Copy"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"hook_0_3s\": \"Day 1 of building the wrist kit\",\n  \"body_3_25s\": \"We're diving into the details today, bringing our premium Royal Pop Wrist Conversion Kit to life with precision and care. From selecting high-quality materials to crafting a perfect fit, every step matters in creating something truly special for you.\",\n  \"cta_25_30s\": \"DM me if you want to be first on the waitlist\",\n  \"b_roll\": [\n    \"measuring components\",\n    \"selecting materials\",\n    \"crafting parts\",\n    \"fitting wrist kit\"\n  ],\n  \"caption\": \"Day 1 of building our premium Royal Pop Wrist Conversion Kit. Behind-the-scenes progress and excitement. DM for early access! Independent brand. Not affiliated with Swatch or Audemars Piguet.\",\n  \"hashtags\": [\n    \"#royalpop\",\n    \"#wristkit\",\n    \"#watchmaking\",\n    \"#watchenthusiast\",\n    \"#timepiece\"\n  ]\n}"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Visual Brief"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"piece_priority\": 4,\n  \"platform\": \"TikTok\",\n  \"format\": \"Video script\",\n  \"aspect_ratio\": \"9:16\",\n  \"shot_list\": [\n    {\n      \"id\": 1,\n      \"type\": \"ai_image\",\n      \"description\": \"A close-up of the Royal Pop wrist kit components laid out on a dark, sleek surface with controlled side lighting.\",\n      \"duration_sec\": 3,\n      \"notes\": \"Focus on the precision and quality of materials.\"\n    },\n    {\n      \"id\": 2,\n      \"type\": \"ai_image\",\n      \"description\": \"A hand holding a ruler or measuring tape next to wrist kit components, emphasizing the attention to detail.\",\n      \"duration_sec\": 3,\n      \"notes\": \"Show the precision and care in measurements.\"\n    },\n    {\n      \"id\": 3,\n      \"type\": \"ai_image\",\n      \"description\": \"A hand selecting high-quality materials for the wrist kit against a dark background with controlled lighting.\",\n      \"duration_sec\": 3,\n      \"notes\": \"Highlight the selection process of premium components.\"\n    },\n    {\n      \"id\": 4,\n      \"type\": \"ai_video\",\n      \"description\": \"Crafting parts of the wrist kit, showing hands assembling the adapter and fitting it to the Royal Pop watch.\",\n      \"duration_sec\": 3,\n      \"notes\": \"Show a sequence of crafting steps with clear focus.\"\n    },\n    {\n      \"id\": 5,\n      \"type\": \"ai_image\",\n      \"description\": \"A hand fitting the wrist kit onto an arm, ensuring it fits perfectly and looks sleek.\",\n      \"duration_sec\": 3,\n      \"notes\": \"Focus on the final fit and premium look of the wrist kit.\"\n    }\n  ],\n  \"ai_prompts\": [\n    {\n      \"for_shot_id\": 1,\n      \"tool\": \"Flux\",\n      \"prompt\": \"A close-up of a Royal Pop Wrist Conversion Kit laid out on a dark, sleek surface with controlled side lighting. Show all components including the clip-in adapter (matte black or brushed steel), silicone "
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "Name": {
+          "title": [
+            {
+              "text": {
+                "content": "P5 Email — Your Thoughts on Royal Pop Collection?"
+              }
+            }
+          ]
+        },
+        "Date": {
+          "date": {
+            "start": "2026-05-14T09:00:00"
+          }
+        },
+        "Platform": {
+          "select": {
+            "name": "Email"
+          }
+        },
+        "Format": {
+          "select": {
+            "name": "Email copy"
+          }
+        },
+        "Pillar": {
+          "select": {
+            "name": "Poll"
+          }
+        },
+        "Status": {
+          "select": {
+            "name": "Draft – Awaiting Approval"
+          }
+        },
+        "Trend Source": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "Internet Reaction to Royal Pop Collection"
+              }
+            }
+          ]
+        },
+        "Preview": {
+          "rich_text": [
+            {
+              "text": {
+                "content": "Your Thoughts on Royal Pop Collection?"
+              }
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Copy"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"subject\": \"Your Thoughts on Royal Pop Collection?\",\n  \"preview_text\": \"Let us know what you think and help set pricing.\",\n  \"body\": \"Dear [Subscriber],\\n\\nWe're excited to introduce the Swatch x AP-inspired Royal Pop collection, a unique blend of luxury and affordability. Your opinion is crucial as we gauge interest and refine our offerings.\\n\\nWhat do you think of the Royal Pop collection? Share your thoughts and suggest pricing that aligns with premium quality without breaking the bank.\\n\\nThank you for being part of our community!\\n\\nBest regards,\\nThe Royal Pop Team\\n\\nIndependent brand. Not affiliated with Swatch or Audemars Piguet.\",\n  \"cta_text\": \"Reply with your thoughts and pricing suggestions\",\n  \"sign_off\": \"The Royal Pop Team\"\n}"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "heading_2",
+          "heading_2": {
+            "rich_text": [
+              {
+                "text": {
+                  "content": "Visual Brief"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "object": "block",
+          "type": "code",
+          "code": {
+            "language": "json",
+            "rich_text": [
+              {
+                "text": {
+                  "content": "{\n  \"piece_priority\": 5,\n  \"platform\": \"Email\",\n  \"format\": \"Email copy\",\n  \"aspect_ratio\": \"16:9\",\n  \"shot_list\": [\n    {\n      \"id\": 1,\n      \"type\": \"ai_image\",\n      \"description\": \"Close-up of the Royal Pop wrist kit, showing the bioceramic pocket watch with central crown and clip-in adapter, on a dark moody studio background.\",\n      \"duration_sec\": null,\n      \"notes\": \"Framing: focus on the product. Lighting: controlled side lighting.\"\n    },\n    {\n      \"id\": 2,\n      \"type\": \"ai_image\",\n      \"description\": \"CAD-style outline of the Royal Pop bioceramic pocket watch, with brushed silver accents and matte black clip-in adapter.\",\n      \"duration_sec\": null,\n      \"notes\": \"Framing: clean white background. Lighting: minimalistic.\"\n    }\n  ],\n  \"ai_prompts\": [\n    {\n      \"for_shot_id\": 1,\n      \"tool\": \"Flux\",\n      \"prompt\": \"Close-up of the Royal Pop wrist kit, showing the bioceramic pocket watch with central crown and clip-in adapter, on a dark moody studio background. The lighting is controlled side lighting to highlight the brushed silver accents and matte black clip-in adapter.\",\n      \"negative_prompt\": \"text overlay, watermark, low quality, blurry, cartoon, illustration, AP logo, Swatch logo\"\n    },\n    {\n      \"for_shot_id\": 2,\n      \"tool\": \"Flux\",\n      \"prompt\": \"CAD-style outline of the Royal Pop bioceramic pocket watch with brushed silver accents and matte black clip-in adapter. The background is a clean white.\",\n      \"negative_prompt\": \"text overlay, watermark, low quality, blurry, cartoon, illustration, AP logo, Swatch logo\"\n    }\n  ],\n  \"filming_notes\": \"For this email content piece, you will need to generate two high-quality images using AI tools as specified in the brief. Ensure that the visuals adhere to the brand's aesthetic guidelines and "
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

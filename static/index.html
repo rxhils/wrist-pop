@@ -1,0 +1,1543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Royal Pop Studio · Agent Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #0b0b0b; color: #ededed; font-family: 'Inter Tight', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #0b0b0b; }
+  ::-webkit-scrollbar-thumb { background: #262626; border-radius: 0; }
+  ::-webkit-scrollbar-thumb:hover { background: #f5e74a; }
+  @keyframes hfPulse { 0%,100% { opacity: 1 } 50% { opacity: .55 } }
+  @keyframes hfBlink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }
+  @keyframes hfBounce { 0%,100% { transform: translateY(0); opacity: .4 } 50% { transform: translateY(-3px); opacity: 1 } }
+  #boot {
+    position: fixed; inset: 0; display: grid; place-items: center;
+    background: #0b0b0b; color: #8a8a8a; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    z-index: 9999; transition: opacity .3s; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div id="boot">connecting to backend…</div>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="env,react">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ───────────────────────── Design tokens ─────────────────────────
+const HF = {
+  bg: '#0b0b0b', surface: '#141414', surface2: '#1b1b1b',
+  border: '#262626', borderSoft: '#1f1f1f',
+  text: '#ededed', textDim: '#8a8a8a', textFaint: '#5a5a5a',
+  accent: '#f5e74a', accentInk: '#0b0b0b',
+  ok: '#3fb27f', err: '#ff5a5a',
+  mono: '"JetBrains Mono", ui-monospace, monospace',
+  body: '"Inter Tight", system-ui, sans-serif',
+  serif: '"Instrument Serif", serif',
+};
+
+const API = '';  // same-origin (served from FastAPI)
+
+// ───────────────────────── Backend client ─────────────────────────
+async function apiGet(path) {
+  const r = await fetch(API + path);
+  if (!r.ok) throw new Error(`${r.status} ${path}`);
+  return r.json();
+}
+async function apiPost(path, body) {
+  const r = await fetch(API + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body || {}),
+  });
+  if (!r.ok) throw new Error(`${r.status} ${path}`);
+  return r.json();
+}
+
+// ───────────────────────── Primitives ─────────────────────────
+const Pill = ({ children, tone = 'default', style }) => {
+  const t = {
+    default: { bg: 'transparent', fg: HF.textDim, border: HF.border },
+    accent:  { bg: HF.accent, fg: HF.accentInk, border: HF.accent },
+    ok:      { bg: 'rgba(63,178,127,.12)', fg: HF.ok, border: 'rgba(63,178,127,.4)' },
+    err:     { bg: 'rgba(255,90,90,.12)', fg: HF.err, border: 'rgba(255,90,90,.4)' },
+    dim:     { bg: HF.surface2, fg: HF.textDim, border: HF.borderSoft },
+  }[tone];
+  return <span style={{
+    display: 'inline-flex', alignItems: 'center', gap: 6,
+    padding: '3px 9px', borderRadius: 999,
+    background: t.bg, color: t.fg, border: `1px solid ${t.border}`,
+    fontFamily: HF.mono, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase',
+    ...style,
+  }}>{children}</span>;
+};
+
+const StatusDot = ({ status, size = 8 }) => {
+  const c = { done: HF.ok, run: HF.accent, idle: HF.textFaint, err: HF.err, skip: HF.textFaint, running: HF.accent }[status] || HF.textFaint;
+  const isRun = status === 'run' || status === 'running';
+  return <span style={{
+    width: size, height: size, borderRadius: '50%', background: c,
+    boxShadow: isRun ? `0 0 0 3px ${HF.accent}33, 0 0 12px ${HF.accent}88` : 'none',
+    animation: isRun ? 'hfPulse 1.4s ease-in-out infinite' : 'none',
+    display: 'inline-block', flex: 'none',
+  }} />;
+};
+
+const IconBtn = ({ children, onClick, tone = 'default', size = 'md', style = {}, disabled = false }) => {
+  const tones = {
+    default: { bg: 'transparent', fg: HF.text, border: HF.border, hover: HF.surface2 },
+    accent:  { bg: HF.accent, fg: HF.accentInk, border: HF.accent, hover: '#fff04a' },
+    ghost:   { bg: 'transparent', fg: HF.textDim, border: 'transparent', hover: HF.surface },
+    danger:  { bg: 'transparent', fg: HF.err, border: HF.border, hover: 'rgba(255,90,90,.08)' },
+  }[tone];
+  const sizes = { sm: { p: '5px 9px', fs: 11 }, md: { p: '7px 12px', fs: 12 }, lg: { p: '10px 16px', fs: 13 } }[size];
+  return <button
+    onClick={onClick}
+    disabled={disabled}
+    onMouseEnter={e => !disabled && (e.currentTarget.style.background = tones.hover)}
+    onMouseLeave={e => !disabled && (e.currentTarget.style.background = tones.bg)}
+    style={{
+      background: tones.bg, color: tones.fg, border: `1px solid ${tones.border}`,
+      padding: sizes.p, borderRadius: 6, fontSize: sizes.fs,
+      fontFamily: HF.mono, letterSpacing: '0.04em',
+      cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.4 : 1,
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      transition: 'background .12s, color .12s', ...style,
+    }}>{children}</button>;
+};
+
+// ───────────────────────── Agent inventory ─────────────────────────
+const AGENT_META = {
+  scout:        { name: 'Trend Scout',         glyph: '◉', group: 'pipeline', desc: 'Search UK watch accessory trends · pytrends + web', stage: 1 },
+  strategist:   { name: 'Content Strategist',  glyph: '◈', group: 'pipeline', desc: 'Turn trends into 3–5 reel ideas with 12-word hooks', stage: 2 },
+  writer:       { name: 'Copy Writer',         glyph: '◆', group: 'pipeline', desc: 'Full scripts + captions in brand voice', stage: 3 },
+  gate:         { name: 'Quality Gate',        glyph: '◇', group: 'pipeline', desc: 'Brand safety checks · hard + soft blocks', stage: 4 },
+  visual:       { name: 'Visual Brief',        glyph: '▣', group: 'pipeline', desc: 'Shot lists + FLUX / LTX-Video prompts', stage: 5 },
+  scheduler:    { name: 'Scheduler',           glyph: '▤', group: 'pipeline', desc: 'UK posting windows + Notion payload', stage: 6 },
+  render_image: { name: 'Image Render',        glyph: '▦', group: 'render',   desc: 'FLUX.1 / SDXL via ComfyUI', stage: 7 },
+  render_video: { name: 'Video Render',        glyph: '▩', group: 'render',   desc: 'LTX-Video via ComfyUI', stage: 8 },
+};
+
+const PIPELINE_IDS = ['scout', 'strategist', 'writer', 'gate', 'visual', 'scheduler'];
+const RENDER_IDS = ['render_image', 'render_video'];
+
+// ───────────────────────── Top bar ─────────────────────────
+function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 14,
+      padding: '12px 20px',
+      borderBottom: `1px solid ${HF.border}`, background: HF.bg,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{
+          width: 26, height: 26, borderRadius: 6,
+          background: HF.accent, color: HF.accentInk,
+          display: 'grid', placeItems: 'center',
+          fontFamily: HF.mono, fontWeight: 700, fontSize: 13,
+        }}>PW</div>
+        <div>
+          <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 17, lineHeight: 1, color: HF.text }}>
+            Royal Pop <span style={{ color: HF.accent }}>Studio</span>
+          </div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, letterSpacing: '.1em', textTransform: 'uppercase', marginTop: 2 }}>
+            agent dashboard · v1
+          </div>
+        </div>
+      </div>
+
+      <div style={{ width: 1, height: 28, background: HF.border, margin: '0 6px' }} />
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {[
+          { id: 'overview', label: 'Overview' },
+          { id: 'text', label: 'Text agent' },
+          { id: 'visual', label: 'Visual' },
+          { id: 'outputs', label: 'Outputs' },
+        ].map(v => (
+          <button key={v.id} onClick={() => setView(v.id)} style={{
+            padding: '6px 11px', borderRadius: 6,
+            background: view === v.id ? HF.surface : 'transparent',
+            border: `1px solid ${view === v.id ? HF.border : 'transparent'}`,
+            color: view === v.id ? HF.text : HF.textDim,
+            fontFamily: HF.mono, fontSize: 11, letterSpacing: '.04em',
+            cursor: 'pointer',
+          }}>{v.label}</button>
+        ))}
+      </div>
+
+      <div style={{ width: 1, height: 28, background: HF.border, margin: '0 6px' }} />
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <IconBtn tone="accent" size="sm" onClick={onRunAll} disabled={running}>▶ Run all</IconBtn>
+        <IconBtn tone="danger" size="sm" onClick={onStop} disabled={!running}>■ Stop</IconBtn>
+      </div>
+
+      <div style={{ flex: 1 }} />
+
+      {subtitle && (
+        <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textDim }}>{subtitle}</div>
+      )}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontFamily: HF.mono, fontSize: 11 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: HF.textDim }}>
+          <StatusDot status={health.ollama ? 'done' : 'err'} /> ollama <span style={{ color: HF.textFaint }}>:11434</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: HF.textDim }}>
+          <StatusDot status={health.comfyui ? 'done' : 'err'} /> comfyui <span style={{ color: HF.textFaint }}>:8188</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Sidebar ─────────────────────────
+function HFSidebar({ activeId, statuses, onPick, progress }) {
+  const Row = ({ id }) => {
+    const a = AGENT_META[id];
+    const st = statuses[id] || 'idle';
+    const active = id === activeId;
+    return (
+      <div onClick={() => onPick(id)} style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '8px 10px', borderRadius: 6, marginBottom: 1,
+        background: active ? HF.surface : 'transparent',
+        borderLeft: active ? `2px solid ${HF.accent}` : '2px solid transparent',
+        cursor: 'pointer',
+      }}>
+        <StatusDot status={st} />
+        <span style={{ fontFamily: HF.mono, fontSize: 13, color: HF.textFaint, width: 14, textAlign: 'center' }}>{a.glyph}</span>
+        <span style={{
+          fontFamily: HF.body, fontSize: 13, fontWeight: active ? 600 : 500,
+          color: active ? HF.text : HF.textDim, flex: 1,
+        }}>{a.name}</span>
+        {st === 'running' && <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, letterSpacing: '.08em' }}>RUN</span>}
+      </div>
+    );
+  };
+
+  const Group = ({ title, ids, index }) => (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{
+        fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint,
+        letterSpacing: '.16em', textTransform: 'uppercase',
+        padding: '0 10px 6px', display: 'flex', alignItems: 'center', gap: 8,
+      }}>
+        <span style={{ color: HF.accent }}>{String(index).padStart(2, '0')}</span>
+        <span>{title}</span>
+        <span style={{ flex: 1, height: 1, background: HF.border }} />
+      </div>
+      {ids.map(id => <Row key={id} id={id} />)}
+    </div>
+  );
+
+  return (
+    <div style={{
+      width: 240, height: '100%',
+      borderRight: `1px solid ${HF.border}`, background: '#080808',
+      display: 'flex', flexDirection: 'column',
+    }}>
+      <div style={{ padding: '14px 8px 4px', flex: 1, overflowY: 'auto' }}>
+        <Group title="Pipeline" ids={PIPELINE_IDS} index={1} />
+        <Group title="Render" ids={RENDER_IDS} index={2} />
+      </div>
+      {progress && (
+        <div style={{ padding: 12, borderTop: `1px solid ${HF.border}` }}>
+          <div style={{ padding: 10, borderRadius: 8, background: HF.surface, border: `1px solid ${HF.border}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <StatusDot status="run" />
+              <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, letterSpacing: '.12em' }}>
+                {progress.label}
+              </span>
+              <span style={{ flex: 1 }} />
+              <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint }}>{progress.elapsed}</span>
+            </div>
+            <div style={{ height: 4, borderRadius: 2, background: HF.surface2, overflow: 'hidden' }}>
+              <div style={{ width: `${progress.pct}%`, height: '100%', background: HF.accent, transition: 'width .3s' }} />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ───────────────────────── Agent header ─────────────────────────
+function HFAgentHeader({ agentId, status, onRun, running }) {
+  const agent = AGENT_META[agentId];
+  if (!agent) return null;
+  return (
+    <div style={{
+      borderRadius: 10, padding: '16px 18px',
+      background: `linear-gradient(180deg, ${HF.surface} 0%, ${HF.bg} 100%)`,
+      border: `1px solid ${HF.border}`,
+      display: 'flex', alignItems: 'center', gap: 16,
+    }}>
+      <div style={{
+        width: 48, height: 48, borderRadius: 10,
+        background: HF.bg, border: `1px solid ${HF.border}`,
+        display: 'grid', placeItems: 'center',
+        fontFamily: HF.mono, color: HF.accent, fontSize: 22,
+      }}>{agent.glyph}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+          <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.18em' }}>
+            STAGE {agent.stage} · {agentId.toUpperCase()}
+          </span>
+          {status === 'running' && <Pill tone="accent"><StatusDot status="run" size={6} /> running</Pill>}
+          {status === 'done' && <Pill tone="ok">✓ done</Pill>}
+          {status === 'idle' && <Pill tone="dim">idle</Pill>}
+          {status === 'err' && <Pill tone="err">✕ error</Pill>}
+        </div>
+        <div style={{ fontFamily: HF.serif, fontSize: 26, fontStyle: 'italic', color: HF.text, lineHeight: 1.1 }}>
+          {agent.name}
+        </div>
+        <div style={{ fontFamily: HF.body, fontSize: 12.5, color: HF.textDim, marginTop: 4, maxWidth: 560 }}>
+          {agent.desc}
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end' }}>
+        <IconBtn tone="accent" onClick={onRun} disabled={running}>▶ Run this agent</IconBtn>
+        <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint }}>
+          docker exec pws-agent · run_{agentId === 'render_image' ? 'render_image' : agentId === 'render_video' ? 'render_video' : agentId}.py
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Execution log ─────────────────────────
+function HFExecLog({ lines, live }) {
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [lines]);
+  return (
+    <div style={{
+      borderRadius: 10, background: '#050505', border: `1px solid ${HF.border}`,
+      overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0,
+    }}>
+      <div style={{
+        padding: '10px 14px', borderBottom: `1px solid ${HF.border}`,
+        display: 'flex', alignItems: 'center', gap: 10, background: HF.surface,
+      }}>
+        <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.text, letterSpacing: '.14em' }}>EXECUTION LOG</span>
+        {live && <Pill tone="ok" style={{ padding: '2px 7px' }}><StatusDot status="run" size={5} /> live</Pill>}
+        <span style={{ flex: 1 }} />
+        <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint }}>stdout · {lines.length} lines</span>
+      </div>
+      <div ref={scrollRef} style={{
+        padding: '12px 14px', flex: 1, overflowY: 'auto',
+        fontFamily: HF.mono, fontSize: 11.5, lineHeight: 1.7,
+      }}>
+        {lines.length === 0 && (
+          <div style={{ color: HF.textFaint }}>no output yet · click Run this agent</div>
+        )}
+        {lines.map((l, i) => {
+          const lc = l.toLowerCase();
+          let color = HF.text;
+          let marker = '›';
+          if (lc.includes('error') || lc.includes('fail') || lc.includes('traceback') || lc.startsWith('✗')) {
+            color = HF.err; marker = '✕';
+          } else if (lc.includes(' ok') || lc.startsWith('✓') || lc.includes('saved') || lc.includes('pass') || lc.includes('done')) {
+            color = HF.ok; marker = '✓';
+          } else if (lc.startsWith('[') && lc.endsWith(']')) {
+            color = HF.textFaint;
+          } else if (lc.includes('stage') || lc.includes('priority') || lc.includes('agent')) {
+            color = HF.accent; marker = '▸';
+          } else if (lc.startsWith('[scout]') || lc.startsWith('[strategist]') || lc.startsWith('[writer]') || lc.startsWith('[gate]') || lc.startsWith('[visual]') || lc.startsWith('[scheduler]') || lc.startsWith('[render')) {
+            color = HF.accent;
+          }
+          return (
+            <div key={i} style={{ display: 'flex', gap: 12, color }}>
+              <span style={{ color: HF.textFaint, flex: 'none', width: 26 }}>{String(i + 1).padStart(3, '0')}</span>
+              <span style={{ flex: 'none', width: 16 }}>{marker}</span>
+              <span style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{l}</span>
+            </div>
+          );
+        })}
+        {live && (
+          <div style={{ display: 'flex', gap: 12 }}>
+            <span style={{ color: HF.textFaint, width: 26 }}>...</span>
+            <span style={{ color: HF.accent, width: 16 }}>·</span>
+            <span style={{ display: 'inline-block', width: 7, height: 14, background: HF.accent, animation: 'hfBlink 1s steps(2) infinite' }} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Chat ─────────────────────────
+function HFChat({ agentId, messages, onSend, streaming, jsonMode, setJsonMode, onReset }) {
+  const [draft, setDraft] = useState('');
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages]);
+
+  const submit = () => {
+    if (!draft.trim() || streaming) return;
+    onSend(draft.trim());
+    setDraft('');
+  };
+
+  return (
+    <div style={{
+      borderRadius: 10, background: HF.surface, border: `1px solid ${HF.border}`,
+      display: 'flex', flexDirection: 'column', minHeight: 0,
+    }}>
+      <div style={{
+        padding: '10px 14px', borderBottom: `1px solid ${HF.borderSoft}`,
+        display: 'flex', alignItems: 'center', gap: 10,
+      }}>
+        <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.text, letterSpacing: '.14em' }}>CHAT</span>
+        <Pill>qwen2.5:14b</Pill>
+        <Pill>system · {agentId}</Pill>
+        <span style={{ flex: 1 }} />
+        <label style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+          <input type="checkbox" checked={jsonMode} onChange={e => setJsonMode(e.target.checked)} />
+          JSON mode
+        </label>
+        <IconBtn tone="ghost" size="sm" onClick={onReset}>⟲ clear</IconBtn>
+      </div>
+
+      <div ref={scrollRef} style={{ padding: '14px 16px', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {messages.length === 0 && (
+          <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint }}>
+            ask the {AGENT_META[agentId]?.name || agentId} about its outputs, request rewrites…
+          </div>
+        )}
+        {messages.map((m, i) => (
+          <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+            <div style={{
+              maxWidth: '82%', padding: '10px 14px',
+              borderRadius: m.role === 'user' ? '12px 12px 4px 12px' : '12px 12px 12px 4px',
+              background: m.role === 'user' ? HF.surface2 : HF.bg,
+              border: `1px solid ${HF.borderSoft}`,
+              fontFamily: HF.body, fontSize: 13.5,
+              color: HF.text, lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+            }}>{m.content}</div>
+          </div>
+        ))}
+        {streaming && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: HF.mono, fontSize: 11, color: HF.textFaint, paddingLeft: 4 }}>
+            <span style={{ display: 'inline-flex', gap: 3 }}>
+              <span style={{ width: 4, height: 4, borderRadius: '50%', background: HF.textDim, animation: 'hfBounce 1s infinite' }} />
+              <span style={{ width: 4, height: 4, borderRadius: '50%', background: HF.textDim, animation: 'hfBounce 1s infinite .15s' }} />
+              <span style={{ width: 4, height: 4, borderRadius: '50%', background: HF.textDim, animation: 'hfBounce 1s infinite .3s' }} />
+            </span>
+            thinking…
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: 12, borderTop: `1px solid ${HF.borderSoft}` }}>
+        <div style={{
+          display: 'flex', alignItems: 'flex-start', gap: 8,
+          padding: '4px 4px 4px 14px', borderRadius: 10,
+          background: HF.bg, border: `1px solid ${HF.border}`,
+        }}>
+          <span style={{ color: HF.accent, fontFamily: HF.mono, fontSize: 13, paddingTop: 12 }}>›</span>
+          <textarea
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submit(); }
+            }}
+            placeholder={`ask the ${AGENT_META[agentId]?.name || agentId}…  ctrl+enter to send`}
+            rows={2}
+            style={{
+              flex: 1, background: 'transparent', border: 'none', outline: 'none',
+              color: HF.text, fontFamily: HF.body, fontSize: 13.5, padding: '8px 0',
+              resize: 'vertical', minHeight: 32,
+            }}
+          />
+          <IconBtn tone="accent" size="sm" onClick={submit} disabled={streaming}>Send ↗</IconBtn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Pipeline Overview ─────────────────────────
+function PipelineOverview({ statuses, onPickAgent, lastRunInfo }) {
+  return (
+    <div style={{ padding: 24, overflowY: 'auto', background: HF.bg, flex: 1 }}>
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint, letterSpacing: '.18em' }}>
+          RUN · {new Date().toISOString().slice(0, 10)}
+        </div>
+        <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 42, color: HF.text, lineHeight: 1.1, marginTop: 6 }}>
+          {lastRunInfo.headline || <>Eight agents, ready to <span style={{ color: HF.accent }}>run</span>.</>}
+        </div>
+        <div style={{ fontFamily: HF.body, fontSize: 14, color: HF.textDim, marginTop: 8, maxWidth: 720 }}>
+          {lastRunInfo.sub || 'Click Run all in the top bar to fire the 6-stage text pipeline. Render stages (7, 8) fire after Visual Brief and use ComfyUI.'}
+        </div>
+      </div>
+
+      <div style={{
+        borderRadius: 12, background: HF.surface, border: `1px solid ${HF.border}`,
+        padding: 22, marginBottom: 22,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.text, letterSpacing: '.14em' }}>PIPELINE FLOW</span>
+          <Pill>main + render branches</Pill>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 0 }}>
+          {PIPELINE_IDS.map((id, i) => {
+            const a = AGENT_META[id];
+            const st = statuses[id] || 'idle';
+            const now = st === 'running';
+            const past = st === 'done';
+            const err = st === 'err';
+            return (
+              <div key={id} onClick={() => onPickAgent(id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, letterSpacing: '.16em', marginBottom: 8 }}>
+                  STAGE {i + 1}
+                </div>
+                <div style={{
+                  width: 64, height: 64, borderRadius: 14,
+                  background: now ? HF.accent : past ? HF.surface2 : err ? 'rgba(255,90,90,.08)' : HF.bg,
+                  border: `1.5px solid ${now ? HF.accent : past ? HF.ok : err ? HF.err : HF.border}`,
+                  color: now ? HF.accentInk : past ? HF.ok : err ? HF.err : HF.textDim,
+                  display: 'grid', placeItems: 'center',
+                  fontFamily: HF.mono, fontSize: 24,
+                  boxShadow: now ? `0 0 0 6px ${HF.accent}22, 0 8px 24px ${HF.accent}33` : 'none',
+                }}>{a.glyph}</div>
+                <div style={{
+                  fontFamily: HF.body, fontSize: 13, fontWeight: now ? 600 : 500,
+                  color: now || past ? HF.text : HF.textDim, marginTop: 10, textAlign: 'center',
+                }}>{a.name}</div>
+                <div style={{ fontFamily: HF.mono, fontSize: 10, color: now ? HF.accent : err ? HF.err : past ? HF.ok : HF.textFaint, marginTop: 3 }}>
+                  {now ? 'running…' : past ? '✓ done' : err ? '✕ failed' : 'idle'}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div style={{
+          marginTop: 30, padding: '14px 16px', borderRadius: 10,
+          background: HF.bg, border: `1px dashed ${HF.border}`,
+          display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
+        }}>
+          <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.16em' }}>↳ RENDER BRANCH</span>
+          <span style={{ fontFamily: HF.body, fontSize: 12, color: HF.textDim }}>fires after Visual Brief · uses ComfyUI :8188</span>
+          <span style={{ flex: 1 }} />
+          {RENDER_IDS.map(id => {
+            const a = AGENT_META[id];
+            const st = statuses[id] || 'idle';
+            return (
+              <div key={id} onClick={() => onPickAgent(id)} style={{
+                display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px',
+                borderRadius: 6, background: HF.surface, border: `1px solid ${HF.borderSoft}`,
+                cursor: 'pointer',
+              }}>
+                <StatusDot status={st} />
+                <span style={{ fontFamily: HF.mono, fontSize: 14, color: HF.textDim }}>{a.glyph}</span>
+                <span style={{ fontFamily: HF.body, fontSize: 12, color: HF.text }}>{a.name}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+        {[
+          { l: 'PIPELINE STAGES', v: '8', sub: '6 LLM · 2 render' },
+          { l: 'MODEL', v: 'qwen2.5:14b', sub: 'local · ollama' },
+          { l: 'COMFYUI', v: 'FLUX + LTX', sub: 'render branch' },
+          { l: 'COST', v: '£0', sub: 'fully local stack' },
+        ].map(s => (
+          <div key={s.l} style={{
+            padding: 16, borderRadius: 10, background: HF.surface, border: `1px solid ${HF.border}`,
+          }}>
+            <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.14em' }}>{s.l}</div>
+            <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 28, color: HF.text, marginTop: 4, lineHeight: 1 }}>{s.v}</div>
+            <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.textDim, marginTop: 4 }}>{s.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Outputs viewer ─────────────────────────
+function OutputsView({}) {
+  const [files, setFiles] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [content, setContent] = useState('');
+  const [date, setDate] = useState('');
+
+  const load = async () => {
+    try {
+      const path = date ? `/api/outputs?d=${encodeURIComponent(date)}` : '/api/outputs';
+      const r = await apiGet(path);
+      setFiles(r.files || []);
+    } catch (e) {
+      setFiles([]);
+    }
+  };
+  useEffect(() => { load(); }, []);
+
+  const open = async (f) => {
+    setSelected(f.name);
+    try {
+      const r = await fetch(`/api/outputs/${encodeURIComponent(f.name)}`);
+      const ct = r.headers.get('content-type') || '';
+      if (ct.includes('json')) {
+        setContent(JSON.stringify(await r.json(), null, 2));
+      } else {
+        setContent(await r.text());
+      }
+    } catch (e) {
+      setContent('error: ' + e.message);
+    }
+  };
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 14, padding: 18, flex: 1, minHeight: 0, background: HF.bg }}>
+      <div style={{ background: HF.surface, border: `1px solid ${HF.border}`, borderRadius: 10, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        <div style={{ padding: 12, borderBottom: `1px solid ${HF.borderSoft}`, display: 'flex', gap: 8 }}>
+          <input
+            value={date}
+            onChange={e => setDate(e.target.value)}
+            placeholder="YYYY-MM-DD"
+            style={{
+              flex: 1, background: HF.bg, border: `1px solid ${HF.border}`, borderRadius: 6,
+              color: HF.text, fontFamily: HF.mono, fontSize: 11, padding: '6px 10px', outline: 'none',
+            }}
+          />
+          <IconBtn size="sm" onClick={load}>↻</IconBtn>
+        </div>
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {files.length === 0 && (
+            <div style={{ padding: 14, fontFamily: HF.mono, fontSize: 11, color: HF.textFaint }}>no files</div>
+          )}
+          {files.map(f => (
+            <div key={f.name} onClick={() => open(f)} style={{
+              padding: '10px 14px', borderBottom: `1px solid ${HF.borderSoft}`, cursor: 'pointer',
+              background: selected === f.name ? HF.surface2 : 'transparent',
+              borderLeft: selected === f.name ? `2px solid ${HF.accent}` : '2px solid transparent',
+            }}>
+              <div style={{ fontFamily: HF.mono, fontSize: 11, color: selected === f.name ? HF.accent : HF.text }}>
+                {f.name}
+              </div>
+              <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, marginTop: 2 }}>
+                {f.size}b · {new Date(f.mtime * 1000).toLocaleTimeString()}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{
+        background: '#050505', border: `1px solid ${HF.border}`, borderRadius: 10,
+        padding: 14, overflow: 'auto', fontFamily: HF.mono, fontSize: 11,
+        color: HF.textDim, whiteSpace: 'pre-wrap', lineHeight: 1.6,
+      }}>
+        {content || <span style={{ color: HF.textFaint }}>select a file…</span>}
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Visual (Image Render) Panel ─────────────────────────
+const MODELS = [
+  { id: 'FLUX.1 schnell', badge: '~3 min', desc: 'Best quality', supportsI2I: false },
+  { id: 'SDXL',           badge: '~45 sec', desc: 'Img2img',     supportsI2I: true },
+  { id: 'SDXL Turbo',     badge: '~3 sec',  desc: 'Quick preview', supportsI2I: false },
+];
+
+function VisualPanel({ agentId, status, health, onRunBatch, running }) {
+  const isVideoAgent = agentId === 'render_video';
+
+  const [model, setModel] = useState('SDXL Turbo');
+  const [mode, setMode] = useState('Text to image');
+  const [colourway, setColourway] = useState('Monochrome');
+  const [shot, setShot] = useState('Hero shot');
+  const [userText, setUserText] = useState('');
+  // refs is array of {b64, name}
+  const [refs, setRefs] = useState([]);
+  const [strength, setStrength] = useState(0.65);
+  const [generating, setGenerating] = useState(false);
+  const [resultImg, setResultImg] = useState(null);
+  const [resultMeta, setResultMeta] = useState(null);
+  const [videoClips, setVideoClips] = useState([]); // [{index, status, video_b64, seed, ref_filename}]
+  const [errorMsg, setErrorMsg] = useState('');
+  const [statusMsg, setStatusMsg] = useState('');
+  const fileInputRef = useRef(null);
+
+  // Vision analyst state
+  const [visionModels, setVisionModels] = useState([]);
+  const [visionModel, setVisionModel] = useState(null);
+  const [analysing, setAnalysing] = useState(false);
+  const [analyses, setAnalyses] = useState([]);   // list of analysis dicts
+  const [visionError, setVisionError] = useState('');
+
+  useEffect(() => {
+    apiGet('/api/vision/models').then(r => {
+      setVisionModels(r.available || []);
+      setVisionModel(r.default || null);
+    }).catch(() => {});
+  }, []);
+
+  const COLOURWAYS = ['Monochrome', 'Huit Blanc', 'Green Eight'];
+  const SHOTS = ['Hero shot', 'Wrist shot', 'Exploded view', 'Strap detail', 'Assembly', 'PW clasp'];
+
+  const isFlux = model === 'FLUX.1 schnell';
+  const isTurbo = model === 'SDXL Turbo';
+  const supportsI2I = (MODELS.find(m => m.id === model) || {}).supportsI2I;
+  const isI2I = supportsI2I && mode === 'Image to image';
+  const maxRefs = isVideoAgent ? 5 : (isI2I ? 1 : 5);  // video: 5, i2i: 1, otherwise allow refs for vision only
+
+  // build full prompt preview (client-side mirror of render.build_prompt)
+  const COLOURWAY_DESC = {
+    'Monochrome': 'matte black FKM rubber strap, black cradle adapter, brushed silver bezel, black Royal Pop dial, dark PW clasp',
+    'Huit Blanc': 'white FKM rubber strap, white cradle adapter, white Royal Pop dial, colorful bezel markers, yellow crown',
+    'Green Eight': 'forest green cradle adapter, deep green FKM rubber strap, dark green dial, green hands, green crown',
+  };
+  const SHOT_DESC = {
+    'Hero shot': 'floating hero shot, dark charcoal studio background, soft grey glow, premium reflections',
+    'Wrist shot': 'worn on wrist, lifestyle shot, soft natural light, casual luxury',
+    'Exploded view': 'three floating components, watch module, cradle adapter, FKM rubber strap, dark background',
+    'Strap detail': 'extreme macro of ribbed FKM rubber strap texture, black background',
+    'Assembly': 'watch module dropping into cradle adapter socket, dynamic moment, studio light',
+    'PW clasp': 'extreme macro of PW branded deployant clasp, brushed metal, engraved letters',
+  };
+  const fullPrompt = [
+    'Pop Wrist Studio Cradle Adapter V1',
+    COLOURWAY_DESC[colourway],
+    SHOT_DESC[shot],
+    userText.trim(),
+    'photorealistic, cinematic, 8k, luxury watch campaign',
+  ].filter(Boolean).join(', ');
+
+  const handleFiles = (files) => {
+    if (!files || !files.length) return;
+    const arr = Array.from(files).slice(0, maxRefs - refs.length);
+    arr.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setRefs(prev => [...prev, { b64: e.target.result, name: file.name }].slice(0, maxRefs));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  const removeRef = (idx) => setRefs(prev => prev.filter((_, i) => i !== idx));
+  const clearRefs = () => { setRefs([]); setAnalyses([]); if (fileInputRef.current) fileInputRef.current.value = ''; };
+  const onDrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
+
+  const runVisionAnalyse = async () => {
+    if (!refs.length || !visionModel) { setVisionError('upload images + pick a vision model first'); return; }
+    setVisionError('');
+    setAnalysing(true);
+    try {
+      const r = await apiPost('/api/vision/analyse', {
+        images_b64: refs.map(r => r.b64),
+        model: visionModel,
+      });
+      if (r.status === 'ok') {
+        setAnalyses(r.analyses || []);
+      } else {
+        setVisionError(r.error || 'unknown error');
+      }
+    } catch (e) {
+      setVisionError(e.message);
+    } finally {
+      setAnalysing(false);
+    }
+  };
+
+  const addAnalysisToPrompt = (a) => {
+    const addition = a.flux_prompt_addition || '';
+    if (!addition) return;
+    setUserText(prev => (prev ? prev + ', ' + addition : addition));
+  };
+
+  const generate = async () => {
+    if (generating) return;
+    if (!health.comfyui) { setErrorMsg('ComfyUI :8188 unreachable. Start ComfyUI Desktop first.'); return; }
+
+    if (isVideoAgent) {
+      if (!refs.length) { setErrorMsg('upload at least 1 reference image for video render'); return; }
+      setErrorMsg('');
+      setGenerating(true);
+      setVideoClips(refs.map((r, i) => ({ index: i + 1, status: 'queued', ref: r.name })));
+      setStatusMsg(`Generating ${refs.length} clip(s) with LTX-Video…`);
+      const t0 = Date.now();
+      try {
+        const fullPromptText = fullPrompt;
+        const r = await apiPost('/api/render/video', {
+          prompt: fullPromptText,
+          refs_b64: refs.map(r => r.b64),
+        });
+        if (r.status === 'ok') {
+          setVideoClips(r.clips || []);
+          setResultMeta({
+            model: 'LTX-Video',
+            seed: null,
+            elapsed: ((Date.now() - t0) / 1000).toFixed(1) + 's',
+            completed: `${r.completed}/${r.total}`,
+          });
+          setStatusMsg('');
+        } else {
+          setErrorMsg(r.error || 'unknown error');
+          setStatusMsg('');
+        }
+      } catch (e) {
+        setErrorMsg(e.message);
+        setStatusMsg('');
+      } finally {
+        setGenerating(false);
+      }
+      return;
+    }
+
+    if (isI2I && refs.length === 0) { setErrorMsg('Image-to-image needs a reference image.'); return; }
+    setErrorMsg('');
+    setGenerating(true);
+    setStatusMsg(`Generating with ${model}…`);
+    const t0 = Date.now();
+    try {
+      const r = await apiPost('/api/render/image', {
+        model, mode, colourway, shot_type: shot,
+        user_text: userText,
+        ref_b64: refs.length ? refs[0].b64 : null,
+        strength,
+      });
+      if (r.status === 'ok') {
+        setResultImg('data:image/png;base64,' + r.image_b64);
+        setResultMeta({
+          model: r.model, seed: r.seed, saved: r.saved,
+          elapsed: ((Date.now() - t0) / 1000).toFixed(1) + 's',
+        });
+        setStatusMsg('');
+      } else {
+        setErrorMsg(r.error || 'unknown error');
+        setStatusMsg('');
+      }
+    } catch (e) {
+      setErrorMsg(e.message);
+      setStatusMsg('');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); generate(); }
+  };
+
+  return (
+    <div style={{ padding: 18, display: 'grid', gridTemplateRows: 'auto 1fr', gap: 14, minHeight: 0, background: HF.bg }}>
+      <HFAgentHeader agentId={agentId} status={status} onRun={onRunBatch} running={running} />
+
+      {!health.comfyui && (
+        <div style={{
+          padding: 12, borderRadius: 8, background: 'rgba(255,90,90,.06)',
+          border: `1px solid ${HF.err}`, color: HF.err,
+          fontFamily: HF.mono, fontSize: 11,
+        }}>
+          ComfyUI :8188 unreachable. Start ComfyUI Desktop to enable generation.
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 14, minHeight: 0 }}>
+        {/* Left: prompt builder */}
+        <div style={{
+          borderRadius: 10, background: HF.surface, border: `1px solid ${HF.border}`,
+          padding: 16, display: 'flex', flexDirection: 'column', gap: 14, overflowY: 'auto',
+        }}>
+          {/* model — 3 cards (hide for video agent) */}
+          {!isVideoAgent && (
+            <div>
+              <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.16em', marginBottom: 8 }}>MODEL</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {MODELS.map(m => (
+                  <div key={m.id} onClick={() => {
+                    setModel(m.id);
+                    if (!m.supportsI2I) setMode('Text to image');
+                  }} style={{
+                    padding: '8px 10px', borderRadius: 6,
+                    background: model === m.id ? HF.accent : HF.surface2,
+                    color: model === m.id ? HF.accentInk : HF.textDim,
+                    border: `1px solid ${model === m.id ? HF.accent : HF.border}`,
+                    fontFamily: HF.mono, fontSize: 11.5, cursor: 'pointer',
+                    fontWeight: model === m.id ? 600 : 400,
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
+                  }}>
+                    <span>{m.id}</span>
+                    <span style={{
+                      fontSize: 9, padding: '2px 6px', borderRadius: 3,
+                      background: model === m.id ? 'rgba(11,11,11,.18)' : HF.bg,
+                      color: model === m.id ? HF.accentInk : HF.textFaint,
+                      letterSpacing: '.06em',
+                    }}>{m.badge} · {m.desc}</span>
+                  </div>
+                ))}
+              </div>
+              {isTurbo && (
+                <div style={{
+                  marginTop: 6, padding: '5px 8px', borderRadius: 4,
+                  background: HF.surface2, border: `1px dashed ${HF.borderSoft}`,
+                  fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, letterSpacing: '.06em',
+                }}>512×512 · CFG 0 · preview mode</div>
+              )}
+            </div>
+          )}
+
+          {/* mode (SDXL t2i/i2i only) */}
+          {!isVideoAgent && supportsI2I && (
+            <div>
+              <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.16em', marginBottom: 8 }}>MODE</div>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {['Text to image', 'Image to image'].map(m => (
+                  <div key={m} onClick={() => setMode(m)} style={{
+                    flex: 1, padding: '7px 8px', borderRadius: 6,
+                    background: mode === m ? HF.surface2 : 'transparent',
+                    color: mode === m ? HF.text : HF.textDim,
+                    border: `1px solid ${mode === m ? HF.accent : HF.border}`,
+                    fontFamily: HF.mono, fontSize: 11, textAlign: 'center', cursor: 'pointer',
+                  }}>{m}</div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* colourway */}
+          <div>
+            <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.16em', marginBottom: 8 }}>COLOURWAY</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
+              {[
+                { n: 'Monochrome', c: '#1a1a1a' },
+                { n: 'Huit Blanc', c: '#f0eee9' },
+                { n: 'Green Eight', c: '#2d4f3a' },
+              ].map(cw => (
+                <div key={cw.n} onClick={() => setColourway(cw.n)} style={{
+                  padding: 8, borderRadius: 6,
+                  background: colourway === cw.n ? HF.surface2 : 'transparent',
+                  border: `1px solid ${colourway === cw.n ? HF.accent : HF.border}`,
+                  cursor: 'pointer',
+                }}>
+                  <div style={{ width: '100%', height: 32, borderRadius: 4, background: cw.c, border: '1px solid #00000040', marginBottom: 6 }} />
+                  <div style={{ fontFamily: HF.body, fontSize: 11, color: colourway === cw.n ? HF.text : HF.textDim }}>{cw.n}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* shot type */}
+          <div>
+            <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.16em', marginBottom: 8 }}>SHOT</div>
+            <select value={shot} onChange={e => setShot(e.target.value)} style={{
+              width: '100%', padding: '10px 12px', borderRadius: 6,
+              background: HF.surface2, border: `1px solid ${HF.border}`,
+              fontFamily: HF.body, fontSize: 12, color: HF.text,
+              outline: 'none', cursor: 'pointer',
+            }}>
+              {SHOTS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+
+          {/* reference images (multi) — always shown except for FLUX/Turbo t2i where they're for Vision only */}
+          <div>
+            <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.16em', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+              REFERENCE IMAGES
+              <span style={{ color: HF.textFaint, textTransform: 'none', letterSpacing: 0 }}>
+                · {isVideoAgent ? 'up to 5 · 1 clip each' : isI2I ? '1 required (i2i)' : 'optional · for Vision Analyst'}
+              </span>
+              <span style={{ flex: 1 }} />
+              {refs.length > 0 && (
+                <span onClick={clearRefs} style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.err, cursor: 'pointer' }}>clear all</span>
+              )}
+            </div>
+
+            {/* thumbnails */}
+            {refs.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 8 }}>
+                {refs.map((r, idx) => (
+                  <div key={idx} style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', border: `1px solid ${HF.border}`, aspectRatio: '1' }}>
+                    <img src={r.b64} alt={r.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    <button onClick={() => removeRef(idx)} style={{
+                      position: 'absolute', top: 2, right: 2, padding: '1px 5px',
+                      background: HF.bg, border: `1px solid ${HF.border}`, borderRadius: 3,
+                      color: HF.err, fontFamily: HF.mono, fontSize: 9, cursor: 'pointer',
+                    }}>✕</button>
+                    <div style={{
+                      position: 'absolute', bottom: 0, left: 0, right: 0,
+                      background: 'linear-gradient(transparent, rgba(0,0,0,.85))',
+                      padding: '8px 4px 3px',
+                      fontFamily: HF.mono, fontSize: 8.5, color: HF.text,
+                      whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                    }}>{r.name}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* drop zone */}
+            {refs.length < maxRefs && (
+              <div
+                onDragOver={e => e.preventDefault()}
+                onDrop={onDrop}
+                onClick={() => fileInputRef.current?.click()}
+                style={{
+                  borderRadius: 8, border: `1.5px dashed ${HF.border}`,
+                  background: HF.bg, padding: refs.length ? 12 : 24, textAlign: 'center', cursor: 'pointer',
+                }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textDim, marginBottom: 4 }}>
+                  ↓ drop or click {refs.length ? `· ${maxRefs - refs.length} more` : ''}
+                </div>
+                <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint }}>.jpg .png .webp</div>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              style={{ display: 'none' }}
+              onChange={e => handleFiles(e.target.files)}
+            />
+
+            {/* i2i strength */}
+            {isI2I && (
+              <div style={{ marginTop: 12 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.16em', marginBottom: 6, display: 'flex', justifyContent: 'space-between' }}>
+                  <span>STRENGTH</span>
+                  <span style={{ color: HF.accent }}>{strength.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range" min={0.2} max={1.0} step={0.05}
+                  value={strength} onChange={e => setStrength(parseFloat(e.target.value))}
+                  style={{ width: '100%', accentColor: HF.accent }}
+                />
+                <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, marginTop: 4 }}>
+                  low = close to ref · high = creative
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Vision Analyst section */}
+          {refs.length > 0 && !isVideoAgent && (
+            <div style={{
+              padding: 12, borderRadius: 8,
+              background: HF.bg, border: `1px solid ${HF.borderSoft}`,
+            }}>
+              <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.16em', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ color: HF.accent }}>◉</span>
+                VISION ANALYST
+              </div>
+              {visionModels.length === 0 ? (
+                <div style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.err, lineHeight: 1.6 }}>
+                  ⚠ No vision model found.<br />
+                  Run: <code style={{ color: HF.accent }}>ollama pull qwen2.5vl</code>
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+                    <select value={visionModel || ''} onChange={e => setVisionModel(e.target.value)} style={{
+                      flex: 1, padding: '6px 8px', borderRadius: 4,
+                      background: HF.surface2, border: `1px solid ${HF.border}`,
+                      color: HF.text, fontFamily: HF.mono, fontSize: 10.5, outline: 'none',
+                    }}>
+                      {visionModels.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                    <IconBtn size="sm" tone="accent" onClick={runVisionAnalyse} disabled={analysing}>
+                      {analysing ? '…' : 'Analyse ↗'}
+                    </IconBtn>
+                  </div>
+                  {visionError && (
+                    <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.err, marginBottom: 6 }}>{visionError}</div>
+                  )}
+                  {analyses.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 240, overflowY: 'auto' }}>
+                      {analyses.map((a, i) => (
+                        <div key={i} style={{
+                          padding: 8, borderRadius: 4,
+                          background: HF.surface2, border: `1px solid ${HF.borderSoft}`,
+                          fontFamily: HF.mono, fontSize: 10, color: HF.textDim, lineHeight: 1.6,
+                        }}>
+                          <div style={{ color: HF.accent, marginBottom: 3 }}>
+                            ▸ Image {a.index || (i+1)} · {a.colourway || 'unknown'}
+                          </div>
+                          {a.error && !a.raw_description ? (
+                            <div style={{ color: HF.err }}>{a.error}</div>
+                          ) : (
+                            <>
+                              {a.materials && <div><span style={{ color: HF.textFaint }}>materials:</span> {a.materials}</div>}
+                              {a.lighting && <div><span style={{ color: HF.textFaint }}>lighting:</span> {a.lighting}</div>}
+                              {a.key_details && <div><span style={{ color: HF.textFaint }}>key:</span> {Array.isArray(a.key_details) ? a.key_details.join(', ') : a.key_details}</div>}
+                              {a.flux_prompt_addition && (
+                                <div style={{ marginTop: 5, padding: 5, background: HF.bg, borderRadius: 3, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                  <span style={{ flex: 1, color: HF.text, fontSize: 9.5 }}>{a.flux_prompt_addition}</span>
+                                  <button onClick={() => addAnalysisToPrompt(a)} style={{
+                                    padding: '2px 6px', background: HF.accent, color: HF.accentInk,
+                                    border: 'none', borderRadius: 3, fontFamily: HF.mono, fontSize: 9, cursor: 'pointer',
+                                  }}>+ prompt</button>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* full prompt preview */}
+          <div style={{
+            padding: 12, borderRadius: 8,
+            background: HF.bg, border: `1px solid ${HF.borderSoft}`,
+          }}>
+            <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, letterSpacing: '.16em', marginBottom: 6 }}>PROMPT PREFIX (auto)</div>
+            <div style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textDim, lineHeight: 1.6, wordBreak: 'break-word' }}>
+              <span style={{ color: HF.accent }}>Pop Wrist Studio Cradle Adapter V1</span>, {COLOURWAY_DESC[colourway]}, <span style={{ color: HF.accent }}>{SHOT_DESC[shot].split(',')[0]}</span>…
+            </div>
+          </div>
+        </div>
+
+        {/* Right: preview + composer */}
+        <div style={{ display: 'grid', gridTemplateRows: '1fr auto', gap: 14, minHeight: 0 }}>
+          {/* preview */}
+          <div style={{
+            borderRadius: 10, background: HF.surface, border: `1px solid ${HF.border}`,
+            position: 'relative', overflow: 'hidden',
+            display: 'grid', placeItems: 'center', minHeight: 320,
+          }}>
+            {generating && (
+              <div style={{ position: 'absolute', inset: 0, background: 'rgba(11,11,11,.8)', display: 'grid', placeItems: 'center', zIndex: 2 }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ display: 'inline-flex', gap: 4, marginBottom: 12 }}>
+                    {[0, 1, 2].map(i => (
+                      <span key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: HF.accent, animation: `hfBounce 1s infinite ${i * 0.15}s` }} />
+                    ))}
+                  </div>
+                  <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textDim, letterSpacing: '.14em' }}>{statusMsg || 'rendering…'}</div>
+                </div>
+              </div>
+            )}
+            {isVideoAgent && videoClips.length > 0 ? (
+              <div style={{
+                width: '100%', height: '100%', padding: 14,
+                display: 'grid',
+                gridTemplateColumns: videoClips.length > 1 ? 'repeat(auto-fit, minmax(220px, 1fr))' : '1fr',
+                gap: 10, overflowY: 'auto', alignContent: 'start',
+              }}>
+                {videoClips.map((c, i) => (
+                  <div key={i} style={{
+                    border: `1px solid ${c.status === 'ok' ? HF.ok : c.status === 'error' ? HF.err : HF.border}`,
+                    borderRadius: 6, overflow: 'hidden', background: HF.bg,
+                  }}>
+                    <div style={{
+                      padding: '6px 10px', display: 'flex', alignItems: 'center', gap: 6,
+                      background: HF.surface, borderBottom: `1px solid ${HF.borderSoft}`,
+                      fontFamily: HF.mono, fontSize: 10, color: HF.textDim,
+                    }}>
+                      <StatusDot status={c.status === 'ok' ? 'done' : c.status === 'error' ? 'err' : 'running'} size={6} />
+                      <span>clip {c.index || (i+1)}</span>
+                      <span style={{ flex: 1 }} />
+                      {c.status === 'ok' && <span style={{ color: HF.ok }}>✓</span>}
+                      {c.status === 'error' && <span style={{ color: HF.err }}>✕</span>}
+                      {c.status === 'queued' && <span style={{ color: HF.accent }}>queued</span>}
+                    </div>
+                    {c.status === 'ok' && c.video_b64 ? (
+                      <video controls src={`data:video/mp4;base64,${c.video_b64}`} style={{ width: '100%', display: 'block', maxHeight: 200 }} />
+                    ) : c.status === 'error' ? (
+                      <div style={{ padding: 12, fontFamily: HF.mono, fontSize: 10, color: HF.err, lineHeight: 1.5 }}>
+                        {c.error}
+                      </div>
+                    ) : (
+                      <div style={{ padding: 30, textAlign: 'center', fontFamily: HF.mono, fontSize: 11, color: HF.textFaint }}>
+                        {c.ref ? `processing ${c.ref}…` : 'queued'}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : resultImg ? (
+              <img src={resultImg} style={{ maxWidth: '100%', maxHeight: '100%', display: 'block', objectFit: 'contain' }} />
+            ) : (
+              <div style={{ textAlign: 'center', color: HF.textFaint }}>
+                <div style={{
+                  width: 140, height: 140, borderRadius: '50%',
+                  border: `2px solid ${HF.border}`,
+                  background: 'radial-gradient(circle at 35% 30%, #2a2a2a 0%, #0a0a0a 80%)',
+                  margin: '0 auto 16px',
+                }} />
+                <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textDim, letterSpacing: '.1em' }}>
+                  {isVideoAgent ? 'upload up to 5 images · generate clips' : 'preview · awaiting generation'}
+                </div>
+              </div>
+            )}
+
+            {/* top-right meta */}
+            {resultMeta && (
+              <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 6 }}>
+                <Pill tone="ok"><StatusDot status="done" size={6} /> {resultMeta.elapsed}</Pill>
+              </div>
+            )}
+            {resultMeta && (
+              <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <Pill>{resultMeta.model}</Pill>
+                <Pill>seed {resultMeta.seed}</Pill>
+              </div>
+            )}
+            {resultImg && (
+              <div style={{ position: 'absolute', bottom: 12, right: 12, display: 'flex', gap: 6 }}>
+                <IconBtn size="sm" onClick={generate}>↻ regen</IconBtn>
+                <a
+                  href={resultImg}
+                  download={`pws_${Date.now()}.png`}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <IconBtn size="sm">↧ download</IconBtn>
+                </a>
+              </div>
+            )}
+          </div>
+
+          {/* composer */}
+          <div style={{
+            borderRadius: 10, background: HF.surface,
+            border: `1px solid ${errorMsg ? HF.err : HF.border}`, padding: 12,
+          }}>
+            {errorMsg && (
+              <div style={{
+                padding: '6px 10px', marginBottom: 8, borderRadius: 6,
+                background: 'rgba(255,90,90,.06)', border: `1px solid ${HF.err}`,
+                color: HF.err, fontFamily: HF.mono, fontSize: 11,
+              }}>{errorMsg}</div>
+            )}
+            <div style={{
+              display: 'flex', alignItems: 'flex-start', gap: 8,
+              padding: '4px 4px 4px 14px', borderRadius: 8,
+              background: HF.bg, border: `1px solid ${HF.border}`,
+            }}>
+              <span style={{ color: HF.accent, fontFamily: HF.mono, fontSize: 13, paddingTop: 12 }}>›</span>
+              <textarea
+                value={userText}
+                onChange={e => setUserText(e.target.value)}
+                onKeyDown={onKeyDown}
+                placeholder={`additional details (optional)… e.g. sun catching the strap, slight tilt   |   ctrl+enter to generate`}
+                rows={2}
+                style={{
+                  flex: 1, background: 'transparent', border: 'none', outline: 'none',
+                  color: HF.text, fontFamily: HF.body, fontSize: 13.5, padding: '8px 0',
+                  resize: 'vertical', minHeight: 36,
+                }}
+              />
+              <IconBtn tone="accent" size="md" onClick={generate} disabled={generating || !health.comfyui}>
+                {generating
+                  ? (isVideoAgent ? `Generating ${refs.length} clip${refs.length === 1 ? '' : 's'}…` : 'Generating…')
+                  : (isVideoAgent ? `Generate ${refs.length || 0} clip${refs.length === 1 ? '' : 's'} ↗` : 'Generate ↗')
+                }
+              </IconBtn>
+            </div>
+            <div style={{
+              marginTop: 8, padding: '6px 10px', borderRadius: 4,
+              background: HF.surface2, border: `1px solid ${HF.borderSoft}`,
+              fontFamily: HF.mono, fontSize: 10, color: HF.textDim, lineHeight: 1.6,
+              wordBreak: 'break-word',
+            }}>
+              <span style={{ color: HF.textFaint, letterSpacing: '.14em', marginRight: 6 }}>FULL PROMPT</span>{fullPrompt}
+            </div>
+            {resultMeta?.saved && (
+              <div style={{ marginTop: 6, fontFamily: HF.mono, fontSize: 10, color: HF.textFaint }}>
+                saved: {resultMeta.saved}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Main App ─────────────────────────
+function App() {
+  const [view, setView] = useState('overview');           // overview | text | visual | outputs
+  const [selectedAgent, setSelectedAgent] = useState('writer');
+  const [statuses, setStatuses] = useState({});           // {agentId: 'idle'|'running'|'done'|'err'}
+  const [logLines, setLogLines] = useState([]);
+  const [health, setHealth] = useState({ ollama: false, comfyui: false });
+  const [chatMessagesByAgent, setChatMessagesByAgent] = useState({});
+  const [chatStreaming, setChatStreaming] = useState(false);
+  const [jsonMode, setJsonMode] = useState(false);
+  const [jobId, setJobId] = useState(null);
+  const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState(null);
+  const runStartRef = useRef(null);
+  const eventSourceRef = useRef(null);
+
+  // ── boot: remove splash ──
+  useEffect(() => {
+    const b = document.getElementById('boot');
+    if (b) { b.style.opacity = '0'; setTimeout(() => b.remove(), 320); }
+  }, []);
+
+  // ── health poll ──
+  const pollHealth = useCallback(async () => {
+    try {
+      const h = await apiGet('/api/health');
+      setHealth({ ollama: !!h.ollama, comfyui: !!h.comfyui });
+    } catch {}
+  }, []);
+  useEffect(() => {
+    pollHealth();
+    const t = setInterval(pollHealth, 8000);
+    return () => clearInterval(t);
+  }, [pollHealth]);
+
+  // ── elapsed timer for progress ──
+  useEffect(() => {
+    if (!running) { setProgress(null); return; }
+    const t = setInterval(() => {
+      if (!runStartRef.current) return;
+      const sec = Math.floor((Date.now() - runStartRef.current) / 1000);
+      const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+      const ss = String(sec % 60).padStart(2, '0');
+      const running_keys = Object.keys(statuses).filter(k => statuses[k] === 'running');
+      setProgress({
+        label: running_keys.length ? running_keys[0].toUpperCase() : 'PIPELINE',
+        elapsed: `${mm}:${ss}`,
+        pct: Math.min((sec / 240) * 100, 95),
+      });
+    }, 500);
+    return () => clearInterval(t);
+  }, [running, statuses]);
+
+  // ── log streaming ──
+  const startStream = (id) => {
+    if (eventSourceRef.current) eventSourceRef.current.close();
+    const es = new EventSource(`/api/job/${id}/stream`);
+    eventSourceRef.current = es;
+    es.addEventListener('log', (e) => {
+      const line = e.data;
+      setLogLines(prev => [...prev, line].slice(-400));
+      // parse [stage] markers to update agent status
+      const m = line.match(/^\[(scout|strategist|writer|gate|visual|scheduler|render-img|render-vid)\]/);
+      if (m) {
+        const map = { 'render-img': 'render_image', 'render-vid': 'render_video' };
+        const aid = map[m[1]] || m[1];
+        setStatuses(prev => ({ ...prev, [aid]: 'running' }));
+      }
+      const stageMatch = line.match(/STAGE: (\w+)/i);
+      if (stageMatch) {
+        const aid = stageMatch[1].toLowerCase();
+        setStatuses(prev => ({ ...prev, [aid]: 'running' }));
+      }
+      const finishedMatch = line.match(/stage '(\w+)' finished.*rc=(-?\d+)/);
+      if (finishedMatch) {
+        const aid = finishedMatch[1];
+        const rc = parseInt(finishedMatch[2]);
+        setStatuses(prev => ({ ...prev, [aid]: rc === 0 ? 'done' : 'err' }));
+      }
+    });
+    es.addEventListener('end', (e) => {
+      try {
+        const info = JSON.parse(e.data);
+        setLogLines(prev => [...prev, `[done] rc=${info.rc} status=${info.status}`].slice(-400));
+      } catch {}
+      es.close();
+      eventSourceRef.current = null;
+      setJobId(null);
+      setRunning(false);
+    });
+    es.onerror = () => {
+      setLogLines(prev => [...prev, '[stream error]']);
+      es.close();
+      eventSourceRef.current = null;
+      setRunning(false);
+    };
+  };
+
+  // ── actions ──
+  const runAgent = async (agentId) => {
+    if (running) return;
+    setLogLines([]);
+    setStatuses(prev => ({ ...prev, [agentId]: 'running' }));
+    setRunning(true);
+    runStartRef.current = Date.now();
+    try {
+      const r = await apiPost('/api/run', { agent: agentId });
+      setJobId(r.job_id);
+      setLogLines([`[job ${r.job_id}] ${r.cmd}`]);
+      startStream(r.job_id);
+    } catch (e) {
+      setLogLines([`[error] ${e.message}`]);
+      setStatuses(prev => ({ ...prev, [agentId]: 'err' }));
+      setRunning(false);
+    }
+  };
+
+  const runAll = async () => {
+    if (running) return;
+    setLogLines([]);
+    PIPELINE_IDS.forEach(id => setStatuses(prev => ({ ...prev, [id]: 'idle' })));
+    setRunning(true);
+    runStartRef.current = Date.now();
+    try {
+      const r = await apiPost('/api/run', { agent: 'pipeline' });
+      setJobId(r.job_id);
+      setLogLines([`[job ${r.job_id}] ${r.cmd}`]);
+      startStream(r.job_id);
+    } catch (e) {
+      setLogLines([`[error] ${e.message}`]);
+      setRunning(false);
+    }
+  };
+
+  const stop = () => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
+    setRunning(false);
+    setLogLines(prev => [...prev, '[stopped by user]']);
+  };
+
+  const chatSend = async (text) => {
+    const agentId = selectedAgent;
+    const prior = chatMessagesByAgent[agentId] || [];
+    const newMessages = [...prior, { role: 'user', content: text }];
+    setChatMessagesByAgent(prev => ({ ...prev, [agentId]: newMessages }));
+    setChatStreaming(true);
+    try {
+      const wire = newMessages.map(({ role, content }) => ({ role, content }));
+      const r = await apiPost('/api/chat', {
+        agent: agentId,
+        messages: wire,
+        json_mode: jsonMode,
+      });
+      setChatMessagesByAgent(prev => ({
+        ...prev,
+        [agentId]: [...newMessages, { role: 'assistant', content: r.reply }],
+      }));
+    } catch (e) {
+      setChatMessagesByAgent(prev => ({
+        ...prev,
+        [agentId]: [...newMessages, { role: 'assistant', content: '[error] ' + e.message }],
+      }));
+    } finally {
+      setChatStreaming(false);
+    }
+  };
+
+  const resetChat = () => setChatMessagesByAgent(prev => ({ ...prev, [selectedAgent]: [] }));
+
+  const pickAgent = (id) => {
+    setSelectedAgent(id);
+    const isVisual = id === 'render_image' || id === 'render_video';
+    setView(isVisual ? 'visual' : 'text');
+  };
+
+  // ── derive lastRunInfo for overview headline ──
+  const lastRunInfo = (() => {
+    const running_keys = Object.keys(statuses).filter(k => statuses[k] === 'running');
+    if (running_keys.length) {
+      const k = running_keys[0];
+      return {
+        headline: <>Running <span style={{ color: HF.accent }}>{AGENT_META[k]?.name || k}</span> now.</>,
+        sub: 'Live log streaming in the active stage. Click any agent for details.',
+      };
+    }
+    const done_count = Object.values(statuses).filter(s => s === 'done').length;
+    if (done_count === 8) return {
+      headline: <>Pipeline complete. <span style={{ color: HF.ok }}>Eight stages done.</span></>,
+      sub: 'All approved copy and renders saved to outputs/. Check the Outputs tab.',
+    };
+    if (done_count) return {
+      headline: <>{done_count} stage{done_count > 1 ? 's' : ''} done. Ready for next.</>,
+      sub: 'Click Run all to continue, or pick an agent to run individually.',
+    };
+    return {};
+  })();
+
+  // ── render ──
+  const subtitle = running ? `running · ${progress?.elapsed || '00:00'}` : '';
+
+  return (
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: HF.bg }}>
+      <HFTopBar
+        subtitle={subtitle}
+        health={health}
+        onRunAll={runAll}
+        onStop={stop}
+        running={running}
+        view={view}
+        setView={setView}
+      />
+
+      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: 0 }}>
+        <HFSidebar
+          activeId={view === 'overview' || view === 'outputs' ? null : selectedAgent}
+          statuses={statuses}
+          onPick={pickAgent}
+          progress={running ? progress : null}
+        />
+
+        {view === 'overview' && (
+          <PipelineOverview statuses={statuses} onPickAgent={pickAgent} lastRunInfo={lastRunInfo} />
+        )}
+
+        {view === 'outputs' && <OutputsView />}
+
+        {view === 'text' && (
+          <div style={{ padding: 18, display: 'grid', gridTemplateRows: 'auto 1fr', gap: 14, minHeight: 0, background: HF.bg }}>
+            <HFAgentHeader
+              agentId={selectedAgent}
+              status={statuses[selectedAgent] || 'idle'}
+              onRun={() => runAgent(selectedAgent)}
+              running={running}
+            />
+            <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 1fr', gap: 14, minHeight: 0 }}>
+              <HFExecLog lines={logLines} live={running} />
+              <HFChat
+                agentId={selectedAgent}
+                messages={chatMessagesByAgent[selectedAgent] || []}
+                onSend={chatSend}
+                streaming={chatStreaming}
+                jsonMode={jsonMode}
+                setJsonMode={setJsonMode}
+                onReset={resetChat}
+              />
+            </div>
+          </div>
+        )}
+
+        {view === 'visual' && (
+          <VisualPanel
+            agentId={selectedAgent}
+            status={statuses[selectedAgent] || 'idle'}
+            health={health}
+            onRunBatch={() => runAgent(selectedAgent)}
+            running={running}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
