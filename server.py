@@ -220,15 +220,35 @@ async def start_job(req: RunReq) -> dict:
     return {"job_id": job_id, "cmd": JOBS[job_id]["cmd"]}
 
 
+def _maybe_proxy_through_docker(cmd: list[str]) -> list[str]:
+    """Only proxy through `docker exec pws-agent` if running on host AND docker container is up.
+    Otherwise run subprocess directly (works fine on host with deps installed)."""
+    if Path("/app").exists():
+        return cmd  # already in container
+    if not cmd or not Path(cmd[0]).name.startswith("python"):
+        return cmd
+    # Check docker availability quickly
+    try:
+        import shutil, subprocess as _sp
+        if not shutil.which("docker"):
+            return cmd  # docker CLI not installed
+        r = _sp.run(
+            ["docker", "ps", "--filter", "name=pws-agent", "--format", "{{.Names}}"],
+            capture_output=True, text=True, timeout=3,
+        )
+        if "pws-agent" not in r.stdout:
+            return cmd  # container not running
+    except Exception:
+        return cmd  # docker hung or missing
+    # Container present + running — proxy through it
+    return ["docker", "exec", "-i", "pws-agent", "python", *cmd[1:]]
+
+
 async def _run_subprocess(job_id: str, cmd: list[str]) -> None:
     job = JOBS[job_id]
     job["status"] = "running"
     queue: asyncio.Queue = job["queue"]
-
-    # If running on host (no /app), proxy through docker exec into pws-agent.
-    if not Path("/app").exists() and cmd and Path(cmd[0]).name.startswith("python"):
-        script_args = cmd[1:]
-        cmd = ["docker", "exec", "-i", "pws-agent", "python", *script_args]
+    cmd = _maybe_proxy_through_docker(cmd)
 
     try:
         proc = await asyncio.create_subprocess_exec(
@@ -415,10 +435,7 @@ async def owui_run_stage(req: OWUIRunReq) -> dict:
     else:
         raise HTTPException(400, f"unknown stage: {req.stage}")
 
-    # proxy via docker exec when running on host
-    if not Path("/app").exists() and cmd and Path(cmd[0]).name.startswith("python"):
-        script_args = cmd[1:]
-        cmd = ["docker", "exec", "-i", "pws-agent", "python", *script_args]
+    cmd = _maybe_proxy_through_docker(cmd)
 
     try:
         proc = await asyncio.create_subprocess_exec(
