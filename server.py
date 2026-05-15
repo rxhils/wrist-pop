@@ -95,7 +95,7 @@ AGENTS: dict[str, dict[str, Any]] = {
         "script": "run_scheduler.py",
         "kind": "det",
         "outputs": ["schedule", "notion_payload", "digest"],
-        "prompt_file": None,
+        "prompt_file": "scheduler.md",
     },
     "render_image": {
         "label": "Image Render",
