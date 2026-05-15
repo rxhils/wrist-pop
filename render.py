@@ -309,8 +309,41 @@ def render_image(
     ref_b64: str | None = None,
     strength: float = 0.65,
     evict: bool = True,
+    backend: str = "comfyui",
+    aspect_ratio: str = "9:16",
 ) -> dict:
-    """One-shot image gen. Returns {status, prompt, image_b64, seed, model}."""
+    """One-shot image gen. Returns {status, prompt, image_b64, seed, model}.
+
+    `backend` = "comfyui" (default, local) or "replicate" (cloud FLUX).
+    """
+    prompt = build_prompt(colourway, shot_type, user_text)
+
+    # ── Cloud route ──
+    if backend == "replicate":
+        from cloud_render import render_flux, is_available
+        if not is_available():
+            return {
+                "status": "error",
+                "error": "Replicate not configured. Set REPLICATE_API_TOKEN env var.",
+                "prompt": prompt,
+            }
+        cloud_model = None
+        if model and model.lower() not in ("flux.1 schnell", "flux schnell", "sdxl", "sdxl turbo"):
+            cloud_model = model  # allow explicit model override
+        # FLUX schnell on Replicate handles t2i only — i2i needs different model path
+        result = render_flux(prompt, aspect_ratio=aspect_ratio, model=cloud_model)
+        if result.get("status") == "ok":
+            from pathlib import Path as _P
+            out_dir = _P("outputs") / "manual_renders"
+            out_dir.mkdir(parents=True, exist_ok=True)
+            save_path = out_dir / f"pws_cloud_{int(time.time())}.png"
+            save_path.write_bytes(base64.b64decode(result["image_b64"]))
+            result["saved"] = str(save_path)
+            result["prompt"] = prompt
+            result["backend"] = "replicate"
+        return result
+
+    # ── Local ComfyUI route (original) ──
     if not is_alive():
         return {"status": "error", "error": "ComfyUI unreachable at " + COMFY_URL}
     if evict:

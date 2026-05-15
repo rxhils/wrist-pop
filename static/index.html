@@ -165,6 +165,7 @@ function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }
           { id: 'text', label: 'Text agent' },
           { id: 'visual', label: 'Visual' },
           { id: 'outputs', label: 'Outputs' },
+          { id: 'models', label: 'Models' },
         ].map(v => (
           <button key={v.id} onClick={() => setView(v.id)} style={{
             padding: '6px 11px', borderRadius: 6,
@@ -274,9 +275,18 @@ function HFSidebar({ activeId, statuses, onPick, progress }) {
 }
 
 // ───────────────────────── Agent header ─────────────────────────
-function HFAgentHeader({ agentId, status, onRun, running }) {
+const LLM_AGENT_IDS = new Set(['scout', 'strategist', 'writer', 'gate', 'visual']);
+
+function HFAgentHeader({ agentId, status, onRun, running, agentsConfig, onAgentConfigUpdate }) {
   const agent = AGENT_META[agentId];
   if (!agent) return null;
+
+  const hasLLM = LLM_AGENT_IDS.has(agentId);
+  const cfgEntry = agentsConfig?.agents?.[agentId];
+  const providers = agentsConfig?.providers || {};
+  const providerInfo = cfgEntry ? providers[cfgEntry.provider] || {} : {};
+  const modelOptions = Object.entries(providerInfo.models || {});
+
   return (
     <div style={{
       borderRadius: 10, padding: '16px 18px',
@@ -306,11 +316,58 @@ function HFAgentHeader({ agentId, status, onRun, running }) {
         <div style={{ fontFamily: HF.body, fontSize: 12.5, color: HF.textDim, marginTop: 4, maxWidth: 560 }}>
           {agent.desc}
         </div>
+
+        {hasLLM && cfgEntry && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8, marginTop: 12,
+            paddingTop: 10, borderTop: `1px solid ${HF.borderSoft}`,
+            flexWrap: 'wrap',
+          }}>
+            <span style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, letterSpacing: '.16em' }}>LLM</span>
+
+            <select
+              value={cfgEntry.provider || 'ollama'}
+              onChange={e => onAgentConfigUpdate(agentId, { provider: e.target.value })}
+              style={{
+                padding: '5px 8px', borderRadius: 5,
+                background: HF.bg, border: `1px solid ${HF.border}`,
+                color: HF.text, fontFamily: HF.mono, fontSize: 10.5, outline: 'none',
+                cursor: 'pointer',
+              }}>
+              {Object.keys(providers).map(p => (
+                <option key={p} value={p}>
+                  {providers[p].key_present ? `${p} ✓` : `${p} (no key)`}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={cfgEntry.model || providerInfo.default_model || ''}
+              onChange={e => onAgentConfigUpdate(agentId, { model: e.target.value })}
+              style={{
+                padding: '5px 8px', borderRadius: 5,
+                background: HF.bg, border: `1px solid ${HF.border}`,
+                color: HF.text, fontFamily: HF.mono, fontSize: 10.5, outline: 'none',
+                cursor: 'pointer', maxWidth: 280,
+              }}>
+              {providerInfo.default_model && (
+                <option value={providerInfo.default_model}>{providerInfo.default_model} (default)</option>
+              )}
+              {modelOptions.map(([tag, m]) => (
+                <option key={tag + m} value={m}>{m} ({tag})</option>
+              ))}
+            </select>
+
+            <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>
+              {cfgEntry.provider === 'ollama' ? 'local · uses RAM' : 'cloud · 0 RAM'}
+            </span>
+          </div>
+        )}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end' }}>
         <IconBtn tone="accent" onClick={onRun} disabled={running}>▶ Run this agent</IconBtn>
         <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint }}>
-          docker exec pws-agent · run_{agentId === 'render_image' ? 'render_image' : agentId === 'render_video' ? 'render_video' : agentId}.py
+          run_{agentId === 'render_image' ? 'render_image' : agentId === 'render_video' ? 'render_video' : agentId}.py
         </div>
       </div>
     </div>
@@ -380,7 +437,7 @@ function HFExecLog({ lines, live }) {
 }
 
 // ───────────────────────── Chat ─────────────────────────
-function HFChat({ agentId, messages, onSend, streaming, jsonMode, setJsonMode, onReset }) {
+function HFChat({ agentId, messages, onSend, streaming, jsonMode, setJsonMode, onReset, agentsConfig }) {
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
   useEffect(() => {
@@ -403,7 +460,15 @@ function HFChat({ agentId, messages, onSend, streaming, jsonMode, setJsonMode, o
         display: 'flex', alignItems: 'center', gap: 10,
       }}>
         <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.text, letterSpacing: '.14em' }}>CHAT</span>
-        <Pill>qwen2.5:14b</Pill>
+        {(() => {
+          const ac = agentsConfig?.agents?.[agentId];
+          if (!ac) return <Pill>—</Pill>;
+          const label = ac.model || agentsConfig?.providers?.[ac.provider]?.default_model || ac.provider;
+          return <>
+            <Pill>{ac.provider}</Pill>
+            <Pill>{label}</Pill>
+          </>;
+        })()}
         <Pill>system · {agentId}</Pill>
         <span style={{ flex: 1 }} />
         <label style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
@@ -654,6 +719,193 @@ function OutputsView({}) {
   );
 }
 
+// ───────────────────────── Models config panel ─────────────────────────
+function ModelsView() {
+  const [cfg, setCfg] = useState(null);
+  const [saving, setSaving] = useState(null);
+  const [error, setError] = useState('');
+  const [globalProvider, setGlobalProvider] = useState('mistral');
+
+  const load = async () => {
+    try {
+      const r = await apiGet('/api/agents-config');
+      setCfg(r);
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+  useEffect(() => { load(); }, []);
+
+  const updateAgent = async (agent, field, value) => {
+    setSaving(agent + ':' + field);
+    setError('');
+    try {
+      await apiPost('/api/agents-config', { agent, [field]: value });
+      await load();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  const applyGlobal = async () => {
+    setSaving('global');
+    try {
+      await apiPost('/api/agents-config/all', { provider: globalProvider });
+      await load();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  if (!cfg) return (
+    <div style={{ padding: 24, fontFamily: HF.mono, fontSize: 11, color: HF.textFaint }}>loading…</div>
+  );
+
+  return (
+    <div style={{ padding: 24, overflowY: 'auto', background: HF.bg, flex: 1 }}>
+      <div style={{ marginBottom: 18 }}>
+        <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint, letterSpacing: '.18em' }}>
+          LLM ROUTING · per-agent provider + model
+        </div>
+        <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 32, color: HF.text, lineHeight: 1.1, marginTop: 6 }}>
+          Where each agent thinks.
+        </div>
+      </div>
+
+      {/* provider catalog + key status */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
+        {Object.entries(cfg.providers || {}).map(([name, p]) => (
+          <div key={name} style={{
+            padding: 14, borderRadius: 10,
+            background: HF.surface, border: `1px solid ${p.key_present ? HF.ok : HF.border}`,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <StatusDot status={p.key_present ? 'done' : 'idle'} />
+              <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.text, letterSpacing: '.12em', textTransform: 'uppercase' }}>{name}</span>
+              <span style={{ flex: 1 }} />
+              {p.key_present
+                ? <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.ok }}>KEY OK</span>
+                : <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>no key</span>
+              }
+            </div>
+            <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, marginBottom: 4 }}>DEFAULT</div>
+            <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.text, marginBottom: 8 }}>{p.default_model || '—'}</div>
+            <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint }}>{Object.values(p.models || {}).length} models</div>
+          </div>
+        ))}
+      </div>
+
+      {/* global override */}
+      <div style={{
+        padding: 14, borderRadius: 10, marginBottom: 20,
+        background: HF.surface, border: `1px solid ${HF.border}`,
+        display: 'flex', alignItems: 'center', gap: 12,
+      }}>
+        <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.14em' }}>GLOBAL OVERRIDE</span>
+        <select
+          value={globalProvider}
+          onChange={e => setGlobalProvider(e.target.value)}
+          style={{
+            padding: '6px 10px', borderRadius: 6,
+            background: HF.bg, border: `1px solid ${HF.border}`,
+            color: HF.text, fontFamily: HF.mono, fontSize: 11, outline: 'none',
+          }}>
+          {Object.keys(cfg.providers || {}).map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
+        <IconBtn tone="accent" size="sm" onClick={applyGlobal} disabled={saving === 'global'}>
+          {saving === 'global' ? '…' : 'Apply to all agents'}
+        </IconBtn>
+        <span style={{ flex: 1 }} />
+        <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint }}>
+          (sets all 6 agents to same provider for this session)
+        </span>
+      </div>
+
+      {/* per-agent rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {Object.entries(cfg.agents || {}).map(([agent, ac]) => {
+          const provInfo = cfg.providers[ac.provider] || {};
+          const modelOptions = Object.entries(provInfo.models || {});
+          return (
+            <div key={agent} style={{
+              padding: 14, borderRadius: 10,
+              background: HF.surface, border: `1px solid ${HF.border}`,
+              display: 'grid', gridTemplateColumns: '140px 130px 1fr auto', gap: 14, alignItems: 'center',
+            }}>
+              <div>
+                <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.text, letterSpacing: '.08em', textTransform: 'uppercase' }}>{agent}</div>
+                <div style={{ fontFamily: HF.body, fontSize: 10, color: HF.textFaint, marginTop: 2 }}>{ac.description}</div>
+              </div>
+
+              <select
+                value={ac.provider || 'ollama'}
+                onChange={e => updateAgent(agent, 'provider', e.target.value)}
+                style={{
+                  padding: '7px 10px', borderRadius: 6,
+                  background: HF.bg, border: `1px solid ${HF.border}`,
+                  color: HF.text, fontFamily: HF.mono, fontSize: 11, outline: 'none',
+                }}>
+                {Object.keys(cfg.providers || {}).map(p => (
+                  <option key={p} value={p}>
+                    {p} {cfg.providers[p].key_present ? '·' : '(no key)'}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                value={ac.model || ''}
+                onChange={e => {
+                  setCfg(prev => ({
+                    ...prev,
+                    agents: { ...prev.agents, [agent]: { ...prev.agents[agent], model: e.target.value } },
+                  }));
+                }}
+                onBlur={e => updateAgent(agent, 'model', e.target.value)}
+                placeholder={provInfo.default_model || 'default'}
+                list={`models-${agent}`}
+                style={{
+                  padding: '7px 10px', borderRadius: 6,
+                  background: HF.bg, border: `1px solid ${HF.border}`,
+                  color: HF.text, fontFamily: HF.mono, fontSize: 11, outline: 'none',
+                }}
+              />
+              <datalist id={`models-${agent}`}>
+                {modelOptions.map(([tag, m]) => <option key={tag} value={m}>{tag}</option>)}
+                {provInfo.default_model && <option value={provInfo.default_model}>default</option>}
+              </datalist>
+
+              <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, textAlign: 'right' }}>
+                {saving === agent + ':provider' || saving === agent + ':model'
+                  ? 'saving…'
+                  : <span>temp <span style={{ color: HF.text }}>{ac.temperature}</span> · max <span style={{ color: HF.text }}>{ac.max_tokens}</span></span>
+                }
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {error && (
+        <div style={{
+          marginTop: 14, padding: 10, borderRadius: 6,
+          background: 'rgba(255,90,90,.08)', border: `1px solid ${HF.err}`,
+          color: HF.err, fontFamily: HF.mono, fontSize: 11,
+        }}>{error}</div>
+      )}
+
+      <div style={{ marginTop: 24, fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, lineHeight: 1.7 }}>
+        Changes apply <strong style={{ color: HF.text }}>in-memory only</strong> — next pipeline run uses them, but they reset on server restart.
+        To persist, edit <code style={{ color: HF.accent }}>pipeline_config.py</code> defaults.
+      </div>
+    </div>
+  );
+}
+
 // ───────────────────────── Visual (Image Render) Panel ─────────────────────────
 const MODELS = [
   { id: 'FLUX.1 schnell', badge: '~3 min', desc: 'Best quality', supportsI2I: false },
@@ -661,7 +913,7 @@ const MODELS = [
   { id: 'SDXL Turbo',     badge: '~3 sec',  desc: 'Quick preview', supportsI2I: false },
 ];
 
-function VisualPanel({ agentId, status, health, onRunBatch, running }) {
+function VisualPanel({ agentId, status, health, onRunBatch, running, agentsConfig, onAgentConfigUpdate }) {
   const isVideoAgent = agentId === 'render_video';
 
   const [model, setModel] = useState('SDXL Turbo');
@@ -843,7 +1095,14 @@ function VisualPanel({ agentId, status, health, onRunBatch, running }) {
 
   return (
     <div style={{ padding: 18, display: 'grid', gridTemplateRows: 'auto 1fr', gap: 14, minHeight: 0, background: HF.bg }}>
-      <HFAgentHeader agentId={agentId} status={status} onRun={onRunBatch} running={running} />
+      <HFAgentHeader
+        agentId={agentId}
+        status={status}
+        onRun={onRunBatch}
+        running={running}
+        agentsConfig={agentsConfig}
+        onAgentConfigUpdate={onAgentConfigUpdate}
+      />
 
       {!health.comfyui && (
         <div style={{
@@ -1279,6 +1538,22 @@ function App() {
   const [logLines, setLogLines] = useState([]);
   const [health, setHealth] = useState({ ollama: false, comfyui: false });
   const [chatMessagesByAgent, setChatMessagesByAgent] = useState({});
+  const [agentsConfig, setAgentsConfig] = useState(null);
+
+  const refreshAgentsConfig = useCallback(async () => {
+    try {
+      const r = await apiGet('/api/agents-config');
+      setAgentsConfig(r);
+    } catch (e) { /* silent */ }
+  }, []);
+  useEffect(() => { refreshAgentsConfig(); }, [refreshAgentsConfig]);
+
+  const updateAgentConfig = useCallback(async (agentId, patch) => {
+    try {
+      await apiPost('/api/agents-config', { agent: agentId, ...patch });
+      await refreshAgentsConfig();
+    } catch (e) { /* silent */ }
+  }, [refreshAgentsConfig]);
   const [chatStreaming, setChatStreaming] = useState(false);
   const [jsonMode, setJsonMode] = useState(false);
   const [jobId, setJobId] = useState(null);
@@ -1500,6 +1775,8 @@ function App() {
 
         {view === 'outputs' && <OutputsView />}
 
+        {view === 'models' && <ModelsView />}
+
         {view === 'text' && (
           <div style={{ padding: 18, display: 'grid', gridTemplateRows: 'auto 1fr', gap: 14, minHeight: 0, background: HF.bg }}>
             <HFAgentHeader
@@ -1507,6 +1784,8 @@ function App() {
               status={statuses[selectedAgent] || 'idle'}
               onRun={() => runAgent(selectedAgent)}
               running={running}
+              agentsConfig={agentsConfig}
+              onAgentConfigUpdate={updateAgentConfig}
             />
             <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 1fr', gap: 14, minHeight: 0 }}>
               <HFExecLog lines={logLines} live={running} />
@@ -1518,6 +1797,7 @@ function App() {
                 jsonMode={jsonMode}
                 setJsonMode={setJsonMode}
                 onReset={resetChat}
+                agentsConfig={agentsConfig}
               />
             </div>
           </div>
@@ -1530,6 +1810,8 @@ function App() {
             health={health}
             onRunBatch={() => runAgent(selectedAgent)}
             running={running}
+            agentsConfig={agentsConfig}
+            onAgentConfigUpdate={updateAgentConfig}
           />
         )}
       </div>

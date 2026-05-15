@@ -64,6 +64,23 @@ PROVIDERS = {
         "default_model": os.getenv("MODEL_CREATIVE", "qwen2.5:14b").replace("ollama/", ""),
         "supports_json_response_format": True,  # via native /api/chat format param
     },
+    "openrouter": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key_env": "OPENROUTER_API_KEY",
+        "models": {
+            "gpt_oss_120b_free":   "openai/gpt-oss-120b:free",
+            "gpt_oss_20b_free":    "openai/gpt-oss-20b:free",
+            "qwen3_80b_free":      "qwen/qwen3-next-80b-a3b-instruct:free",
+            "gemma_31b_free":      "google/gemma-4-31b-it:free",
+            "deepseek_v4_free":    "deepseek/deepseek-v4-flash:free",
+            "nemotron_120b_free":  "nvidia/nemotron-3-super-120b-a12b:free",
+            "glm_4_5_free":        "z-ai/glm-4.5-air:free",
+            "claude_paid":         "anthropic/claude-3.5-sonnet",
+            "gpt4o_paid":          "openai/gpt-4o",
+        },
+        "default_model": "openai/gpt-oss-120b:free",
+        "supports_json_response_format": True,
+    },
 }
 
 
@@ -93,7 +110,7 @@ def call_llm(
     json_mode: bool = False,
     num_ctx: int = 8192,
     timeout: int = 420,
-    max_retries: int = 4,
+    max_retries: int = 2,
 ) -> str:
     """Universal LLM call. Returns plain text or JSON string (if json_mode=True).
 

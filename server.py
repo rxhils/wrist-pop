@@ -309,6 +309,23 @@ class ChatReq(BaseModel):
     json_mode: bool = False
 
 
+CHAT_MODE_OVERRIDE = """
+
+## CHAT MODE OVERRIDE
+The user is chatting with you directly, not triggering a pipeline run.
+
+IGNORE the output schema / JSON-only / "valid JSON" rules above. Those apply ONLY
+when the pipeline invokes you with real data.
+
+In chat mode:
+- Reply in natural English. Conversational tone.
+- Answer questions about your role, your prompts, your outputs.
+- If asked to draft, rewrite, or critique something — do it inline.
+- If asked to produce structured output (JSON, table, list), then do — but only when explicitly asked.
+- You may reference Pop Wrist Studio facts, but you can also discuss your own behaviour.
+"""
+
+
 @app.post("/api/chat")
 def chat(req: ChatReq) -> dict:
     if req.agent not in AGENTS:
@@ -319,29 +336,45 @@ def chat(req: ChatReq) -> dict:
     else:
         system_prompt = META_PROMPTS.get(req.agent, "Generic assistant.")
 
-    messages = [{"role": "system", "content": system_prompt}]
-    for m in req.messages:
-        messages.append({"role": m.role, "content": m.content})
+    # If user did NOT explicitly ask for JSON mode, append chat override
+    if not req.json_mode:
+        system_prompt = system_prompt + CHAT_MODE_OVERRIDE
 
-    url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
-    model = os.getenv("MODEL_CREATIVE", "qwen2.5:14b").replace("ollama/", "")
-    body: dict[str, Any] = {
-        "model": model,
-        "messages": messages,
-        "stream": False,
-        "options": {"temperature": 0.4, "num_ctx": 8192},
-        "keep_alive": "10m",
-    }
-    if req.json_mode:
-        body["format"] = "json"
+    # Map agent key → pipeline_config name. Both use same keys.
+    from pipeline_config import AGENT_CONFIG
+    from providers import call_llm
+    pcfg = AGENT_CONFIG.get(req.agent, {})
+    provider = pcfg.get("provider", "ollama")
+    model = pcfg.get("model")
+    temperature = pcfg.get("temperature", 0.4) or 0.4
+    max_tokens = pcfg.get("max_tokens", 2048) or 2048
+
+    # Build prompt — last user message + history above as part of user msg
+    history_text = ""
+    for m in req.messages[:-1]:
+        history_text += f"[{m.role}] {m.content}\n\n"
+    last_user = req.messages[-1].content if req.messages else ""
+    user_prompt = (history_text + last_user) if history_text else last_user
 
     try:
-        r = requests.post(f"{url}/api/chat", json=body, timeout=600)
-        r.raise_for_status()
-        reply = r.json()["message"]["content"]
+        reply = call_llm(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            provider=provider,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            json_mode=req.json_mode,
+            num_ctx=8192,
+        )
     except Exception as e:
-        raise HTTPException(500, f"ollama: {e}")
-    return {"reply": reply, "agent": req.agent}
+        raise HTTPException(500, f"{provider} error: {e}")
+    return {
+        "reply": reply,
+        "agent": req.agent,
+        "provider_used": provider,
+        "model_used": model,
+    }
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -464,6 +497,74 @@ def owui_evict_ollama() -> dict:
         return {"status": "ok", "evicted": model}
     except Exception as e:
         return {"status": "error", "error": str(e)}
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Agent provider/model config — get + set per-agent assignments
+# ─────────────────────────────────────────────────────────────────────────
+@app.get("/api/agents-config")
+def get_agents_config() -> dict:
+    """Return current per-agent provider/model assignments + provider catalog + key status."""
+    from pipeline_config import AGENT_CONFIG
+    from providers import PROVIDERS, has_key
+    return {
+        "agents": {
+            name: {
+                "provider": cfg.get("provider"),
+                "model": cfg.get("model"),
+                "temperature": cfg.get("temperature"),
+                "max_tokens": cfg.get("max_tokens"),
+                "description": cfg.get("description", ""),
+            }
+            for name, cfg in AGENT_CONFIG.items()
+        },
+        "providers": {
+            p: {
+                "models": cfg.get("models", {}),
+                "default_model": cfg.get("default_model"),
+                "key_present": has_key(p),
+            }
+            for p, cfg in PROVIDERS.items()
+        },
+    }
+
+
+class AgentConfigUpdate(BaseModel):
+    agent: str
+    provider: str | None = None
+    model: str | None = None
+    temperature: float | None = None
+    max_tokens: int | None = None
+
+
+@app.post("/api/agents-config")
+def set_agent_config(req: AgentConfigUpdate) -> dict:
+    """Update one agent's provider/model live (no restart needed). In-memory only."""
+    from pipeline_config import AGENT_CONFIG
+    if req.agent not in AGENT_CONFIG:
+        raise HTTPException(404, f"unknown agent '{req.agent}'")
+    if req.provider is not None:
+        AGENT_CONFIG[req.agent]["provider"] = req.provider
+    if req.model is not None:
+        AGENT_CONFIG[req.agent]["model"] = req.model
+    if req.temperature is not None:
+        AGENT_CONFIG[req.agent]["temperature"] = req.temperature
+    if req.max_tokens is not None:
+        AGENT_CONFIG[req.agent]["max_tokens"] = req.max_tokens
+    return {"status": "ok", "agent": req.agent, "config": AGENT_CONFIG[req.agent]}
+
+
+class GlobalOverride(BaseModel):
+    provider: str
+    model: str | None = None
+
+
+@app.post("/api/agents-config/all")
+def set_all_agents_endpoint(req: GlobalOverride) -> dict:
+    """Override all agents to a single provider (e.g. 'mistral' globally)."""
+    from pipeline_config import AGENT_CONFIG, set_all_agents
+    set_all_agents(req.provider, req.model)
+    return {"status": "ok", "config": {n: c for n, c in AGENT_CONFIG.items()}}
 
 
 # ─────────────────────────────────────────────────────────────────────────

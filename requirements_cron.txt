@@ -1,6 +1,7 @@
-# Minimal deps for GitHub Actions runner (cloud LLM only, no Ollama/ComfyUI).
+# Minimal deps for GitHub Actions runner + HF Space (cloud LLM + cloud render only).
 openai>=1.30.0
 google-generativeai>=0.7.0
+replicate>=0.30.0
 pytrends==4.9.2
 ddgs==9.0.0
 praw==7.7.1
