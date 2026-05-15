@@ -245,36 +245,48 @@ def _maybe_proxy_through_docker(cmd: list[str]) -> list[str]:
 
 
 async def _run_subprocess(job_id: str, cmd: list[str]) -> None:
+    """Run subprocess in a thread (asyncio.create_subprocess_exec broken on Windows uvicorn SelectorEventLoop)."""
+    import subprocess as _sp
+    import threading
     job = JOBS[job_id]
     job["status"] = "running"
     queue: asyncio.Queue = job["queue"]
     cmd = _maybe_proxy_through_docker(cmd)
+    loop = asyncio.get_event_loop()
 
-    try:
-        proc = await asyncio.create_subprocess_exec(
-            *cmd,
-            cwd=str(ROOT),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT,
-            env={**os.environ, "PYTHONUNBUFFERED": "1"},
-        )
-        assert proc.stdout
-        while True:
-            line = await proc.stdout.readline()
-            if not line:
-                break
-            try:
-                text = line.decode("utf-8", errors="replace").rstrip()
-            except Exception:
-                text = repr(line)
-            await queue.put({"event": "log", "data": text})
-        rc = await proc.wait()
-        job["rc"] = rc
-        job["status"] = "done" if rc == 0 else "failed"
-        await queue.put({"event": "end", "data": json.dumps({"rc": rc, "status": job["status"]})})
-    except Exception as e:
-        job["status"] = "failed"
-        await queue.put({"event": "end", "data": json.dumps({"rc": -1, "error": str(e)})})
+    def _put(evt: dict) -> None:
+        asyncio.run_coroutine_threadsafe(queue.put(evt), loop)
+
+    def _runner():
+        try:
+            proc = _sp.Popen(
+                cmd,
+                cwd=str(ROOT),
+                stdout=_sp.PIPE,
+                stderr=_sp.STDOUT,
+                text=True,
+                bufsize=1,
+                encoding="utf-8",
+                errors="replace",
+                env={**os.environ, "PYTHONUNBUFFERED": "1"},
+            )
+            assert proc.stdout
+            for line in proc.stdout:
+                _put({"event": "log", "data": line.rstrip()})
+            rc = proc.wait()
+            job["rc"] = rc
+            job["status"] = "done" if rc == 0 else "failed"
+            _put({"event": "end", "data": json.dumps({"rc": rc, "status": job["status"]})})
+        except Exception as e:
+            import traceback
+            tb = traceback.format_exc()
+            job["status"] = "failed"
+            job["error"] = f"{type(e).__name__}: {e}\n{tb}"
+            _put({"event": "log", "data": f"[error] {type(e).__name__}: {e}"})
+            _put({"event": "log", "data": tb})
+            _put({"event": "end", "data": json.dumps({"rc": -1, "error": str(e)})})
+
+    threading.Thread(target=_runner, daemon=True).start()
 
 
 @app.get("/api/job/{job_id}/stream")
@@ -305,7 +317,13 @@ def job_status(job_id: str) -> dict:
     job = JOBS.get(job_id)
     if not job:
         raise HTTPException(404, "no job")
-    return {"job_id": job_id, "cmd": job["cmd"], "status": job["status"], "rc": job["rc"]}
+    return {
+        "job_id": job_id,
+        "cmd": job["cmd"],
+        "status": job["status"],
+        "rc": job["rc"],
+        "error": job.get("error"),
+    }
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -437,29 +455,38 @@ async def owui_run_stage(req: OWUIRunReq) -> dict:
 
     cmd = _maybe_proxy_through_docker(cmd)
 
-    try:
-        proc = await asyncio.create_subprocess_exec(
-            *cmd,
-            cwd=str(ROOT),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT,
-            env={**os.environ, "PYTHONUNBUFFERED": "1"},
-        )
+    # Use sync subprocess in a thread (asyncio subprocess broken on Windows uvicorn).
+    import subprocess as _sp
+    import concurrent.futures
+
+    def _run():
         try:
-            stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=req.timeout_s)
-        except asyncio.TimeoutError:
-            proc.kill()
+            res = _sp.run(
+                cmd,
+                cwd=str(ROOT),
+                capture_output=True,
+                text=True,
+                timeout=req.timeout_s,
+                encoding="utf-8",
+                errors="replace",
+                env={**os.environ, "PYTHONUNBUFFERED": "1"},
+            )
+            log = (res.stdout or "") + (res.stderr or "")
+            rc = res.returncode
+            return {
+                "status": "done" if rc == 0 else "failed",
+                "rc": rc,
+                "log_tail": log[-3500:],
+                "cmd": " ".join(cmd),
+            }
+        except _sp.TimeoutExpired:
             return {"status": "timeout", "rc": -1, "log": f"killed after {req.timeout_s}s"}
-        rc = proc.returncode or 0
-        log = stdout.decode("utf-8", errors="replace")
-        return {
-            "status": "done" if rc == 0 else "failed",
-            "rc": rc,
-            "log_tail": log[-3500:],
-            "cmd": " ".join(cmd),
-        }
-    except Exception as e:
-        return {"status": "error", "rc": -1, "error": str(e)}
+        except Exception as e:
+            return {"status": "error", "rc": -1, "error": str(e)}
+
+    loop = asyncio.get_event_loop()
+    with concurrent.futures.ThreadPoolExecutor() as pool:
+        return await loop.run_in_executor(pool, _run)
 
 
 @app.get("/api/owui/latest")
