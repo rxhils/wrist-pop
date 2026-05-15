@@ -1,3 +1,13 @@
+---
+title: Royal Pop Studio
+emoji: ⚙️
+colorFrom: yellow
+colorTo: gray
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Pop Wrist Studio — Agentic Content System
 
 8-stage multi-agent pipeline. Trend research → strategy → copy → quality gate → visual brief → schedule → image render → video render. All local Ollama (`qwen2.5:14b`) + ComfyUI (FLUX.1 schnell + LTX-Video). Zero API cost.
