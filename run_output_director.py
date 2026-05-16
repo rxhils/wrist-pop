@@ -100,10 +100,9 @@ def main() -> int:
     )
     user_prompt = "\n".join(user_blocks)
 
-    from providers import llm_call, llm_json
+    from providers import call_llm, llm_json, extract_json
     console = None
     err_log = []
-    # Try primary model (per pipeline_config)
     try:
         console = llm_json(
             agent_name="output_director",
@@ -111,12 +110,11 @@ def main() -> int:
             user_prompt=user_prompt,
             num_ctx=12288,
         )
-    except (json.JSONDecodeError, RuntimeError) as e:
-        err_log.append(f"primary: {e}")
-        print(f"[output_director] primary failed ({e}). Trying mistral fallback…")
-        # Fallback 1: try mistral-large
+    except Exception as e:
+        err_log.append(f"primary: {type(e).__name__}: {e}")
+        print(f"[output_director] primary failed ({type(e).__name__}). Trying mistral-large fallback…")
         try:
-            text = llm_call(
+            text = call_llm(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
                 provider="mistral",
@@ -125,13 +123,12 @@ def main() -> int:
                 max_tokens=8192,
                 temperature=0.3,
             )
-            from providers import extract_json
             console = extract_json(text)
         except Exception as e2:
-            err_log.append(f"mistral_fallback: {e2}")
-            print(f"[output_director] mistral fallback failed ({e2}). Saving text-only.")
+            err_log.append(f"mistral_fallback: {type(e2).__name__}: {e2}")
+            print(f"[output_director] mistral fallback failed ({type(e2).__name__}). Trying openrouter gpt-oss-20b text-only…")
             try:
-                text = llm_call(
+                text = call_llm(
                     system_prompt=system_prompt,
                     user_prompt=user_prompt,
                     provider="openrouter",
@@ -142,7 +139,7 @@ def main() -> int:
                 )
                 console = {"_text_only": text, "_errors": err_log}
             except Exception as e3:
-                err_log.append(f"text_fallback: {e3}")
+                err_log.append(f"text_fallback: {type(e3).__name__}: {e3}")
                 console = {"_text_only": "(all providers failed)", "_errors": err_log}
 
     # If model returned a list instead of object, wrap defensively.

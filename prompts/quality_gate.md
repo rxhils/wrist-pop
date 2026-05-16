@@ -35,11 +35,20 @@ You can PASS, REVISE, or BLOCK.
 - No "so excited to share…", "we can't wait…"
 - Script lines ≤ 15 words
 
-### Gate 3 — Conversion strength
-- Hook lands in first 3 seconds (recommended_hook ≤ 8 words)
-- Works on mute (on_screen_text present)
-- One CTA only
-- CTA specific (not "click the link")
+### Gate 3 — Conversion strength (DETERMINISTIC)
+
+Hard checks (use Copy's self-validation field — do not recount):
+- `caption_validation` block MUST be present in Copy output → if missing, BLOCK with reason "caption_validation missing — Copy did not self-check"
+- `caption_validation.recommended_hook_passes` MUST be true → if false, BLOCK
+- `caption_validation.option_a_passes` AND `option_b_passes` MUST be true → if either false, BLOCK with exact issue: "Caption line 1 is {N} chars. Max 125. Rewrite."
+- `on_screen_text` array MUST be non-empty (mute-readable)
+- Exactly one `cta` field, non-empty, ≥ 4 chars
+- CTA must NOT appear inside `caption_options[*].caption` line 1 (CTA belongs further down)
+
+Soft checks (LLM judgement, weighted):
+- Hook stops scroll (would a Royal Pop owner actually pause?)
+- CTA specific (mentions waitlist / pre-order / link — not "click the link")
+- Caption line 1 is HOOK not setup/context (if it's setup → REVISE)
 
 ### Gate 4 — Spec accuracy
 - 40.35mm socket / 0.7mm lip / 22mm lug / 6.2mm depth / Crown notch ×2 / FKM rubber

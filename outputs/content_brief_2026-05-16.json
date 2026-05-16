@@ -1,63 +1,63 @@
 {
   "status": "OK",
-  "campaign_id": "PW-2026-05-16-VARIATIONS",
+  "campaign_id": "PW-20260516-VARIATIONS",
   "campaign_stage": "WAITLIST",
   "primary_angle": {
-    "title": "The only wrist adapter engineered for 40.35mm",
-    "core_message": "Cradle Adapter V1 is the precision-engineered solution for Royal Pop wrist conversion, designed to fit the exact 40.35mm case with a 0.7mm retaining lip and 22mm lug width. No guesswork, no generic straps\u2014just an exact fit.",
-    "why_this_wins": "Addresses the audience's top tension (fear of poor fit) by leading with exact specs, which competitors are also highlighting but without the same level of engineering detail. Leverages the cultural momentum of 'Project WristPop' while positioning Pop Wrist Studio as the definitive solution.",
-    "audience": "Royal Pop owners and prospective buyers who prioritize precision, engineering, and premium design in their accessories.",
-    "desired_reaction": "Audience should feel confidence in the adapter's fit and quality, and urgency to join the waitlist before competitors flood the market with inferior solutions.",
+    "title": "40.35mm exact. 5 colourways, one fit.",
+    "core_message": "The Cradle Adapter V1 is engineered to the exact 40.35mm Royal Pop case diameter, with a 0.7mm retaining lip and 22mm lug width. Five premium FKM rubber colourways ensure a perfect match for every style\u2014no compromises on fit or finish.",
+    "why_this_wins": "Leverages audience obsession with exact specs (40.35mm, 22mm) while addressing the tension around fit and material quality. The colourway variation reinforces premium positioning and exclusivity, aligning with the 'Product variations' calendar focus.",
+    "audience": "Royal Pop owners and prospective buyers who prioritize precision engineering and design-led accessories.",
+    "desired_reaction": "Audience should feel: 'This is the definitive solution\u2014engineered for the Royal Pop, not a generic strap.' They should understand the exact fit and material benefits, and be compelled to join the waitlist to secure their preferred colourway.",
     "cta": "Pre-Order Now"
   },
   "supporting_angle": {
-    "title": "Five colourways, one exact fit",
-    "purpose": "Highlight the product variations (colourways) while reinforcing the engineering-first approach. Addresses the tension around material quality and durability by showcasing the FKM rubber material across all colour options. Also resolves the calendar focus conflict (Product variations) by tying it to the primary angle."
+    "title": "Project WristPop: The definitive conversion kit.",
+    "purpose": "Reinforces cultural momentum around 'Project WristPop' and positions the Cradle Adapter V1 as the standardized, premium solution. Addresses the audience tension around uncertainty in wrist conversion methods while aligning with Scout's recommendation to own the narrative."
   },
   "content_decision": {
     "format": "REEL",
-    "goal": "Showcase the precision engineering of the Cradle Adapter V1 while demonstrating its versatility across all five colourways. Drive waitlist sign-ups by emphasizing exact fit and premium material.",
-    "hook_direction": "Engineering-first transformation: Start with the Royal Pop in pocket format, then show the exact measurements (40.35mm, 0.7mm lip, 22mm lug width) before revealing the wrist conversion with the adapter in each colourway.",
-    "conversion_role": "Use the Reel to build trust in the adapter's fit and quality, then direct viewers to the waitlist with a clear CTA ('Pre-Order Now')."
+    "goal": "Showcase the engineering precision and colourway variations of the Cradle Adapter V1, transforming the Royal Pop into a wristwatch.",
+    "hook_direction": "Precision specs + visual transformation. Open with a tight shot of the 40.35mm case snapping into the adapter, followed by a quick montage of all five colourways on-wrist.",
+    "conversion_role": "Drive waitlist sign-ups by emphasizing exclusivity (limited colourways) and engineering trust (exact fit)."
   },
   "creative_direction": {
-    "tone": "Premium, direct, and slightly obsessive about fit and finish. Avoid hype or generic luxury language.",
-    "pace": "Calm and confident, with a focus on precision. Use slow zooms on the adapter's engineering details (e.g., retaining lip, crown notches).",
-    "visual_energy": "High contrast between the Royal Pop's design and the adapter's functionality. Use close-ups to emphasize the exact fit and material quality.",
+    "tone": "Premium, direct, and slightly obsessive about fit and finish. Avoid hype; focus on calm confidence in engineering.",
+    "pace": "Fast cuts (1-2s per shot) to highlight precision and variation. Slow down only for key specs (e.g., 40.35mm, 0.7mm lip) to emphasize detail.",
+    "visual_energy": "High-energy but controlled. Use close-ups of the adapter snapping into place, macro shots of the FKM rubber texture, and smooth transitions between colourways.",
     "must_show": [
-      "Royal Pop in pocket format (problem)",
-      "Close-up of the 40.35mm case measurement",
-      "Adapter's 0.7mm retaining lip and 22mm lug width",
-      "Cradle Adapter V1 in all five colourways (Monochrome, Arctic Blue, Cobalt Orange, Green Eight, Otto Rosso)",
-      "Wrist conversion transformation (before/after)",
-      "FKM rubber material close-up"
+      "40.35mm case diameter measurement (on-screen text: '40.35mm exact')",
+      "0.7mm retaining lip (macro shot)",
+      "All five colourways on-wrist (quick montage)",
+      "Royal Pop transforming from pocket to wrist (before/after)",
+      "FKM rubber material close-up (texture, durability)"
     ],
     "must_not_do": [
-      "Use competitor names or direct comparisons",
-      "Overpromise on availability or delivery timelines",
-      "Use generic luxury language (e.g., 'luxury strap')",
-      "Assume audience familiarity with FKM rubber without a brief explanation"
+      "Use competitor names or direct comparisons.",
+      "Show generic straps or non-Royal Pop watches.",
+      "Overpromise on availability or delivery timelines.",
+      "Use vague language (e.g., 'perfect fit' without specs).",
+      "Include hypebro language or fake luxury clich\u00e9s."
     ]
   },
   "success_metric": {
-    "primary": "Waitlist sign-ups (target: 500+ from this campaign)",
-    "secondary": "Engagement rate (likes, comments, shares) on the Reel, with a focus on comments asking about fit, colour options, or pre-order details."
+    "primary": "Waitlist sign-ups (target: 500+ from this campaign).",
+    "secondary": "Engagement rate (likes, shares, saves) on Reel, with a focus on saves as a signal of intent."
   },
   "brief_for_copy": {
-    "script_goal": "Highlight the precision engineering of the Cradle Adapter V1 while showcasing its versatility across all five colourways. Emphasize exact fit (40.35mm, 0.7mm lip, 22mm lug width) and material quality (FKM rubber). End with a clear CTA to join the waitlist.",
-    "caption_goal": "Reinforce the adapter's exact fit and premium material while teasing the five colour options. Use concise, design-literate language to appeal to watch enthusiasts and collectors. Include the waitlist CTA and a brief explanation of FKM rubber for durability.",
-    "cta_language": "Pre-Order Now \u2014 join the waitlist to secure your Cradle Adapter V1 before the first batch sells out.",
+    "script_goal": "Compress the primary angle into a 15-30s Reel script. Lead with the hook: '40.35mm exact. 5 colourways, one fit.' Highlight the engineering specs (40.35mm, 0.7mm lip, 22mm lug) and material (FKM rubber) in the first 10 seconds. Showcase all five colourways in a quick montage, ending with the transformation shot (pocket to wrist). Close with the CTA: 'Pre-Order Now \u2014 limited colourways available.'",
+    "caption_goal": "Reinforce the engineering precision and exclusivity. Include exact specs, material benefits, and a clear CTA to join the waitlist. Example: 'The Cradle Adapter V1: engineered for the 40.35mm Royal Pop case, with a 0.7mm retaining lip and 22mm lug width. Five premium FKM rubber colourways\u2014no compromises. Pre-Order Now to secure yours. #ProjectWristPop'",
+    "cta_language": "Pre-Order Now (exact wording from website truth).",
     "proof_points_to_include": [
-      "Exact fit for 40.35mm Royal Pop case",
-      "0.7mm retaining lip for secure hold",
-      "22mm lug width compatibility",
-      "FKM rubber for durability and premium feel",
-      "Five colourways: Monochrome, Arctic Blue, Cobalt Orange, Green Eight, Otto Rosso"
+      "40.35mm exact fit (inner socket)",
+      "0.7mm retaining lip (prevents slippage)",
+      "22mm lug width (standard strap compatibility)",
+      "FKM rubber (premium, durable, colour-matched)",
+      "Five colourways (Monochrome, Arctic Blue, Cobalt Orange, Green Eight, Otto Rosso)"
     ]
   },
   "website_truth": {
     "website_status": "LIVE",
-    "fetched_at": "2026-05-16T17:44:26Z",
+    "fetched_at": "2026-05-16T17:54:28Z",
     "verified_brand_name": "Pop Wrist Studio",
     "verified_product_name": "Cradle Adapter V1",
     "verified_cta": "Pre-Order Now",

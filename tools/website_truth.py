@@ -145,6 +145,52 @@ def _extract(html: str, base: dict) -> dict:
     return out
 
 
+IMPACT_BY_FIELD = {
+    "brand_name":       "CRITICAL",
+    "legal_disclaimer": "CRITICAL",
+    "product_name":     "HIGH",
+    "cta_primary":      "HIGH",
+    "colourways":       "HIGH",
+}
+
+AFFECTED_AGENTS_BY_FIELD = {
+    "brand_name":       ["scout", "strategist", "writer", "gate", "asset_director", "visual", "manual_post", "output_director", "reel_director"],
+    "legal_disclaimer": ["writer", "gate", "manual_post"],
+    "product_name":     ["scout", "strategist", "writer", "asset_director", "visual", "reel_director"],
+    "cta_primary":      ["strategist", "writer", "manual_post"],
+    "colourways":       ["strategist", "writer", "asset_director", "visual"],
+}
+
+
+def _diff(previous: dict, current: dict) -> list[dict]:
+    """Return list of change records for fields that matter downstream."""
+    changes: list[dict] = []
+    if not previous:
+        return changes
+    for field in IMPACT_BY_FIELD:
+        prev_v = previous.get(field)
+        cur_v = current.get(field)
+        if prev_v == cur_v:
+            continue
+        # Normalise list compare (order-insensitive for colourways)
+        if isinstance(prev_v, list) and isinstance(cur_v, list):
+            if sorted(prev_v) == sorted(cur_v):
+                continue
+        changes.append({
+            "field": field,
+            "previous_value": prev_v,
+            "new_value": cur_v,
+            "impact": IMPACT_BY_FIELD[field],
+            "affected_agents": AFFECTED_AGENTS_BY_FIELD.get(field, []),
+            "recommended_action": (
+                f"Review on-site change to '{field}' before publishing today's content."
+                if IMPACT_BY_FIELD[field] == "CRITICAL"
+                else f"Verify '{field}' aligns with downstream artifacts."
+            ),
+        })
+    return changes
+
+
 def fetch() -> dict:
     """Try site → existing snapshot → seed. Always returns a dict with website_status."""
     existing = _load_existing()
@@ -177,7 +223,11 @@ def fetch() -> dict:
 
 
 def refresh_if_stale(force: bool = False) -> dict:
-    """Used by pipeline: only refetch if cache > TTL or force."""
+    """Used by pipeline: only refetch if cache > TTL or force.
+
+    On refetch, computes diff vs previous snapshot and embeds website_change_alert
+    in the new snapshot for downstream agents (especially Output Director).
+    """
     existing = _load_existing()
     if not force and existing and existing.get("fetched_at"):
         try:
@@ -188,6 +238,18 @@ def refresh_if_stale(force: bool = False) -> dict:
         except Exception:
             pass
     snap = fetch()
+
+    # Diff against previous snapshot (only meaningful when both exist + new fetch was LIVE)
+    changes = []
+    if existing and snap.get("website_status") == "LIVE":
+        changes = _diff(existing, snap)
+    snap["website_change_alert"] = {
+        "detected": bool(changes),
+        "checked_at": _now_iso(),
+        "previous_fetched_at": (existing or {}).get("fetched_at"),
+        "changes": changes,
+    }
+
     SNAPSHOT_PATH.write_text(json.dumps(snap, indent=2, ensure_ascii=False), encoding="utf-8")
     return snap
 

@@ -34,6 +34,30 @@ You may read:
 - If the trend is misaligned with premium positioning, reject it (status REJECTED_TREND).
 - If multiple good angles exist, rank them and choose one winner.
 
+## HARD CONSTRAINT — primary_angle.title must be HOOK-ABLE
+
+`primary_angle.title` will be compressed by Copy into a reel `recommended_hook` (≤8 words). If your title is too long or too clause-heavy, Copy CANNOT compress without losing the spec — and the whole pipeline retries.
+
+Constraints:
+- ≤ 12 words total
+- NO clause beyond a single comma (`,`) — multi-clause titles fail compression
+- NO "is the / are the / has been" verbs — they don't survive compression
+- Specs and numbers (40.35mm, 22mm, 0.7mm, FKM) preserved if relevant
+- Numbers + units count as 1 word
+
+PASS title examples (≤12 words, hook-able):
+- "Built only for Royal Pop. 40.35mm exact."     (7)
+- "Engineering-first wrist conversion."           (3)
+- "Three specs. One adapter. FKM rubber."         (6)
+- "Cradle Adapter V1 — five colourways, one fit." (8)
+
+FAIL title examples (DO NOT EMIT — Copy will struggle):
+- "The only wrist adapter engineered for the 40.35mm Royal Pop case."          (10 + 2 articles — verbose)
+- "Pop Wrist Studio's Cradle Adapter V1 is the precision solution audiences need." (12 + verb — unhookable)
+- "A revolutionary, precision-engineered, premium-feeling solution for the Royal Pop." (multi-clause — unhookable)
+
+If your strongest angle is unavoidably long, split it: put the full thought in `core_message` (any length) and write a tight hookable version in `title`.
+
 ## Output schema (strict JSON)
 ```json
 {

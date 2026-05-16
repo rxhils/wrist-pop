@@ -6,6 +6,8 @@
       "visual_brief_path": "outputs\\visual_brief_2026-05-16.json",
       "status": "WAITING",
       "exported_file": null,
+      "production_eta_minutes": 59,
+      "blocker_reason": null,
       "notes": "",
       "updated_at": "2026-05-16T12:27:26.190588Z"
     }

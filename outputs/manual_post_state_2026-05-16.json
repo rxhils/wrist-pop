@@ -13,6 +13,8 @@
       "post_urls": {},
       "metrics_1h": {},
       "metrics_24h": {},
+      "winner_candidate": false,
+      "postmortem": "",
       "notes": "",
       "reel_state": "WAITING",
       "updated_at": "2026-05-16T12:27:26.309302Z"
