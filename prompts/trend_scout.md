@@ -62,7 +62,10 @@ You must not assume inputs that are missing.
       "evidence": [],
       "audience_fit_score": 0,
       "novelty_score": 0,
-      "risk_score": 0
+      "risk_score": 0,
+      "best_platform": "IG | TIKTOK | YT | GENERIC",
+      "platform_fit_score": 0,
+      "objection_addressed": ""
     }
   ],
   "winning_formats": [

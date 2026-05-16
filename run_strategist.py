@@ -57,20 +57,40 @@ def recent_hooks(today: str, days: int = ANTI_REPEAT_DAYS) -> list[str]:
             data = json.loads(path.read_text(encoding="utf-8"))
         except Exception:
             continue
-        # data is list or dict
-        items = data if isinstance(data, list) else [data]
-        for it in items:
-            if not isinstance(it, dict):
+        items = data.get("pieces", []) if isinstance(data, dict) and "pieces" in data else (data if isinstance(data, list) else [data])
+        for piece in items:
+            if not isinstance(piece, dict):
                 continue
-            h = (it.get("recommended_hook") or "").strip()
+            h = (piece.get("recommended_hook") or "").strip()
             if h:
                 hooks.append(h)
-            for opt in it.get("hook_options") or []:
+            for opt in piece.get("hook_options") or []:
                 if isinstance(opt, str) and opt.strip():
                     hooks.append(opt.strip())
         if len(hooks) >= days * 5:
             break
     return hooks[: days * 5]
+
+
+def recent_archetypes(today: str, days: int = 2) -> list[str]:
+    """Return recent hook_archetypes (last N days) — Director should rotate, not repeat."""
+    files = sorted(OUT_DIR.glob("copy_*.json"), reverse=True)
+    out: list[str] = []
+    for path in files:
+        if today in path.name:
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        items = data.get("pieces", []) if isinstance(data, dict) and "pieces" in data else (data if isinstance(data, list) else [data])
+        for piece in items:
+            arch = (piece.get("hook_archetype") or "").upper().strip()
+            if arch:
+                out.append(arch)
+        if len(out) >= days * 2:
+            break
+    return out[: days * 2]
 
 
 def sprint_day(today: str, sprint_start: str = "2026-05-14") -> int:
@@ -113,6 +133,7 @@ def synthesize(trend_report: dict, today: str) -> dict:
     system_prompt = load_prompt(PROMPT_PATH.name)
     ctx = load_project_context()
     prior_hooks = recent_hooks(today)
+    prior_archetypes = recent_archetypes(today, days=2)
     day_n = sprint_day(today)
 
     # Calendar-day cue (cycles within 7 days)
@@ -146,6 +167,9 @@ OBJECTION CATEGORIES (address where you can):
 ============ ANTI-REPEAT LIST ============
 Hooks used in last {ANTI_REPEAT_DAYS} days — your `primary_angle.title` must NOT verbatim-overlap any of these:
 {json.dumps(prior_hooks, indent=2) if prior_hooks else '(none yet — first run)'}
+
+Hook archetypes used in last 2 days — `content_decision.hook_direction` must NOT reuse these archetypes:
+{json.dumps(prior_archetypes) if prior_archetypes else '(none)'}
 
 ============ TREND SCOUT OUTPUT ============
 ```json

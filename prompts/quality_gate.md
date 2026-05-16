@@ -72,6 +72,7 @@ You can PASS, REVISE, or BLOCK.
     {
       "severity": "LOW | MEDIUM | HIGH",
       "gate": "LEGAL | VOICE | CONVERSION | SPEC | HASHTAG | READINESS",
+      "weight": 0,
       "issue": "",
       "fix": ""
     }
@@ -82,6 +83,14 @@ You can PASS, REVISE, or BLOCK.
   "final_instruction_for_copy_if_revision_needed": ""
 }
 ```
+
+## Problem weights (used to rank fixes in Output Director)
+- LEGAL: 5 (immutable — always rewrite)
+- SPEC:  5 (immutable — always rewrite)
+- CONVERSION: 4 (hook/CTA failure kills the post)
+- VOICE: 3 (brand drift, fixable but visible)
+- HASHTAG: 2 (cosmetic)
+- READINESS: 2 (cosmetic)
 
 ## Override rules
 - Gates 1 (Legal) + 4 (Specs) = IMMUTABLE. Never override via chat.

@@ -60,11 +60,20 @@ def main() -> int:
         meta = b.get("_meta") or {}
         post_id = b.get("post_id") or meta.get("post_id") or meta.get("id") or "unknown"
         prior = by_id.get(post_id, {})
+        # Estimate production effort from shot count in brief
+        eta = prior.get("production_eta_minutes")
+        if eta is None:
+            n_shots = len(b.get("shot_list") or [])
+            n_edits = len(b.get("edit_plan") or [])
+            # rough heuristic: 5 min per shot + 3 min per edit step + 10 min export
+            eta = max(15, n_shots * 5 + n_edits * 3 + 10)
         items.append({
             "post_id": post_id,
             "visual_brief_path": str(brief_path.relative_to(ROOT)),
             "status": prior.get("status", "WAITING"),
             "exported_file": prior.get("exported_file"),
+            "production_eta_minutes": eta,
+            "blocker_reason": prior.get("blocker_reason"),
             "notes": prior.get("notes", ""),
             "updated_at": prior.get("updated_at") or datetime.utcnow().isoformat() + "Z",
         })

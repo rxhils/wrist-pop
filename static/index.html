@@ -637,9 +637,17 @@ function ManualReelOutput({ data }) {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
             <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.accent }}>{it.post_id}</span>
+            {it.production_eta_minutes != null && (
+              <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>~{it.production_eta_minutes}min</span>
+            )}
             <span style={{ flex: 1 }} />
             <StateChip state={it.status} />
           </div>
+          {it.blocker_reason && (
+            <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.err, marginTop: 2, fontStyle: 'italic' }}>
+              ⚠ {it.blocker_reason}
+            </div>
+          )}
           {it.exported_file && (
             <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, marginTop: 4 }}>
               file: {it.exported_file}
@@ -668,6 +676,9 @@ function ManualPostOutput({ data }) {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
             <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.accent }}>{it.post_id}</span>
+            {it.winner_candidate && (
+              <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, border: `1px solid ${HF.accent}`, padding: '1px 6px', borderRadius: 3 }}>★ WINNER</span>
+            )}
             <span style={{ flex: 1 }} />
             <StateChip state={it.status} />
           </div>
@@ -682,6 +693,11 @@ function ManualPostOutput({ data }) {
           {it.metrics_24h && Object.keys(it.metrics_24h).length > 0 && (
             <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, marginTop: 6 }}>
               24h: {Object.entries(it.metrics_24h).map(([k, v]) => `${k}=${v}`).join(' · ')}
+            </div>
+          )}
+          {it.postmortem && (
+            <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, marginTop: 4, fontStyle: 'italic', borderLeft: `2px solid ${HF.borderSoft}`, paddingLeft: 6 }}>
+              {it.postmortem}
             </div>
           )}
         </div>
@@ -753,6 +769,16 @@ function OutputDirectorOutput({ data }) {
           ))}
         </div>
       )}
+      {Array.isArray(data.do_not_do) && data.do_not_do.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.err, letterSpacing: '.14em', marginBottom: 6 }}>⊘ DO NOT</div>
+          {data.do_not_do.map((d, i) => (
+            <div key={i} style={{ padding: 6, marginBottom: 3, borderRadius: 3, background: 'rgba(255,90,90,.04)', borderLeft: `2px solid ${HF.err}`, fontFamily: HF.body, fontSize: 11, color: HF.textDim, lineHeight: 1.5 }}>
+              {d}
+            </div>
+          ))}
+        </div>
+      )}
       {data.success_condition && (
         <div style={{ padding: 10, borderRadius: 6, background: HF.bg, border: `1px dashed ${HF.borderSoft}` }}>
           <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>SUCCESS TODAY</div>
@@ -790,10 +816,12 @@ function ScoutOutput({ data }) {
           <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>TREND CLUSTERS ({clusters.length})</div>
           {clusters.map((c, i) => (
             <div key={i} style={{ padding: 10, marginBottom: 6, background: HF.bg, border: `1px solid ${HF.borderSoft}`, borderRadius: 5 }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
                 <span style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 14, color: HF.text }}>{c.name}</span>
+                {c.best_platform && <Pill tone="accent">{c.best_platform}</Pill>}
                 <span style={{ flex: 1 }} />
                 <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent }}>fit {c.audience_fit_score}/10</span>
+                {c.platform_fit_score != null && <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textDim }}>plat {c.platform_fit_score}</span>}
                 <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>nov {c.novelty_score}</span>
                 <span style={{ fontFamily: HF.mono, fontSize: 9, color: c.risk_score >= 7 ? HF.err : HF.textFaint }}>risk {c.risk_score}</span>
               </div>
@@ -964,6 +992,7 @@ function WriterOutput({ data }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
               <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.accent }}>{p.post_id || meta.campaign_id}</span>
               {meta.format && <Pill>{meta.format}</Pill>}
+              {p.hook_archetype && <Pill tone="accent">{p.hook_archetype}</Pill>}
               <span style={{ flex: 1 }} />
               {p._gate_status && <Pill tone={fail ? 'err' : 'ok'}>{p._gate_status}</Pill>}
             </div>
@@ -1122,11 +1151,19 @@ function GateOutput({ data }) {
                 {problems.map((pr, j) => {
                   const sev = pr.severity || 'LOW';
                   const sevColor = sev === 'HIGH' ? HF.err : sev === 'MEDIUM' ? HF.accent : HF.textFaint;
+                  const w = pr.weight || 0;
                   return (
                     <div key={j} style={{ padding: 6, marginBottom: 4, borderRadius: 3, background: HF.surface2 }}>
-                      <div style={{ display: 'flex', gap: 6, marginBottom: 2 }}>
+                      <div style={{ display: 'flex', gap: 6, marginBottom: 2, alignItems: 'center' }}>
                         <span style={{ fontFamily: HF.mono, fontSize: 8.5, color: sevColor }}>{sev}</span>
                         {pr.gate && <span style={{ fontFamily: HF.mono, fontSize: 8.5, color: HF.textFaint }}>· {pr.gate}</span>}
+                        {w > 0 && (
+                          <span style={{ display: 'flex', gap: 1, marginLeft: 'auto' }}>
+                            {[1,2,3,4,5].map(n => (
+                              <div key={n} style={{ width: 6, height: 4, background: n <= w ? HF.accent : HF.borderSoft, borderRadius: 1 }} />
+                            ))}
+                          </span>
+                        )}
                       </div>
                       <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.text, lineHeight: 1.4 }}>{pr.issue}</div>
                       {pr.fix && (

@@ -110,12 +110,29 @@ def collect_signals(cfg: dict) -> dict:
     else:
         reddit_results = {"_skipped": "REDDIT_CLIENT_ID + REDDIT_CLIENT_SECRET not set"}
 
+    # YouTube — free Google Data API v3 (10k units/day)
+    youtube_results: dict[str, list | dict] = {}
+    try:
+        from tools.social_tools import youtube_search, has_youtube_key
+        if has_youtube_key():
+            yt_queries = cfg.get("youtube_queries", [
+                "Royal Pop strap", "AP Swatch wrist conversion", "Cradle Adapter watch",
+            ])
+            print(f"[scout] querying YouTube ({len(yt_queries)} queries)...")
+            for q in yt_queries:
+                youtube_results[q] = youtube_search(q, max_results=8, days=30)
+        else:
+            youtube_results = {"_skipped": "GOOGLE_API_KEY not set"}
+    except Exception as e:
+        youtube_results = {"_error": str(e)[:200]}
+
     return {
         "google_trends_interest": trends,
         "google_trends_related_royal_pop": related,
         "web_search": web_results,
         "news_search": news,
         "reddit_search": reddit_results,
+        "youtube_search": youtube_results,
         "_sources_used": {
             "web": search_label,
             "news": news_label,
@@ -179,6 +196,24 @@ def _extract_url_catalog(signals: dict) -> list[dict]:
                             "from_query": f"reddit:{query}",
                             "score": r.get("score"),
                             "comments": r.get("num_comments"),
+                        })
+    # YouTube
+    yt = signals.get("youtube_search", {})
+    if isinstance(yt, dict):
+        for query, results in yt.items():
+            if query.startswith("_"):
+                continue
+            if isinstance(results, list):
+                for r in results:
+                    if isinstance(r, dict) and r.get("post_url"):
+                        catalog.append({
+                            "url": r["post_url"],
+                            "title": (r.get("title") or "")[:120],
+                            "snippet": (r.get("description") or "")[:200],
+                            "from_query": f"youtube:{query}",
+                            "author": r.get("author"),
+                            "views": r.get("view_count"),
+                            "likes": r.get("like_count"),
                         })
     return catalog
 
@@ -246,6 +281,15 @@ def _collect_real_urls(signals: dict) -> set[str]:
         for r in news:
             if isinstance(r, dict) and r.get("url"):
                 urls.add(r["url"])
+    yt = signals.get("youtube_search", {})
+    if isinstance(yt, dict):
+        for q, results in yt.items():
+            if q.startswith("_"):
+                continue
+            if isinstance(results, list):
+                for r in results:
+                    if isinstance(r, dict) and r.get("post_url"):
+                        urls.add(r["post_url"])
     return urls
 
 

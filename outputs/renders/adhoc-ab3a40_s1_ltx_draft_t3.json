@@ -1,0 +1,21 @@
+{
+  "post_id": "adhoc-ab3a40",
+  "shot_no": 1,
+  "take": 3,
+  "model": "ltx_draft",
+  "label": "LTX-Video 0.9 (draft)",
+  "video_path": "renders/adhoc-ab3a40_s1_ltx_draft_t3.mp4",
+  "video_url": "https://v3b.fal.media/files/b/0a9a7736/fXV1mi1FmV2Tipt9MU_b5_tmpgv5aa6yg.mp4",
+  "prompt": "make a 3d video just with this exact model i have uploaded",
+  "init_image_path": "C:\\claude\\Royal pop\\05-agents\\content-system\\outputs\\renders\\uploads\\1778952079_a93525f6-3141-4463-8069-7d83f1d54c87.png",
+  "init_image_url": null,
+  "duration_s": 5,
+  "aspect": "9:16",
+  "negative_prompt": null,
+  "cost_usd": 0.02,
+  "latency_s": 9.9,
+  "wall_time_s": 13.1,
+  "request_id": null,
+  "created_at": "2026-05-16T17:23:48Z",
+  "size_bytes": 3522070
+}

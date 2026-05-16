@@ -46,6 +46,7 @@ You may read:
     ""
   ],
   "recommended_hook": "",
+  "hook_archetype": "PROBLEM | SPEC | AESTHETIC | CONTRAST | PROOF",
   "reel_script": {
     "duration_target": "",
     "beats": [

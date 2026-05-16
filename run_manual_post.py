@@ -85,6 +85,13 @@ def main() -> int:
         post_id = r["post_id"]
         series = _series_from_post_id(post_id, brief_path)
         prior = by_id.get(post_id, {})
+        # Engagement signal: any metric >= 8 saves OR 50+ signups => winner candidate
+        m24 = prior.get("metrics_24h") or {}
+        winner_candidate = bool(
+            (m24.get("saves") or 0) >= 80
+            or (m24.get("waitlist_signups") or 0) >= 50
+            or (m24.get("shares") or 0) >= 25
+        )
         items.append({
             "post_id": post_id,
             "platforms": prior.get("platforms") or PLATFORM_BY_SERIES.get(series, ["Instagram Reel"]),
@@ -93,7 +100,9 @@ def main() -> int:
             "posted_at": prior.get("posted_at"),
             "post_urls": prior.get("post_urls") or {},
             "metrics_1h": prior.get("metrics_1h") or {},
-            "metrics_24h": prior.get("metrics_24h") or {},
+            "metrics_24h": m24,
+            "winner_candidate": winner_candidate,
+            "postmortem": prior.get("postmortem", ""),
             "notes": prior.get("notes", ""),
             "reel_state": r.get("status", "WAITING"),
             "updated_at": prior.get("updated_at") or datetime.utcnow().isoformat() + "Z",
