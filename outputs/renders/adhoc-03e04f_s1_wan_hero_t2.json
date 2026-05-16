@@ -1,0 +1,21 @@
+{
+  "post_id": "adhoc-03e04f",
+  "shot_no": 1,
+  "take": 2,
+  "model": "wan_hero",
+  "label": "Wan 2.7 (hero \u00b7 1080p \u00b7 15s \u00b7 audio)",
+  "video_path": "renders/adhoc-03e04f_s1_wan_hero_t2.mp4",
+  "video_url": "https://v3b.fal.media/files/b/0a9a7700/VRDxTtl4w6Z9j-zhH7i-x_AtjqFG8A.mp4",
+  "prompt": "MAKE THIS NICE ",
+  "init_image_path": "C:\\claude\\Royal pop\\05-agents\\content-system\\outputs\\renders\\uploads\\1778951527_a93525f6-3141-4463-8069-7d83f1d54c87.png",
+  "init_image_url": null,
+  "duration_s": 5,
+  "aspect": "9:16",
+  "negative_prompt": null,
+  "cost_usd": 0.75,
+  "latency_s": 67.4,
+  "wall_time_s": 88.3,
+  "request_id": null,
+  "created_at": "2026-05-16T17:15:03Z",
+  "size_bytes": 6695339
+}

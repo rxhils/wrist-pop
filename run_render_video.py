@@ -108,7 +108,7 @@ def render_take(
         "take": take,
         "model": model,
         "label": result["label"],
-        "video_path": str(mp4_path.relative_to(ROOT)).replace("\\", "/"),
+        "video_path": str(mp4_path.relative_to(OUT_DIR)).replace("\\", "/"),
         "video_url": result["video_url"],
         "prompt": prompt,
         "init_image_path": init_image_path,

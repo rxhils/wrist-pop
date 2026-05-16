@@ -350,7 +350,7 @@ def get_agent_prompt(agent: str, inlined: bool = True) -> dict:
     }
 
 
-@app.get("/api/outputs/{name}")
+@app.get("/api/outputs/{name:path}")
 def get_output(name: str) -> Any:
     safe = (OUT_DIR / name).resolve()
     if not str(safe).startswith(str(OUT_DIR.resolve())):
@@ -362,7 +362,16 @@ def get_output(name: str) -> Any:
             return JSONResponse(json.loads(safe.read_text(encoding="utf-8")))
         except Exception as e:
             raise HTTPException(500, f"parse: {e}")
-    return FileResponse(safe, media_type="text/markdown" if safe.suffix == ".md" else "text/plain")
+    media_map = {
+        ".md":   "text/markdown",
+        ".mp4":  "video/mp4",
+        ".webm": "video/webm",
+        ".png":  "image/png",
+        ".jpg":  "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".webp": "image/webp",
+    }
+    return FileResponse(safe, media_type=media_map.get(safe.suffix, "application/octet-stream"))
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -1017,8 +1026,9 @@ async def upload_init_image(file: UploadFile = File(...)) -> dict:
     return {"path": rel, "url": f"/api/outputs/{rel}", "size_bytes": len(data)}
 
 
-# Serve mp4 + uploaded files directly
-app.mount("/renders", StaticFiles(directory=str(RENDERS_DIR)), name="renders") if RENDERS_DIR.exists() else None
+# Serve mp4 + uploaded files directly (also reachable via /api/outputs/renders/...)
+RENDERS_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/renders", StaticFiles(directory=str(RENDERS_DIR)), name="renders")
 
 
 # ─────────────────────────────────────────────────────────────────────────

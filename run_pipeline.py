@@ -21,6 +21,9 @@ STAGES = [
     "scout", "strategist", "writer", "gate", "visual",
     "manual_reel", "manual_post", "output_director",
 ]
+# Off-chain agents — runnable via --only but not in the default sequence
+EXTRA_STAGES = ["scheduler", "render_image", "render_video", "reel_director"]
+ALL_STAGES = STAGES + EXTRA_STAGES
 
 
 def _run(name: str) -> int:
@@ -59,6 +62,9 @@ def _run(name: str) -> int:
     elif name == "render_video":
         from run_render_video import main as vid_main
         rc = vid_main()
+    elif name == "reel_director":
+        from run_reel_director import main as rd_main
+        rc = rd_main()
     else:
         raise ValueError(f"unknown stage: {name}")
     elapsed = time.time() - start
@@ -69,7 +75,8 @@ def _run(name: str) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Royal Pop content pipeline")
     parser.add_argument("--from", dest="from_stage", choices=STAGES, default="scout")
-    parser.add_argument("--only", dest="only_stage", choices=STAGES, default=None)
+    parser.add_argument("--only", dest="only_stage", choices=ALL_STAGES, default=None,
+                        help=f"Run one stage only. Marketing chain: {STAGES}. Extra: {EXTRA_STAGES}.")
     parser.add_argument(
         "--provider", choices=["groq", "mistral", "gemini", "ollama"], default=None,
         help="Override ALL agents to this provider for this run."

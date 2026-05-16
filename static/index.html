@@ -3337,8 +3337,13 @@ function App() {
 
   const pickAgent = (id) => {
     setSelectedAgent(id);
-    const isVisual = id === 'render_image' || id === 'render_video';
-    setView(isVisual ? 'visual' : 'text');
+    if (id === 'render_video') {
+      setView('render');           // new cloud Render tab (fal.ai)
+    } else if (id === 'render_image') {
+      setView('visual');           // legacy ComfyUI image render (TODO: cloud)
+    } else {
+      setView('text');
+    }
   };
 
   // ── derive lastRunInfo for overview headline ──

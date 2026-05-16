@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 from typing import Any
 
+import requests
 import urllib3.util.retry as _retry_mod
 
 _orig_retry_init = _retry_mod.Retry.__init__
