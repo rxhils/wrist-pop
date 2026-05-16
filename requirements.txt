@@ -9,3 +9,16 @@ notion-client==2.2.1
 fastapi==0.115.4
 uvicorn[standard]==0.32.0
 sse-starlette==2.1.3
+python-multipart>=0.0.9
+
+# LLM providers
+openai>=1.40.0
+google-generativeai>=0.8.0
+
+# Cloud self-learning (Supabase + pgvector)
+supabase>=2.30.0
+psycopg[binary]>=3.2
+pgvector>=0.3
+
+# Cloud video render
+fal-client>=0.5

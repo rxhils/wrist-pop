@@ -115,7 +115,11 @@ def _build_args_for_model(
 
 
 def is_configured() -> bool:
-    return bool(os.getenv("FAL_KEY") or os.getenv("REPLICATE_API_TOKEN"))
+    """True only when FAL_KEY is set. Replicate fallback not yet implemented —
+    do NOT return true on REPLICATE_API_TOKEN alone, otherwise the UI reports
+    'ready' but every generate raises 'FAL_KEY missing'.
+    """
+    return bool(os.getenv("FAL_KEY"))
 
 
 def list_models() -> list[dict]:
@@ -243,13 +247,15 @@ def generate(
     if not video_url:
         raise RuntimeError(f"no video URL in fal response: {result!r}"[:500])
 
-    # Actual cost calc per model
+    # Actual cost calc per model — always use the ACTUAL duration sent to fal
+    # (caller may have asked for 60s but model clamps to 15s).
+    actual_dur = args.get("duration", duration_s)
     if model_key == "wan_hero":
-        cost = 0.15 * duration_s    # 1080p tier
+        cost = 0.15 * actual_dur    # 1080p tier
     elif model_key == "wan_flash":
-        cost = 0.05 * duration_s
+        cost = 0.05 * actual_dur
     elif model_key == "ltx2_4k":
-        cost = 0.06 * args.get("duration", duration_s)
+        cost = 0.06 * actual_dur
     else:
         cost = cfg["cost_per_clip_estimate"]
 

@@ -395,6 +395,14 @@ async def start_job(req: RunReq) -> dict:
         if req.only:
             cmd += ["--only", req.only]
     elif req.agent in AGENTS:
+        # `render_video` requires a prompt (or --from-brief) and cannot be triggered
+        # from the generic /api/run path. Use POST /api/render/video/cloud instead.
+        if req.agent == "render_video":
+            raise HTTPException(
+                400,
+                "render_video must be invoked via POST /api/render/video/cloud (it needs a prompt + model). "
+                "The sidebar Video Render entry routes the UI to the Render tab for this reason."
+            )
         script = AGENTS[req.agent]["script"]
         cmd = [sys.executable, script]
         if req.input_path:
@@ -930,9 +938,14 @@ def render_video_status() -> dict:
 RENDERS_DIR = OUT_DIR / "renders"
 
 
+MAX_TAKES_PER_REQUEST = 5
+ALLOWED_VIDEO_MODELS = {"ltx_draft", "wan_hero", "wan_flash", "ltx2_4k"}
+ALLOWED_ASPECTS = {"9:16", "1:1", "16:9", "4:5"}
+
+
 class CloudVideoReq(BaseModel):
     prompt: str
-    model: str = "ltx_draft"               # ltx_draft | wan_hero | ltx2_4k
+    model: str = "ltx_draft"
     post_id: str | None = None
     shot_no: int = 1
     takes: int = 1
@@ -962,6 +975,16 @@ def cloud_video_render(req: CloudVideoReq) -> dict:
     if not video_providers.is_configured():
         raise HTTPException(400, "FAL_KEY missing in .env")
 
+    # ── Input validation (cap paid calls, whitelist enums) ──
+    if req.model not in ALLOWED_VIDEO_MODELS:
+        raise HTTPException(400, f"model must be one of {sorted(ALLOWED_VIDEO_MODELS)}")
+    if req.aspect not in ALLOWED_ASPECTS:
+        raise HTTPException(400, f"aspect must be one of {sorted(ALLOWED_ASPECTS)}")
+    takes = max(1, min(MAX_TAKES_PER_REQUEST, req.takes))
+    duration_s = max(3, min(15, req.duration_s))
+    if not req.prompt or not req.prompt.strip():
+        raise HTTPException(400, "prompt required")
+
     from run_render_video import render_take
     post_id = req.post_id or f"adhoc-{uuid.uuid4().hex[:6]}"
     init_path = None
@@ -973,7 +996,7 @@ def cloud_video_render(req: CloudVideoReq) -> dict:
 
     successes: list[dict] = []
     errors: list[str] = []
-    for t in range(1, req.takes + 1):
+    for t in range(1, takes + 1):
         try:
             entry = render_take(
                 prompt=req.prompt,
@@ -983,7 +1006,7 @@ def cloud_video_render(req: CloudVideoReq) -> dict:
                 take=t,
                 init_image_path=init_path,
                 init_image_url=req.init_image_url,
-                duration_s=req.duration_s,
+                duration_s=duration_s,
                 aspect=req.aspect,
                 negative_prompt=req.negative_prompt,
             )
