@@ -1,0 +1,47 @@
+{
+  "date": "2026-05-16",
+  "takes": [
+    {
+      "post_id": "smoke-ltx",
+      "shot_no": 1,
+      "take": 1,
+      "model": "ltx_draft",
+      "label": "LTX-Video 0.9 (draft)",
+      "video_path": "outputs/renders/smoke-ltx_s1_ltx_draft_t1.mp4",
+      "video_url": "https://v3b.fal.media/files/b/0a9a7336/0aZb4nmnFbE_XmSYaGa9n_tmpf1_zv7e8.mp4",
+      "prompt": "Slow macro rotation of matte black FKM rubber strap on dark slate, cinematic key light from upper left, shallow depth of field, premium product photography",
+      "init_image_path": null,
+      "init_image_url": null,
+      "duration_s": 5,
+      "aspect": "9:16",
+      "negative_prompt": null,
+      "cost_usd": 0.02,
+      "latency_s": 123.5,
+      "wall_time_s": 124.9,
+      "request_id": null,
+      "created_at": "2026-05-16T14:33:05Z",
+      "size_bytes": 3570285
+    },
+    {
+      "post_id": "smoke-wan",
+      "shot_no": 1,
+      "take": 1,
+      "model": "wan_hero",
+      "label": "Wan 2.7 (hero \u00b7 1080p \u00b7 15s \u00b7 audio)",
+      "video_path": "outputs/renders/smoke-wan_s1_wan_hero_t1.mp4",
+      "video_url": "https://v3b.fal.media/files/b/0a9a733d/_vJAfxq3evDhSVnvgyPDO_BnjcScPW.mp4",
+      "prompt": "Macro shot of matte black FKM rubber watch strap on Royal Pop watch, slow rotation revealing the cradle adapter mechanism, dark cinematic studio lighting from upper left, premium product photography, ultra detailed, 4K, shallow depth of field",
+      "init_image_path": null,
+      "init_image_url": null,
+      "duration_s": 5,
+      "aspect": "9:16",
+      "negative_prompt": null,
+      "cost_usd": 0.75,
+      "latency_s": 68.4,
+      "wall_time_s": 70.0,
+      "request_id": null,
+      "created_at": "2026-05-16T14:34:22Z",
+      "size_bytes": 9869513
+    }
+  ]
+}

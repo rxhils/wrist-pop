@@ -1,0 +1,21 @@
+{
+  "post_id": "smoke-ltx",
+  "shot_no": 1,
+  "take": 1,
+  "model": "ltx_draft",
+  "label": "LTX-Video 0.9 (draft)",
+  "video_path": "outputs/renders/smoke-ltx_s1_ltx_draft_t1.mp4",
+  "video_url": "https://v3b.fal.media/files/b/0a9a7336/0aZb4nmnFbE_XmSYaGa9n_tmpf1_zv7e8.mp4",
+  "prompt": "Slow macro rotation of matte black FKM rubber strap on dark slate, cinematic key light from upper left, shallow depth of field, premium product photography",
+  "init_image_path": null,
+  "init_image_url": null,
+  "duration_s": 5,
+  "aspect": "9:16",
+  "negative_prompt": null,
+  "cost_usd": 0.02,
+  "latency_s": 123.5,
+  "wall_time_s": 124.9,
+  "request_id": null,
+  "created_at": "2026-05-16T14:33:05Z",
+  "size_bytes": 3570285
+}

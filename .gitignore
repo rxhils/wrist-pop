@@ -9,5 +9,7 @@
 __pycache__/
 outputs/_archive/
 outputs/_debug/
+outputs/renders/*.mp4
+outputs/renders/uploads/
 prompts/_archive_old/
 venv/

@@ -170,6 +170,7 @@ function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }
           { id: 'overview', label: 'Overview' },
           { id: 'console', label: 'Console' },
           { id: 'reels', label: 'Reels' },
+          { id: 'render', label: 'Render' },
           { id: 'text', label: 'Text agent' },
           { id: 'visual', label: 'Visual' },
           { id: 'outputs', label: 'Outputs' },
@@ -1569,7 +1570,7 @@ const ARCH_COLOR = {
   PROOF:     '#60a5fa',
 };
 
-function ReelIdeaCard({ idea, isBestBet }) {
+function ReelIdeaCard({ idea, isBestBet, onSendToRender }) {
   const [expanded, setExpanded] = useState(false);
   const archCol = ARCH_COLOR[idea.hook_archetype] || HF.accent;
   return (
@@ -1627,6 +1628,18 @@ function ReelIdeaCard({ idea, isBestBet }) {
         }}>
         {expanded ? '↑ collapse' : '↓ full script + captions'}
       </button>
+      {onSendToRender && (
+        <button
+          onClick={() => onSendToRender(idea)}
+          style={{
+            width: '100%', padding: '6px 0', marginTop: 4,
+            background: HF.accent, border: `1px solid ${HF.accent}`, borderRadius: 4,
+            color: HF.accentInk, fontFamily: HF.mono, fontSize: 9.5, letterSpacing: '.1em',
+            textTransform: 'uppercase', cursor: 'pointer', fontWeight: 700,
+          }}>
+          ▶ Generate video
+        </button>
+      )}
       {expanded && (
         <div style={{ marginTop: 10 }}>
           <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>BEATS</div>
@@ -1687,7 +1700,7 @@ function ReelIdeaCard({ idea, isBestBet }) {
   );
 }
 
-function ReelIdeasOutput({ data }) {
+function ReelIdeasOutput({ data, onSendToRender }) {
   if (data && data._text_only) {
     return <pre style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textDim, whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0, lineHeight: 1.6 }}>{data._text_only}</pre>;
   }
@@ -1708,7 +1721,7 @@ function ReelIdeasOutput({ data }) {
       )}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 12 }}>
         {ideas.map((idea, i) => (
-          <ReelIdeaCard key={i} idea={idea} isBestBet={idea.idea_id === bestBet} />
+          <ReelIdeaCard key={i} idea={idea} isBestBet={idea.idea_id === bestBet} onSendToRender={onSendToRender} />
         ))}
       </div>
       {data.execution_note_for_operator && (
@@ -1722,7 +1735,7 @@ function ReelIdeasOutput({ data }) {
 }
 
 // ───────────────────────── Reels view (full tab) ─────────────────────────
-function ReelsView({ refreshSignal, onRunReels, running }) {
+function ReelsView({ refreshSignal, onRunReels, running, onSendToRender }) {
   const [data, setData] = useState(null);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -1783,7 +1796,7 @@ function ReelsView({ refreshSignal, onRunReels, running }) {
           No reel ideas yet. Run the marketing pipeline, then ▶ Generate 5 Ideas.
         </div>
       )}
-      {data && <ReelIdeasOutput data={data} />}
+      {data && <ReelIdeasOutput data={data} onSendToRender={onSendToRender} />}
     </div>
   );
 }
@@ -1930,6 +1943,297 @@ function HistoryView() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Video Render (cloud) ─────────────────────────
+function VideoRenderView({ prefill }) {
+  const [models, setModels] = useState([]);
+  const [configured, setConfigured] = useState(true);
+  const [model, setModel] = useState('ltx_draft');
+  const [prompt, setPrompt] = useState(prefill?.prompt || '');
+  const [negative, setNegative] = useState('');
+  const [aspect, setAspect] = useState('9:16');
+  const [duration, setDuration] = useState(5);
+  const [takes, setTakes] = useState(3);
+  const [postId, setPostId] = useState(prefill?.post_id || '');
+  const [initSource, setInitSource] = useState('upload'); // 'upload' | 'flux' | 'url' | 'none'
+  const [initPath, setInitPath] = useState('');
+  const [initUrl, setInitUrl] = useState('');
+  const [uploadedPreview, setUploadedPreview] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [allTakes, setAllTakes] = useState([]);
+  const [activeTake, setActiveTake] = useState(null);
+  const [sessionCost, setSessionCost] = useState(0);
+
+  const loadModels = useCallback(async () => {
+    try {
+      const r = await apiGet('/api/render/video/models');
+      setModels(r.models || []);
+      setConfigured(!!r.configured);
+    } catch (e) { setError(e.message); }
+  }, []);
+
+  const loadTakes = useCallback(async () => {
+    try {
+      const r = await apiGet('/api/render/video/takes?limit=60');
+      setAllTakes(r.takes || []);
+      if (!activeTake && r.takes && r.takes.length) {
+        setActiveTake(r.takes[0]);
+      }
+    } catch (e) { /* silent */ }
+  }, [activeTake]);
+
+  useEffect(() => { loadModels(); loadTakes(); }, [loadModels, loadTakes]);
+
+  const handleUpload = async (file) => {
+    if (!file) return;
+    setError('');
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const r = await fetch('/api/render/upload', { method: 'POST', body: fd });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.detail || 'upload failed');
+      setInitPath(data.path);
+      setUploadedPreview('/api/outputs/' + data.path);
+    } catch (e) {
+      setError('upload: ' + e.message);
+    }
+  };
+
+  const generate = async () => {
+    if (!prompt.trim()) { setError('prompt required'); return; }
+    if (!configured) { setError('FAL_KEY missing in .env — sign up at fal.ai'); return; }
+    setError('');
+    setBusy(true);
+    try {
+      const body = {
+        prompt,
+        model,
+        takes: Number(takes) || 1,
+        duration_s: Number(duration) || 5,
+        aspect,
+        post_id: postId || null,
+        negative_prompt: negative || null,
+      };
+      if (initSource === 'upload' && initPath) body.init_image_path = initPath;
+      if (initSource === 'url' && initUrl)    body.init_image_url = initUrl;
+      const r = await apiPost('/api/render/video/cloud', body);
+      const newTakes = r.takes || [];
+      if (newTakes.length) {
+        setSessionCost(c => c + newTakes.reduce((s, t) => s + (t.cost_usd || 0), 0));
+        setActiveTake(newTakes[0]);
+        await loadTakes();
+      }
+      if (r.errors && r.errors.length) setError(r.errors.join(' · '));
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const cfg = models.find(m => m.key === model) || {};
+  const expectedCost = (cfg.cost_per_clip_estimate || 0) * (Number(takes) || 1);
+
+  return (
+    <div style={{ padding: 18, display: 'grid', gridTemplateRows: 'auto 1fr', gap: 14, minHeight: 0, background: HF.bg }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div>
+          <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 28, color: HF.text, lineHeight: 1 }}>
+            Video <span style={{ color: HF.accent }}>Render</span>
+          </div>
+          <div style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textFaint, letterSpacing: '.12em', textTransform: 'uppercase', marginTop: 6 }}>
+            cloud · fal.ai · LTX-Video · Wan 2.2 · LTX-2
+          </div>
+        </div>
+        <span style={{ flex: 1 }} />
+        <div style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textDim }}>
+          session cost: <span style={{ color: HF.accent }}>${sessionCost.toFixed(2)}</span>
+        </div>
+        <IconBtn size="sm" tone="ghost" onClick={loadTakes}>↻ reload</IconBtn>
+      </div>
+
+      {!configured && (
+        <div style={{ padding: 10, borderRadius: 5, background: 'rgba(255,90,90,.06)', border: `1px solid ${HF.err}`, color: HF.err, fontFamily: HF.mono, fontSize: 11 }}>
+          FAL_KEY missing in .env. Sign up at https://fal.ai (free $1 credit) → Project → API keys → paste in .env → restart server.
+        </div>
+      )}
+      {error && (
+        <div style={{ padding: 8, borderRadius: 4, background: 'rgba(255,90,90,.06)', color: HF.err, fontFamily: HF.mono, fontSize: 10.5 }}>{error}</div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr 280px', gap: 14, minHeight: 0 }}>
+        {/* LEFT: form */}
+        <div style={{
+          padding: 14, borderRadius: 8, background: HF.surface, border: `1px solid ${HF.border}`,
+          overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10,
+        }}>
+          <FormRow label="MODEL">
+            <select value={model} onChange={e => setModel(e.target.value)} style={selStyle}>
+              {models.map(m => (
+                <option key={m.key} value={m.key}>{m.label} · ~${m.cost_per_clip_estimate.toFixed(2)}</option>
+              ))}
+            </select>
+            {cfg.use_for && <div style={hintStyle}>{cfg.use_for}</div>}
+          </FormRow>
+          <FormRow label="PROMPT">
+            <textarea value={prompt} onChange={e => setPrompt(e.target.value)} rows={4} style={{ ...inputStyle, fontFamily: HF.body, fontSize: 12, resize: 'vertical' }} placeholder="e.g. Close macro of matte FKM rubber strap rotating slowly on dark slate, single key light from upper left, shallow depth of field" />
+          </FormRow>
+          <FormRow label="NEGATIVE">
+            <input value={negative} onChange={e => setNegative(e.target.value)} style={inputStyle} placeholder="cartoon, plastic, glossy, neon" />
+          </FormRow>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+            <FormRow label="ASPECT">
+              <select value={aspect} onChange={e => setAspect(e.target.value)} style={selStyle}>
+                <option>9:16</option><option>1:1</option><option>16:9</option><option>4:5</option>
+              </select>
+            </FormRow>
+            <FormRow label="DUR S">
+              <input type="number" value={duration} onChange={e => setDuration(e.target.value)} min={3} max={10} style={inputStyle} />
+            </FormRow>
+            <FormRow label="TAKES">
+              <input type="number" value={takes} onChange={e => setTakes(e.target.value)} min={1} max={8} style={inputStyle} />
+            </FormRow>
+          </div>
+          <FormRow label="POST ID (optional)">
+            <input value={postId} onChange={e => setPostId(e.target.value)} style={inputStyle} placeholder="W1-01 or leave blank" />
+          </FormRow>
+
+          <div style={{ marginTop: 4, padding: 8, background: HF.bg, border: `1px solid ${HF.borderSoft}`, borderRadius: 5 }}>
+            <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>INIT IMAGE (for i2v)</div>
+            <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
+              {['none', 'upload', 'url'].map(s => (
+                <button key={s} onClick={() => setInitSource(s)} style={{
+                  flex: 1, padding: '4px 0', borderRadius: 3,
+                  background: initSource === s ? HF.surface : 'transparent',
+                  color: initSource === s ? HF.accent : HF.textDim,
+                  border: `1px solid ${initSource === s ? HF.accent : HF.borderSoft}`,
+                  fontFamily: HF.mono, fontSize: 9.5, letterSpacing: '.06em', cursor: 'pointer',
+                  textTransform: 'uppercase',
+                }}>{s}</button>
+              ))}
+            </div>
+            {initSource === 'upload' && (
+              <>
+                <input type="file" accept="image/*" onChange={e => handleUpload(e.target.files && e.target.files[0])} style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim }} />
+                {uploadedPreview && (
+                  <img src={uploadedPreview} style={{ width: '100%', marginTop: 6, borderRadius: 3, border: `1px solid ${HF.borderSoft}` }} />
+                )}
+              </>
+            )}
+            {initSource === 'url' && (
+              <input value={initUrl} onChange={e => setInitUrl(e.target.value)} style={inputStyle} placeholder="https://..." />
+            )}
+            {initSource === 'none' && (
+              <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint }}>text-to-video only</div>
+            )}
+          </div>
+
+          <div style={{ marginTop: 8, fontFamily: HF.mono, fontSize: 10, color: HF.textDim, padding: '8px 0', borderTop: `1px solid ${HF.borderSoft}` }}>
+            expected cost: <span style={{ color: HF.accent }}>${expectedCost.toFixed(2)}</span>
+          </div>
+          <IconBtn tone="accent" onClick={generate} disabled={busy || !configured}>
+            {busy ? '… generating' : `▶ Generate ${takes} take${takes > 1 ? 's' : ''}`}
+          </IconBtn>
+        </div>
+
+        {/* CENTER: video player */}
+        <div style={{
+          padding: 14, borderRadius: 8, background: HF.surface, border: `1px solid ${HF.border}`,
+          display: 'flex', flexDirection: 'column', minHeight: 0, gap: 10,
+        }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em' }}>PREVIEW</div>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', borderRadius: 5, minHeight: 240 }}>
+            {activeTake ? (
+              <video
+                key={activeTake.video_path}
+                src={'/api/outputs/' + activeTake.video_path}
+                controls loop autoPlay muted playsInline
+                style={{ maxWidth: '100%', maxHeight: '60vh', borderRadius: 4 }}
+              />
+            ) : (
+              <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint, padding: 30, textAlign: 'center' }}>
+                no take selected · generate or pick from gallery
+              </div>
+            )}
+          </div>
+          {activeTake && (
+            <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, lineHeight: 1.6 }}>
+              <div><span style={{ color: HF.textFaint }}>file:</span> {activeTake.video_path}</div>
+              <div>
+                <span style={{ color: HF.textFaint }}>model:</span> {activeTake.label || activeTake.model} ·{' '}
+                <span style={{ color: HF.textFaint }}>cost:</span> <span style={{ color: HF.accent }}>${(activeTake.cost_usd || 0).toFixed(2)}</span> ·{' '}
+                <span style={{ color: HF.textFaint }}>latency:</span> {activeTake.latency_s}s
+              </div>
+              {activeTake.prompt && <div style={{ marginTop: 4, fontStyle: 'italic', color: HF.textDim }}>"{activeTake.prompt.slice(0, 220)}"</div>}
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT: takes gallery */}
+        <div style={{
+          padding: 8, borderRadius: 8, background: HF.surface, border: `1px solid ${HF.border}`,
+          display: 'flex', flexDirection: 'column', minHeight: 0,
+        }}>
+          <div style={{ padding: '6px 8px', fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em' }}>
+            TAKES ({allTakes.length})
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto', padding: 4 }}>
+            {allTakes.length === 0 && (
+              <div style={{ padding: 14, fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, textAlign: 'center' }}>no takes yet</div>
+            )}
+            {allTakes.map((t, i) => {
+              const active = activeTake && activeTake.video_path === t.video_path;
+              return (
+                <div key={i} onClick={() => setActiveTake(t)} style={{
+                  padding: 6, marginBottom: 4, borderRadius: 4, cursor: 'pointer',
+                  background: active ? HF.bg : 'transparent',
+                  border: `1px solid ${active ? HF.accent : 'transparent'}`,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                    <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent }}>{t.post_id}</span>
+                    <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>s{t.shot_no}·t{t.take}</span>
+                    <span style={{ flex: 1 }} />
+                    <span style={{ fontFamily: HF.mono, fontSize: 8.5, color: HF.textFaint }}>${(t.cost_usd || 0).toFixed(2)}</span>
+                  </div>
+                  <video
+                    src={'/api/outputs/' + t.video_path}
+                    muted loop playsInline preload="metadata"
+                    onMouseEnter={e => e.target.play().catch(() => {})}
+                    onMouseLeave={e => { e.target.pause(); e.target.currentTime = 0; }}
+                    style={{ width: '100%', borderRadius: 3, background: '#000', aspectRatio: t.aspect && t.aspect.replace(':', '/') }}
+                  />
+                  <div style={{ fontFamily: HF.mono, fontSize: 8.5, color: HF.textFaint, marginTop: 2 }}>
+                    {t.model} · {t.latency_s}s
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const inputStyle = {
+  width: '100%', padding: '6px 8px', borderRadius: 4,
+  background: '#0a0a0a', color: '#F0EDE8',
+  border: '1px solid #2a2a2a', fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
+  boxSizing: 'border-box',
+};
+const selStyle = { ...inputStyle };
+const hintStyle = { marginTop: 3, fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#8A8582' };
+
+function FormRow({ label, children }) {
+  return (
+    <div>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#8A8582', letterSpacing: '.14em', marginBottom: 3 }}>{label}</div>
+      {children}
     </div>
   );
 }
@@ -2854,6 +3158,23 @@ function App() {
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(null);
   const [previewRefresh, setPreviewRefresh] = useState(0);
+  const [renderPrefill, setRenderPrefill] = useState(null);
+
+  const sendIdeaToRender = useCallback((idea) => {
+    const firstBeat = (idea.beats || [])[0] || {};
+    const prompt = [
+      idea.hook,
+      firstBeat.shot,
+      idea.cover_frame_direction,
+    ].filter(Boolean).join('. ').slice(0, 1200);
+    setRenderPrefill({
+      prompt,
+      post_id: idea.idea_id || '',
+      aspect: '9:16',
+      duration: idea.duration_target && idea.duration_target.includes('15') ? 5 : 5,
+    });
+    setView('render');
+  }, []);
   const runStartRef = useRef(null);
   const eventSourceRef = useRef(null);
 
@@ -3074,10 +3395,12 @@ function App() {
         )}
 
         {view === 'reels' && (
-          <ReelsView refreshSignal={previewRefresh} onRunReels={() => runAgent('reel_director')} running={running} />
+          <ReelsView refreshSignal={previewRefresh} onRunReels={() => runAgent('reel_director')} running={running} onSendToRender={sendIdeaToRender} />
         )}
 
         {view === 'history' && <HistoryView />}
+
+        {view === 'render' && <VideoRenderView prefill={renderPrefill} />}
 
         {view === 'outputs' && <OutputsView />}
 

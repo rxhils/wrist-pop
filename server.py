@@ -26,7 +26,8 @@ from typing import Any
 
 import requests
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
+import time
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -903,6 +904,7 @@ class RenderVideoReq(BaseModel):
 
 @app.post("/api/render/video")
 def render_video_endpoint(req: RenderVideoReq) -> dict:
+    """Legacy local ComfyUI render. Kept for backwards compat."""
     from render import render_video_multi
     return render_video_multi(prompt=req.prompt, refs_b64=req.refs_b64)
 
@@ -911,6 +913,112 @@ def render_video_endpoint(req: RenderVideoReq) -> dict:
 def render_video_status() -> dict:
     from render import ltx_checkpoint_present
     return {"ltx_available": ltx_checkpoint_present()}
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Cloud video render (fal.ai)
+# ─────────────────────────────────────────────────────────────────────────
+RENDERS_DIR = OUT_DIR / "renders"
+
+
+class CloudVideoReq(BaseModel):
+    prompt: str
+    model: str = "ltx_draft"               # ltx_draft | wan_hero | ltx2_4k
+    post_id: str | None = None
+    shot_no: int = 1
+    takes: int = 1
+    duration_s: int = 5
+    aspect: str = "9:16"
+    init_image_path: str | None = None     # relative path under outputs/
+    init_image_url: str | None = None      # external HTTPS url
+    negative_prompt: str | None = None
+
+
+@app.get("/api/render/video/models")
+def cloud_video_models() -> dict:
+    try:
+        import video_providers
+        return {
+            "configured": video_providers.is_configured(),
+            "models": video_providers.list_models(),
+        }
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@app.post("/api/render/video/cloud")
+def cloud_video_render(req: CloudVideoReq) -> dict:
+    """Synchronous: blocks until video downloaded. Latency 10s-10min depending on model."""
+    import video_providers
+    if not video_providers.is_configured():
+        raise HTTPException(400, "FAL_KEY missing in .env")
+
+    from run_render_video import render_take
+    post_id = req.post_id or f"adhoc-{uuid.uuid4().hex[:6]}"
+    init_path = None
+    if req.init_image_path:
+        # Resolve relative to outputs/ — must stay inside outputs/ for safety
+        candidate = (OUT_DIR / req.init_image_path).resolve()
+        if str(candidate).startswith(str(OUT_DIR.resolve())) and candidate.exists():
+            init_path = str(candidate)
+
+    successes: list[dict] = []
+    errors: list[str] = []
+    for t in range(1, req.takes + 1):
+        try:
+            entry = render_take(
+                prompt=req.prompt,
+                model=req.model,
+                post_id=post_id,
+                shot_no=req.shot_no,
+                take=t,
+                init_image_path=init_path,
+                init_image_url=req.init_image_url,
+                duration_s=req.duration_s,
+                aspect=req.aspect,
+                negative_prompt=req.negative_prompt,
+            )
+            successes.append(entry)
+        except Exception as e:
+            errors.append(f"take {t}: {type(e).__name__}: {e}")
+
+    return {"takes": successes, "errors": errors, "post_id": post_id}
+
+
+@app.get("/api/render/video/takes")
+def cloud_video_takes(post_id: str | None = None, limit: int = 100) -> dict:
+    """List all video takes on disk (most recent first), optionally filtered by post_id."""
+    RENDERS_DIR.mkdir(parents=True, exist_ok=True)
+    items: list[dict] = []
+    for sidecar in sorted(RENDERS_DIR.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+        try:
+            meta = json.loads(sidecar.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if post_id and meta.get("post_id") != post_id:
+            continue
+        items.append(meta)
+        if len(items) >= limit:
+            break
+    return {"count": len(items), "takes": items}
+
+
+@app.post("/api/render/upload")
+async def upload_init_image(file: UploadFile = File(...)) -> dict:
+    """Save an uploaded init image into outputs/renders/uploads/ for i2v."""
+    up_dir = RENDERS_DIR / "uploads"
+    up_dir.mkdir(parents=True, exist_ok=True)
+    safe = "".join(c if c.isalnum() or c in ".-_" else "_" for c in file.filename or "upload.png")[:80]
+    name = f"{int(time.time())}_{safe}"
+    dest = up_dir / name
+    data = await file.read()
+    dest.write_bytes(data)
+    rel = str(dest.relative_to(OUT_DIR)).replace("\\", "/")
+    return {"path": rel, "url": f"/api/outputs/{rel}", "size_bytes": len(data)}
+
+
+# Serve mp4 + uploaded files directly
+app.mount("/renders", StaticFiles(directory=str(RENDERS_DIR)), name="renders") if RENDERS_DIR.exists() else None
 
 
 # ─────────────────────────────────────────────────────────────────────────
