@@ -123,17 +123,18 @@ const AGENT_META = {
   strategist:      { name: 'Marketing Director', glyph: '◈', group: 'marketing', desc: 'Trend signal → campaign play of the day', stage: 2 },
   writer:          { name: 'Copy',               glyph: '◆', group: 'marketing', desc: 'Hooks + scripts + captions A/B + CTA', stage: 3 },
   gate:            { name: 'QA',                 glyph: '◇', group: 'marketing', desc: 'Blocks weak / risky / spec-wrong copy', stage: 4 },
-  visual:          { name: 'Visual Brief',       glyph: '▣', group: 'marketing', desc: 'Shot list + edit brief for manual production', stage: 5 },
-  manual_reel:     { name: 'Manual Reel',        glyph: '▥', group: 'marketing', desc: 'Human production step — film + edit + export', stage: 6 },
-  manual_post:     { name: 'Manual Post',        glyph: '▧', group: 'marketing', desc: 'Human publishing step — schedule + post + log metrics', stage: 7 },
-  output_director: { name: 'Output Director',    glyph: '◐', group: 'marketing', desc: 'Operator console · synthesises everything into next-action list', stage: 8 },
+  asset_director:  { name: 'Asset Director',     glyph: '◫', group: 'marketing', desc: 'Plans stills + motion clips · minimum-viable-first', stage: 5 },
+  visual:          { name: 'Visual Brief',       glyph: '▣', group: 'marketing', desc: 'Shot list + edit brief for manual production', stage: 6 },
+  manual_reel:     { name: 'Manual Reel',        glyph: '▥', group: 'marketing', desc: 'Human production step — film + edit + export', stage: 7 },
+  manual_post:     { name: 'Manual Post',        glyph: '▧', group: 'marketing', desc: 'Human publishing step — schedule + post + log metrics', stage: 8 },
+  output_director: { name: 'Output Director',    glyph: '◐', group: 'marketing', desc: 'Operator console · synthesises everything into next-action list', stage: 9 },
   scheduler:       { name: 'Scheduler',          glyph: '▤', group: 'tools',     desc: 'UK posting windows + Notion payload (optional)', stage: 9 },
   render_image:    { name: 'Image Render',       glyph: '▦', group: 'render',    desc: 'FLUX.1 / SDXL via ComfyUI (optional)', stage: 10 },
   render_video:    { name: 'Video Render',       glyph: '▩', group: 'render',    desc: 'LTX-Video via ComfyUI (optional)', stage: 11 },
   reel_director:   { name: 'Reel Director',      glyph: '◑', group: 'reels',     desc: 'Generates 5 ranked reel/TikTok ideas from full pipeline output', stage: 12 },
 };
 
-const PIPELINE_IDS = ['scout', 'strategist', 'writer', 'gate', 'visual', 'manual_reel', 'manual_post', 'output_director'];
+const PIPELINE_IDS = ['scout', 'strategist', 'writer', 'gate', 'asset_director', 'visual', 'manual_reel', 'manual_post', 'output_director'];
 const TOOLS_IDS = ['scheduler'];
 const RENDER_IDS = ['render_image', 'render_video'];
 const REEL_IDS = ['reel_director'];
@@ -291,7 +292,7 @@ function HFSidebar({ activeId, statuses, onPick, progress }) {
 }
 
 // ───────────────────────── Agent header ─────────────────────────
-const LLM_AGENT_IDS = new Set(['scout', 'strategist', 'writer', 'gate', 'visual', 'output_director', 'reel_director']);
+const LLM_AGENT_IDS = new Set(['scout', 'strategist', 'writer', 'gate', 'asset_director', 'visual', 'output_director', 'reel_director']);
 
 function HFAgentHeader({ agentId, status, onRun, running, agentsConfig, onAgentConfigUpdate }) {
   const agent = AGENT_META[agentId];
@@ -458,6 +459,7 @@ const OUTPUT_FILE_BY_AGENT = {
   strategist:      'content_brief',
   writer:          'copy',
   gate:            'approved_copy',
+  asset_director:  'asset_plan',
   visual:          'visual_brief',
   manual_reel:     'manual_reel_state',
   manual_post:     'manual_post_state',
@@ -592,6 +594,7 @@ function AgentOutputView({ agentId, data }) {
     case 'strategist':      return <StrategistOutput data={data} />;
     case 'writer':          return <WriterOutput data={data} />;
     case 'gate':            return <GateOutput data={data} />;
+    case 'asset_director':  return <AssetDirectorOutput data={data} />;
     case 'visual':          return <VisualOutput data={data} />;
     case 'scheduler':       return <SchedulerOutput data={data} />;
     case 'manual_reel':     return <ManualReelOutput data={data} />;
@@ -1185,6 +1188,175 @@ function GateOutput({ data }) {
               <div style={{ marginTop: 8, padding: 6, background: HF.surface2, borderLeft: `2px solid ${HF.accent}`, borderRadius: 3 }}>
                 <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 3 }}>HAND-OFF TO VISUAL</div>
                 <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.text, fontStyle: 'italic', lineHeight: 1.5 }}>{visualInstr}</div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+const PRIORITY_COLOR = { REQUIRED: '#7fd96b', USEFUL: '#f5e74a', OPTIONAL: '#8A8582' };
+
+function AssetDirectorOutput({ data }) {
+  const plans = data.plans || (Array.isArray(data) ? data : [data]);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {plans.map((plan, pi) => {
+        const blocked = plan.status === 'BLOCKED';
+        const imgs = plan.image_blueprint || [];
+        const vids = plan.motion_blueprint || [];
+        const deps = plan.asset_dependencies || [];
+        const missing = plan.missing_assets || [];
+        const build = plan.build_order || [];
+        const mv = plan.minimum_viable_asset_set || {};
+        const handoff = plan.handoff_for_visual_brief || {};
+        const strat = plan.asset_strategy || {};
+        return (
+          <div key={pi} style={{
+            padding: 14, borderRadius: 8, background: HF.bg,
+            border: `1px solid ${blocked ? HF.err : HF.borderSoft}`,
+          }}>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 8, flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.accent }}>{plan.post_id || `plan-${pi}`}</span>
+              <Pill tone={blocked ? 'err' : 'ok'}>{plan.status}</Pill>
+              {strat.content_type && <Pill>{strat.content_type}</Pill>}
+              <span style={{ flex: 1 }} />
+              <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>
+                {imgs.length} stills · {vids.length} clips
+              </span>
+            </div>
+            {plan.campaign_angle && (
+              <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 14, color: HF.text, marginBottom: 6 }}>"{plan.campaign_angle}"</div>
+            )}
+            {strat.why_this_asset_mix_wins && (
+              <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.textDim, marginBottom: 10, lineHeight: 1.5 }}>{strat.why_this_asset_mix_wins}</div>
+            )}
+
+            {imgs.length > 0 && (
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>IMAGE BLUEPRINT</div>
+                {imgs.map((im, i) => {
+                  const c = PRIORITY_COLOR[im.priority] || HF.textFaint;
+                  return (
+                    <div key={i} style={{ padding: 8, marginBottom: 4, borderRadius: 4, background: HF.surface2, borderLeft: `3px solid ${c}` }}>
+                      <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 3, flexWrap: 'wrap' }}>
+                        <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent }}>{im.image_id}</span>
+                        <Pill>{im.image_type}</Pill>
+                        <Pill>{im.role}</Pill>
+                        <span style={{ flex: 1 }} />
+                        <span style={{ fontFamily: HF.mono, fontSize: 9, color: c, letterSpacing: '.1em' }}>{im.priority}</span>
+                        {im.reuse_for_video && <span style={{ fontFamily: HF.mono, fontSize: 8.5, color: HF.accent }}>★ i2v base</span>}
+                      </div>
+                      <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.text, lineHeight: 1.4 }}>
+                        <strong>{im.subject}</strong>
+                        {im.purpose && <span style={{ color: HF.textDim }}> — {im.purpose}</span>}
+                      </div>
+                      {(im.composition || im.lighting || im.background) && (
+                        <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, marginTop: 3, lineHeight: 1.5 }}>
+                          {im.composition && <div>comp: {im.composition}</div>}
+                          {im.lighting && <div>light: {im.lighting}</div>}
+                          {im.background && <div>bg: {im.background}</div>}
+                        </div>
+                      )}
+                      {Array.isArray(im.must_show) && im.must_show.length > 0 && (
+                        <div style={{ marginTop: 4 }}>
+                          {im.must_show.map((m, j) => <Pill key={j} tone="ok" style={{ marginRight: 3 }}>{m}</Pill>)}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {vids.length > 0 && (
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>MOTION BLUEPRINT</div>
+                {vids.map((v, i) => {
+                  const c = PRIORITY_COLOR[v.priority] || HF.textFaint;
+                  return (
+                    <div key={i} style={{ padding: 8, marginBottom: 4, borderRadius: 4, background: HF.surface2, borderLeft: `3px solid ${c}` }}>
+                      <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 3, flexWrap: 'wrap' }}>
+                        <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent }}>{v.video_id}</span>
+                        <Pill>{v.video_type}</Pill>
+                        <Pill>{v.role}</Pill>
+                        {v.platform && <Pill>{v.platform}</Pill>}
+                        <span style={{ flex: 1 }} />
+                        <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>{v.duration_seconds}s · {v.aspect_ratio}</span>
+                        <span style={{ fontFamily: HF.mono, fontSize: 9, color: c, letterSpacing: '.1em' }}>{v.priority}</span>
+                      </div>
+                      {v.source_image_id && (
+                        <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textDim, marginBottom: 3 }}>
+                          source: <span style={{ color: HF.accent }}>{v.source_image_id}</span>
+                        </div>
+                      )}
+                      <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, lineHeight: 1.6 }}>
+                        {v.subject_motion && <div>subject: {v.subject_motion}</div>}
+                        {v.background_motion && <div>bg: {v.background_motion}</div>}
+                        {v.camera_motion && <div>cam: {v.camera_motion}</div>}
+                      </div>
+                      {v.prompt && (
+                        <div style={{ marginTop: 4, padding: 6, background: HF.bg, border: `1px solid ${HF.borderSoft}`, borderRadius: 3, fontFamily: HF.mono, fontSize: 9.5, color: HF.textDim, lineHeight: 1.5 }}>
+                          {v.prompt}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {missing.length > 0 && (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.err, letterSpacing: '.14em', marginBottom: 4 }}>MISSING ASSETS</div>
+                {missing.map((m, i) => (
+                  <div key={i} style={{ padding: 6, marginBottom: 3, borderLeft: `2px solid ${HF.err}`, background: 'rgba(255,90,90,.04)', borderRadius: 3, fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5 }}>
+                    <strong style={{ color: HF.text }}>{m.missing_item}</strong> — {m.why_needed}
+                    {m.impact_if_missing && <div style={{ fontStyle: 'italic', color: HF.textFaint, marginTop: 2 }}>impact: {m.impact_if_missing}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {build.length > 0 && (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>BUILD ORDER</div>
+                {build.map((b, i) => (
+                  <div key={i} style={{ padding: 4, fontFamily: HF.body, fontSize: 11, color: HF.text, lineHeight: 1.5 }}>
+                    <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, marginRight: 6 }}>{b.step}.</span>
+                    {b.action}
+                    {b.why_first && <span style={{ color: HF.textFaint, marginLeft: 6, fontStyle: 'italic' }}>— {b.why_first}</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {(mv.images_required || mv.videos_required) && (
+              <div style={{ padding: 8, background: HF.surface2, borderLeft: `2px solid ${HF.accent}`, borderRadius: 3, fontFamily: HF.mono, fontSize: 10, color: HF.textDim, marginBottom: 8 }}>
+                <div style={{ color: HF.accent, letterSpacing: '.12em', marginBottom: 3 }}>MINIMUM VIABLE</div>
+                <div>images: {(mv.images_required || []).join(' · ') || '—'}</div>
+                <div>videos: {(mv.videos_required || []).join(' · ') || '—'}</div>
+              </div>
+            )}
+
+            {handoff.recommended_sequence && handoff.recommended_sequence.length > 0 && (
+              <div style={{ padding: 8, background: 'rgba(245,231,74,.04)', borderLeft: `2px solid ${HF.accent}`, borderRadius: 3 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 3 }}>HAND-OFF TO VISUAL BRIEF</div>
+                <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.text, lineHeight: 1.6 }}>
+                  <div>sequence: {(handoff.recommended_sequence || []).join(' → ')}</div>
+                  {handoff.cover_asset && <div>cover: <span style={{ color: HF.accent }}>{handoff.cover_asset}</span></div>}
+                  {handoff.hero_asset && <div>hero: <span style={{ color: HF.accent }}>{handoff.hero_asset}</span></div>}
+                </div>
+                {handoff.editing_note && <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, marginTop: 4, fontStyle: 'italic' }}>{handoff.editing_note}</div>}
+              </div>
+            )}
+
+            {blocked && plan.reason && (
+              <div style={{ marginTop: 8, padding: 8, background: 'rgba(255,90,90,.06)', borderLeft: `2px solid ${HF.err}`, borderRadius: 3, fontFamily: HF.body, fontSize: 11, color: HF.text }}>
+                <strong style={{ color: HF.err }}>BLOCKED:</strong> {plan.reason}
+                {plan.required_fix && <div style={{ marginTop: 4, fontStyle: 'italic', color: HF.textDim }}>fix: {plan.required_fix}</div>}
               </div>
             )}
           </div>

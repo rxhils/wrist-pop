@@ -49,6 +49,13 @@ AGENT_CONFIG = {
         "max_tokens": 0,
         "description": "Deterministic Python — no LLM call.",
     },
+    "asset_director": {
+        "provider": "mistral",
+        "model":    "mistral-large-latest",
+        "temperature": 0.4,
+        "max_tokens": 8192,
+        "description": "Plans stills + motion clips before Visual Brief; minimum-viable-first.",
+    },
     "manual_reel": {
         "provider": "ollama",
         "model":    None,

@@ -87,10 +87,19 @@ AGENTS: dict[str, dict[str, Any]] = {
         "outputs": ["approved_copy"],
         "prompt_file": "quality_gate.md",
     },
+    "asset_director": {
+        "label": "Asset Director",
+        "tier": "marketing",
+        "stage": 5,
+        "script": "run_asset_director.py",
+        "kind": "llm",
+        "outputs": ["asset_plan"],
+        "prompt_file": "asset_director.md",
+    },
     "visual": {
         "label": "Visual Brief",
         "tier": "marketing",
-        "stage": 5,
+        "stage": 6,
         "script": "run_visual.py",
         "kind": "llm",
         "outputs": ["visual_brief"],
@@ -99,7 +108,7 @@ AGENTS: dict[str, dict[str, Any]] = {
     "manual_reel": {
         "label": "Manual Reel",
         "tier": "marketing",
-        "stage": 6,
+        "stage": 7,
         "script": "run_manual_reel.py",
         "kind": "manual",
         "outputs": ["manual_reel_state"],
@@ -108,7 +117,7 @@ AGENTS: dict[str, dict[str, Any]] = {
     "manual_post": {
         "label": "Manual Post",
         "tier": "marketing",
-        "stage": 7,
+        "stage": 8,
         "script": "run_manual_post.py",
         "kind": "manual",
         "outputs": ["manual_post_state"],
@@ -117,7 +126,7 @@ AGENTS: dict[str, dict[str, Any]] = {
     "output_director": {
         "label": "Output Director",
         "tier": "marketing",
-        "stage": 8,
+        "stage": 9,
         "script": "run_output_director.py",
         "kind": "llm",
         "outputs": ["operator_console"],

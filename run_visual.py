@@ -63,6 +63,21 @@ def _strip_fences(s: str) -> str:
     return s.strip()
 
 
+def _load_asset_plan_for(post_id: str, today: str) -> dict | None:
+    """Look up Asset Director plan for this post_id (if Asset Director ran upstream)."""
+    direct = OUT_DIR / f"asset_plan_{today}.json"
+    candidates = [direct] if direct.exists() else sorted(OUT_DIR.glob("asset_plan_*.json"), reverse=True)[:1]
+    for path in candidates:
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for plan in data.get("plans") or []:
+            if plan.get("post_id") == post_id and plan.get("status") == "OK":
+                return plan
+    return None
+
+
 def brief_one(piece: dict, today: str) -> dict:
     from prompts import load_prompt
     system_prompt = load_prompt(PROMPT_PATH.name)
@@ -73,19 +88,35 @@ def brief_one(piece: dict, today: str) -> dict:
     public_piece = {k: v for k, v in piece.items() if not k.startswith("_")}
     post_id = piece.get("post_id") or "unknown"
 
+    asset_plan = _load_asset_plan_for(post_id, today)
+    asset_block = ""
+    if asset_plan:
+        asset_block = (
+            "ASSET PLAN (from Asset Director — translate this into shot_list + edit_plan, "
+            "DO NOT invent extra assets):\n```json\n"
+            + json.dumps({
+                "image_blueprint": asset_plan.get("image_blueprint"),
+                "motion_blueprint": asset_plan.get("motion_blueprint"),
+                "build_order": asset_plan.get("build_order"),
+                "minimum_viable_asset_set": asset_plan.get("minimum_viable_asset_set"),
+                "handoff_for_visual_brief": asset_plan.get("handoff_for_visual_brief"),
+            }, indent=2, ensure_ascii=False)[:4000]
+            + "\n```\n\n"
+        )
+
     user_prompt = f"""Today: {today}
 post_id: {post_id}
 Format: {fmt}
 Required aspect ratio: {aspect}
 
-APPROVED COPY (from QA):
+{asset_block}APPROVED COPY (from QA):
 ```json
 {json.dumps(public_piece, indent=2, ensure_ascii=False)}
 ```
 
 QA visual instruction: {piece.get('_qa_visual_instruction') or '(none)'}
 
-Produce the visual brief using your output schema. shot_list must have 3–8 shots. edit_plan steps must align with reel_script.beats. Output VALID JSON only.
+Produce the visual brief using your output schema. shot_list must have 3–8 shots. edit_plan steps must align with reel_script.beats. {('Reuse asset IDs from the Asset Plan above where applicable (set must_capture to reference image_id/video_id). ' if asset_plan else '')}Output VALID JSON only.
 """
 
     from providers import llm_json

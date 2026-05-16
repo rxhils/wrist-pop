@@ -18,7 +18,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 STAGES = [
-    "scout", "strategist", "writer", "gate", "visual",
+    "scout", "strategist", "writer", "gate", "asset_director", "visual",
     "manual_reel", "manual_post", "output_director",
 ]
 # Off-chain agents — runnable via --only but not in the default sequence
@@ -41,6 +41,9 @@ def _run(name: str) -> int:
     elif name == "gate":
         from run_gate import main as gate_main
         rc = gate_main()
+    elif name == "asset_director":
+        from run_asset_director import main as ad_main
+        rc = ad_main()
     elif name == "visual":
         from run_visual import main as visual_main
         rc = visual_main()
