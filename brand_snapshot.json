@@ -1,0 +1,25 @@
+{
+  "source": "https://popwriststudio.com/",
+  "fetched_at": "2026-05-16T17:42:30Z",
+  "website_status": "LIVE",
+  "brand_name": "Pop Wrist Studio",
+  "product_name": "Cradle Adapter V1",
+  "cta_primary": "Pre-Order Now",
+  "legal_disclaimer": "Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet.",
+  "colourways": [
+    "Monochrome",
+    "Arctic Blue",
+    "Cobalt Orange",
+    "Green Eight",
+    "Otto Rosso"
+  ],
+  "specs": {
+    "inner_socket_mm": 40.35,
+    "retaining_lip_mm": 0.7,
+    "lug_width_mm": 22,
+    "cradle_depth_mm": 6.2,
+    "material": "FKM rubber",
+    "crown_notch_count": 2
+  },
+  "notes": []
+}

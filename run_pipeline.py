@@ -122,6 +122,14 @@ def main() -> int:
     today = date.today().isoformat()
     print(f"[pipeline] {today} — running stages: {', '.join(stages)}")
 
+    # Refresh brand snapshot (live site truth) before any agent runs
+    try:
+        from tools.website_truth import refresh_if_stale
+        snap = refresh_if_stale(force=False)
+        print(f"[pipeline] brand snapshot status={snap.get('website_status')} cta={snap.get('cta_primary')!r} colourways={len(snap.get('colourways') or [])}")
+    except Exception as e:
+        print(f"[pipeline] brand snapshot refresh failed (continuing with cached/seed): {e}")
+
     for stage in stages:
         rc = _run(stage)
         if rc != 0:

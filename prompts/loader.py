@@ -34,6 +34,30 @@ def _read_with_includes(name: str, _seen: set[str] | None = None) -> str:
     return _INCLUDE_RE.sub(_sub, text)
 
 
+def _brand_snapshot_block() -> str:
+    """Append the live brand_snapshot.json as a [BRAND TRUTH SNAPSHOT] block.
+    Read-only — does not refetch. Pipeline runner is responsible for refresh.
+    """
+    try:
+        import sys
+        from pathlib import Path as _P
+        sys.path.insert(0, str(_P(__file__).resolve().parent.parent))
+        from tools.website_truth import load as _load_snap
+        snap = _load_snap()
+    except Exception:
+        return ""
+    if not snap:
+        return ""
+    try:
+        import json as _json
+        return (
+            "\n\n[BRAND TRUTH SNAPSHOT — read first, override master block defaults where this differs]\n"
+            "```json\n" + _json.dumps(snap, indent=2, ensure_ascii=False) + "\n```\n"
+        )
+    except Exception:
+        return ""
+
+
 def _learning_block() -> str:
     """Pull last 30d winners from cloud_store. Empty string if cloud unavailable."""
     try:
@@ -61,13 +85,24 @@ def _learning_block() -> str:
     return "\n".join(lines)
 
 
-def load_prompt(name: str, with_learning: bool = True) -> str:
-    """Read a prompt file with @include resolution + optional learning injection.
+def load_prompt(name: str, with_learning: bool = True, with_snapshot: bool = True) -> str:
+    """Read a prompt file with @include resolution + optional dynamic blocks.
 
-    `with_learning` defaults True — quietly no-ops if cloud_store not configured.
-    Pass False to get the raw on-disk file (useful for the /api/prompts UI viewer).
+    Dynamic blocks appended in order:
+      1. [BRAND TRUTH SNAPSHOT] from brand_snapshot.json (with_snapshot=True)
+      2. [SELF-LEARNING — KNOWN WINNERS] from cloud_store (with_learning=True)
+
+    `with_snapshot` defaults True — silently no-ops if brand_snapshot.json missing.
+    `with_learning` defaults True — silently no-ops if cloud_store not configured.
+
+    Pass both False to get the raw on-disk file (used by /api/prompts viewer
+    when `inlined=false`).
     """
     text = _read_with_includes(name)
+    if with_snapshot:
+        snap_block = _brand_snapshot_block()
+        if snap_block:
+            text = text + snap_block
     if with_learning:
         block = _learning_block()
         if block:

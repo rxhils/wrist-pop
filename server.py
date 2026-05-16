@@ -232,18 +232,45 @@ def health() -> dict:
     except Exception as e:
         cloud = {"configured": False, "ok": False, "reason": str(e)[:200]}
 
+    try:
+        from tools.website_truth import load as _load_snap
+        snap = _load_snap() or {}
+        brand = {
+            "status": snap.get("website_status"),
+            "brand_name": snap.get("brand_name"),
+            "cta_primary": snap.get("cta_primary"),
+            "colourways_count": len(snap.get("colourways") or []),
+            "fetched_at": snap.get("fetched_at"),
+        }
+    except Exception as e:
+        brand = {"status": "ERROR", "reason": str(e)[:200]}
+
     return {
         "ok": True,
         "model": os.getenv("MODEL_CREATIVE", "qwen2.5:14b"),
         "ollama": _check(ollama_url, "/api/tags"),
         "comfyui": _check(comfy_url, "/system_stats"),
         "cloud": cloud,
+        "brand": brand,
     }
 
 
 @app.get("/api/agents")
 def list_agents() -> dict:
     return {"agents": [{"key": k, **v} for k, v in AGENTS.items()]}
+
+
+@app.get("/api/brand-snapshot")
+def get_brand_snapshot() -> dict:
+    from tools.website_truth import load as _load_snap
+    snap = _load_snap()
+    return snap or {"website_status": "MISSING"}
+
+
+@app.post("/api/brand-snapshot/refresh")
+def refresh_brand_snapshot() -> dict:
+    from tools.website_truth import refresh_if_stale
+    return refresh_if_stale(force=True)
 
 
 @app.get("/api/cloud/health")

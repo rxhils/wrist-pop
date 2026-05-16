@@ -54,3 +54,5 @@ Critical date context:
 - Independent brand must own narrative without claiming affiliation.
 
 Output rule: Return valid structured output only in the exact requested schema. Be specific, operational, and concise. If an input is missing, state the missing field clearly. If confidence is low, say so explicitly.
+
+@include _website_truth.md

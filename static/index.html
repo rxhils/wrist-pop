@@ -203,6 +203,10 @@ function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontFamily: HF.mono, fontSize: 11 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: HF.textDim }} title={health.brand ? `${health.brand.brand_name || ''} · CTA: ${health.brand.cta_primary || ''} · ${health.brand.colourways_count || 0} colourways · fetched ${health.brand.fetched_at || 'never'}` : ''}>
+          <StatusDot status={health.brand && health.brand.status === 'LIVE' ? 'done' : (health.brand && (health.brand.status || '').startsWith('UNREACHABLE') ? 'err' : 'idle')} />
+          site <span style={{ color: HF.textFaint }}>{health.brand ? (health.brand.status === 'LIVE' ? 'live' : (health.brand.status || '').toLowerCase().slice(0,10)) : '—'}</span>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: HF.textDim }} title={health.cloud && health.cloud.reason ? health.cloud.reason : ''}>
           <StatusDot status={health.cloud && health.cloud.ok ? 'done' : (health.cloud && health.cloud.configured ? 'err' : 'idle')} />
           cloud <span style={{ color: HF.textFaint }}>{health.cloud && health.cloud.project ? health.cloud.project.slice(0,8) : '—'}</span>
