@@ -692,6 +692,13 @@ async def owui_run_stage(req: OWUIRunReq) -> dict:
         if req.only:
             cmd += ["--only", req.only]
     elif req.stage in AGENTS:
+        # render_video needs --prompt (or --from-brief). Same restriction as /api/run.
+        if req.stage == "render_video":
+            raise HTTPException(
+                400,
+                "render_video must be invoked via POST /api/render/video/cloud "
+                "(needs prompt + model). The OpenWebUI tool should call that endpoint."
+            )
         script = AGENTS[req.stage]["script"]
         cmd = [sys.executable, script]
         if req.input_path:
