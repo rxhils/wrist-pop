@@ -3,7 +3,14 @@
 Reads today's visual_brief, seeds a state file with one entry per post_id,
 preserving any existing manual entries. Writes JSON. No LLM.
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -16,14 +23,12 @@ sys.path.insert(0, str(Path(__file__).parent))
 ROOT = Path(__file__).parent
 OUT_DIR = ROOT / "outputs"
 
-
 def _latest(prefix: str, today: str) -> Path | None:
     direct = OUT_DIR / f"{prefix}_{today}.json"
     if direct.exists():
         return direct
     files = sorted(OUT_DIR.glob(f"{prefix}_*.json"), reverse=True)
     return files[0] if files else None
-
 
 def _load_existing(path: Path) -> dict:
     if path.exists():
@@ -32,7 +37,6 @@ def _load_existing(path: Path) -> dict:
         except json.JSONDecodeError:
             pass
     return {}
-
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -85,7 +89,6 @@ def main() -> int:
     if waiting:
         print(f"[manual_reel] {waiting} reel(s) WAITING for human production.")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

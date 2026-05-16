@@ -7,7 +7,14 @@ winners block from cloud_store) and outputs reel_ideas_<date>.json
 Sits SEPARATE from main marketing chain. Triggered manually after pipeline
 completes.
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -35,14 +42,12 @@ ARTIFACT_PREFIXES = [
     "operator_console",
 ]
 
-
 def _latest(prefix: str, today: str) -> Path | None:
     direct = OUT_DIR / f"{prefix}_{today}.json"
     if direct.exists():
         return direct
     files = sorted(OUT_DIR.glob(f"{prefix}_*.json"), reverse=True)
     return files[0] if files else None
-
 
 def _load_artifact(prefix: str, today: str):
     p = _latest(prefix, today)
@@ -53,11 +58,9 @@ def _load_artifact(prefix: str, today: str):
     except json.JSONDecodeError as e:
         return p, {"_parse_error": str(e)}
 
-
 def _truncate(obj, limit: int = 2500) -> str:
     s = json.dumps(obj, indent=2, ensure_ascii=False, default=str)
     return s if len(s) <= limit else s[:limit] + f"\n... [truncated {len(s) - limit} chars]"
-
 
 def _load_historical_winners() -> str:
     """Optional self-learning hook. Returns markdown block of past winners
@@ -76,7 +79,6 @@ def _load_historical_winners() -> str:
     except Exception as e:
         print(f"[reel_director] cloud lookup failed (continuing without): {e}")
         return ""
-
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -200,7 +202,6 @@ def main() -> int:
     print(f"Saved: {md_path}")
 
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

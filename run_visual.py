@@ -3,7 +3,14 @@
 Same pattern as Writer: loop one LLM call per piece. Output saved to
 visual_brief_<date>.json with one entry per approved piece.
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -41,7 +48,6 @@ REQUIRED_NEGATIVE_TOKENS = [
     "Swatch logo",
 ]
 
-
 def latest_approved(today: str) -> dict:
     candidate = OUT_DIR / f"approved_copy_{today}.json"
     if candidate.exists():
@@ -52,7 +58,6 @@ def latest_approved(today: str) -> dict:
     print(f"[visual] fallback: {files[0].name}")
     return json.loads(files[0].read_text(encoding="utf-8"))
 
-
 def _strip_fences(s: str) -> str:
     s = s.strip()
     if s.startswith("```"):
@@ -61,7 +66,6 @@ def _strip_fences(s: str) -> str:
             s = s[4:]
         s = s.rsplit("```", 1)[0]
     return s.strip()
-
 
 def _load_asset_plan_for(post_id: str, today: str) -> dict | None:
     """Look up Asset Director plan for this post_id (if Asset Director ran upstream)."""
@@ -76,7 +80,6 @@ def _load_asset_plan_for(post_id: str, today: str) -> dict | None:
             if plan.get("post_id") == post_id and plan.get("status") == "OK":
                 return plan
     return None
-
 
 def brief_one(piece: dict, today: str) -> dict:
     from prompts import load_prompt
@@ -130,7 +133,6 @@ Produce the visual brief using your output schema. shot_list must have 3–8 sho
     brief["post_id"] = brief.get("post_id") or post_id
     return brief
 
-
 def validate_brief(brief: dict) -> dict:
     """New schema: visual_direction + shot_list + edit_plan."""
     notes: list[str] = []
@@ -172,7 +174,6 @@ def validate_brief(brief: dict) -> dict:
     else:
         brief["_visual_status"] = "PASS"
     return brief
-
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -234,7 +235,6 @@ def main() -> int:
         )
     print(f"\nSaved: {out_path}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

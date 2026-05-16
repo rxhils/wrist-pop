@@ -142,12 +142,22 @@ def _word_in_text(word: str, text_lc: str) -> bool:
 
 def hard_check(piece: dict, idea: dict) -> list[str]:
     text = gather_text(piece)
-    text_lc = text.lower()
+    # Mask out any disclaimer-like sentence before banned-phrase scan, otherwise
+    # words inside the disclaimer ("official", "endorsed", "collaboration") trigger
+    # false positives — the disclaimer literally has to contain those words.
+    # Catches both the exact DISCLAIMER and any paraphrase the model wrote.
+    text_for_scan = re.sub(
+        r"[^.!?\n]*\b(?:not affiliated|independent accessory brand|no affiliation)\b[^.!?\n]*[.!?\n]",
+        "[DISCLAIMER]",
+        text,
+        flags=re.IGNORECASE,
+    )
+    text_lc = text_for_scan.lower()
     issues: list[str] = []
 
-    # banned phrases — regex word-boundary
+    # banned phrases — regex word-boundary (scan masked text)
     for banned in BANNED_PHRASES:
-        if _word_in_text(banned, text):
+        if _word_in_text(banned, text_for_scan):
             issues.append(f"banned phrase '{banned}' present")
 
     # braggy phrases — substring fine (these are multi-word)
@@ -169,9 +179,16 @@ def hard_check(piece: dict, idea: dict) -> list[str]:
         )
     fmt = (fmt or "").upper()
 
-    # Disclaimer required on public-facing formats (any caption_option carries it OK)
+    # Disclaimer required on public-facing formats — check ORIGINAL text + accept
+    # paraphrased versions that still carry the "not affiliated" essence.
     if fmt in PUBLIC_FACING_FORMATS:
-        if DISCLAIMER.lower() not in text_lc:
+        orig_lc = text.lower()
+        has_disclaimer = (
+            DISCLAIMER.lower() in orig_lc
+            or ("not affiliated" in orig_lc and ("swatch" in orig_lc or "audemars" in orig_lc))
+            or "independent accessory brand" in orig_lc
+        )
+        if not has_disclaimer:
             issues.append("required disclaimer missing")
 
     # Legacy hashtag check — only if piece exposes a hashtags list

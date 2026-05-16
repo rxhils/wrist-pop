@@ -10,7 +10,14 @@ Pipeline:
       else → rewrite via Writer with combined revision notes
   emit approved_copy_<date>.json
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -39,7 +46,6 @@ PROMPT_PATH = ROOT / "prompts" / "quality_gate.md"
 OUT_DIR = ROOT / "outputs"
 MAX_RETRIES = 2
 
-
 def latest_copy(today: str) -> dict:
     candidate = OUT_DIR / f"copy_{today}.json"
     if candidate.exists():
@@ -50,7 +56,6 @@ def latest_copy(today: str) -> dict:
     print(f"[gate] fallback: {files[0].name}")
     return json.loads(files[0].read_text(encoding="utf-8"))
 
-
 def _strip_fences(s: str) -> str:
     s = s.strip()
     if s.startswith("```"):
@@ -59,7 +64,6 @@ def _strip_fences(s: str) -> str:
             s = s[4:]
         s = s.rsplit("```", 1)[0]
     return s.strip()
-
 
 def soft_check(piece: dict, director_brief: dict) -> dict:
     """LLM QA review against new schema. Returns full QA JSON (status/score/problems)."""
@@ -86,7 +90,6 @@ Run all 6 QA gates. Return strict JSON per schema in your system prompt.
         user_prompt=user_prompt,
         num_ctx=6144,
     )
-
 
 def gate_one(piece: dict, director_brief: dict, today: str) -> dict:
     """Hard regex + auto-fix → LLM soft QA. BLOCK on hard fail after retries.
@@ -176,7 +179,6 @@ def gate_one(piece: dict, director_brief: dict, today: str) -> dict:
     current["_auto_fix_applied"] = auto_fix_log
     return current
 
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, help="custom copy_<date>.json")
@@ -233,7 +235,6 @@ def main() -> int:
         )
     print(f"\nSaved: {out_path}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

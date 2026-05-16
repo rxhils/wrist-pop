@@ -2,7 +2,14 @@
 
 One LLM call per idea (loop). Format-specific output schema per platform/format.
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -33,7 +40,6 @@ LENGTH_LIMITS = {
     "Email": {"subject": 50, "preview_text": 90, "body": 5000},
 }
 
-
 def _flatten_text(piece: dict) -> str:
     parts: list[str] = []
 
@@ -50,7 +56,6 @@ def _flatten_text(piece: dict) -> str:
 
     walk(piece)
     return " ".join(parts)
-
 
 def recent_captions(today: str, days: int = 3) -> list[str]:
     """Pull recommended captions from last N days of copy_*.json (new schema)."""
@@ -75,7 +80,6 @@ def recent_captions(today: str, days: int = 3) -> list[str]:
         if len(caps) >= days * 5:
             break
     return caps[: days * 5]
-
 
 def check_lengths(piece: dict, director_brief: dict) -> list[str]:
     """Length checks for new Copy schema (hook_options + reel_script.beats + caption_options)."""
@@ -106,7 +110,6 @@ def check_lengths(piece: dict, director_brief: dict) -> list[str]:
 
     return issues
 
-
 def latest_brief(today: str) -> dict:
     candidate = OUT_DIR / f"content_brief_{today}.json"
     if candidate.exists():
@@ -117,7 +120,6 @@ def latest_brief(today: str) -> dict:
     print(f"[writer] using fallback brief: {briefs[0].name}")
     return json.loads(briefs[0].read_text(encoding="utf-8"))
 
-
 def _strip_fences(s: str) -> str:
     s = s.strip()
     if s.startswith("```"):
@@ -126,7 +128,6 @@ def _strip_fences(s: str) -> str:
             s = s[4:]
         s = s.rsplit("```", 1)[0]
     return s.strip()
-
 
 def write_one(director_brief: dict, post_id: str, today: str) -> dict:
     """Generate one Copy piece from a Marketing Director brief."""
@@ -161,7 +162,6 @@ Output VALID JSON only. No preamble.
     piece["post_id"] = piece.get("post_id") or post_id
     return piece
 
-
 def validate_piece(piece: dict, director_brief: dict, anti_repeat: list[str] | None = None) -> dict:
     """New-schema validation. hard_check kept for banned-phrase scan across all text."""
     issues = hard_check(piece, director_brief)
@@ -185,7 +185,6 @@ def validate_piece(piece: dict, director_brief: dict, anti_repeat: list[str] | N
     else:
         piece["_gate_status"] = "PASS"
     return piece
-
 
 def rewrite_one(director_brief: dict, prior: dict, revision_notes: list[str], today: str) -> dict:
     """Re-run writer with explicit revision notes."""
@@ -218,7 +217,6 @@ Return the FULL revised JSON only. Same schema. No preamble.
         num_ctx=6144,
         temperature=0.4,
     )
-
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -269,7 +267,6 @@ def main() -> int:
     print(json.dumps(piece, indent=2, ensure_ascii=False)[:4000])
     print(f"\nSaved: {out_path}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -2,7 +2,14 @@
 
 Avoids CrewAI ReAct loop because small local models hallucinate inside it.
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -36,14 +43,12 @@ PROMPT_PATH = ROOT / "prompts" / "trend_scout.md"
 CONFIG_PATH = ROOT / "config" / "keywords.yaml"
 OUT_DIR = ROOT / "outputs"
 
-
 def _call(tool, **kwargs) -> dict | list:
     raw = tool.run(**kwargs)
     try:
         return json.loads(raw)
     except json.JSONDecodeError:
         return {"_raw": raw}
-
 
 def collect_signals(cfg: dict) -> dict:
     primary = cfg["primary"]
@@ -140,7 +145,6 @@ def collect_signals(cfg: dict) -> dict:
         },
     }
 
-
 def _strip_fences(s: str) -> str:
     s = s.strip()
     if s.startswith("```"):
@@ -149,7 +153,6 @@ def _strip_fences(s: str) -> str:
             s = s[4:]
         s = s.rsplit("```", 1)[0]
     return s.strip()
-
 
 def _extract_url_catalog(signals: dict) -> list[dict]:
     catalog: list[dict] = []
@@ -217,7 +220,6 @@ def _extract_url_catalog(signals: dict) -> list[dict]:
                         })
     return catalog
 
-
 def synthesize(signals: dict, today: str) -> dict:
     from prompts import load_prompt
     system_prompt = load_prompt(PROMPT_PATH.name)
@@ -255,7 +257,6 @@ Output valid JSON only. Schema in system prompt. Every `source_url` must come fr
         num_ctx=8192,
     )
 
-
 def _collect_real_urls(signals: dict) -> set[str]:
     urls: set[str] = set()
     web = signals.get("web_search", {})
@@ -292,7 +293,6 @@ def _collect_real_urls(signals: dict) -> set[str]:
                         urls.add(r["post_url"])
     return urls
 
-
 def validate_report(report: dict, signals: dict) -> dict:
     """Validate trend_clusters[].evidence URLs against the real catalogue.
 
@@ -328,7 +328,6 @@ def validate_report(report: dict, signals: dict) -> dict:
         report["handoff_note_for_marketing_director"] = "No verifiable trend clusters found. Retry later."
     return report
 
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--keywords", type=Path, help="custom keywords YAML")
@@ -362,7 +361,6 @@ def main() -> int:
     print(json.dumps(report, indent=2))
     print(f"\nSaved: {out_path}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

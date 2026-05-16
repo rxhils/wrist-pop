@@ -17,7 +17,14 @@ Writes:
 
 For ComfyUI/local LTX-Video, see run_render_video_comfy.py (legacy).
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -39,7 +46,6 @@ ROOT = Path(__file__).parent
 OUT_DIR = ROOT / "outputs"
 RENDERS_DIR = OUT_DIR / "renders"
 
-
 def _download(url: str, dest: Path) -> int:
     req = Request(url, headers={"User-Agent": "PopWristStudio/1.0"})
     with urlopen(req, timeout=120) as r:
@@ -47,7 +53,6 @@ def _download(url: str, dest: Path) -> int:
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(data)
     return len(data)
-
 
 def _index_add(today: str, entry: dict) -> Path:
     idx_path = OUT_DIR / f"video_render_{today}.json"
@@ -61,7 +66,6 @@ def _index_add(today: str, entry: dict) -> Path:
     idx["takes"].append(entry)
     idx_path.write_text(json.dumps(idx, indent=2), encoding="utf-8")
     return idx_path
-
 
 def render_take(
     *,
@@ -129,7 +133,6 @@ def render_take(
     _index_add(today, sidecar)
     return sidecar
 
-
 def _load_brief_shot(brief_path: Path, post_id: str, shot_no: int) -> dict | None:
     data = json.loads(brief_path.read_text(encoding="utf-8"))
     briefs = data if isinstance(data, list) else (data.get("briefs") or [data])
@@ -141,7 +144,6 @@ def _load_brief_shot(brief_path: Path, post_id: str, shot_no: int) -> dict | Non
                     return s
     return None
 
-
 def _shot_to_prompt(shot: dict) -> str:
     parts = [
         shot.get("subject"),
@@ -150,7 +152,6 @@ def _shot_to_prompt(shot: dict) -> str:
         shot.get("must_capture"),
     ]
     return ". ".join([p for p in parts if p])
-
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -210,7 +211,6 @@ def main() -> int:
     for s in successes:
         print(f"  {s['video_path']}  cost=${s['cost_usd']:.2f}  latency={s['latency_s']}s")
     return 0 if successes else 1
-
 
 if __name__ == "__main__":
     sys.exit(main())

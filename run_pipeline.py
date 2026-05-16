@@ -7,7 +7,14 @@ Usage:
   python run_pipeline.py --from gate        # only run gate
   python run_pipeline.py --only scout       # just one stage
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import sys
@@ -24,7 +31,6 @@ STAGES = [
 # Off-chain agents — runnable via --only but not in the default sequence
 EXTRA_STAGES = ["scheduler", "render_image", "render_video", "reel_director"]
 ALL_STAGES = STAGES + EXTRA_STAGES
-
 
 def _run(name: str) -> int:
     print(f"\n{'#' * 60}\n# STAGE: {name.upper()}\n{'#' * 60}")
@@ -73,7 +79,6 @@ def _run(name: str) -> int:
     elapsed = time.time() - start
     print(f"\n[pipeline] stage '{name}' finished in {elapsed:.1f}s (rc={rc})")
     return rc
-
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Royal Pop content pipeline")
@@ -142,7 +147,6 @@ def main() -> int:
     for f in sorted(out.glob(f"*{today}*.json")):
         print(f"  {f.name}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

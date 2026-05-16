@@ -9,7 +9,14 @@ Writes:
   outputs/asset_plan_<date>.json — image_blueprint + motion_blueprint +
   dependencies + missing_assets + build_order + handoff_for_visual_brief
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -26,14 +33,12 @@ ROOT = Path(__file__).parent
 PROMPT_PATH = ROOT / "prompts" / "asset_director.md"
 OUT_DIR = ROOT / "outputs"
 
-
 def _latest(prefix: str, today: str) -> Path | None:
     direct = OUT_DIR / f"{prefix}_{today}.json"
     if direct.exists():
         return direct
     files = sorted(OUT_DIR.glob(f"{prefix}_*.json"), reverse=True)
     return files[0] if files else None
-
 
 def _load(prefix: str, today: str) -> dict | list | None:
     p = _latest(prefix, today)
@@ -43,7 +48,6 @@ def _load(prefix: str, today: str) -> dict | list | None:
         return json.loads(p.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
         return None
-
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -127,7 +131,6 @@ Produce the strict-JSON asset plan per your output schema. Respect:
         vids = len(p.get("motion_blueprint") or [])
         print(f"  {p.get('post_id'):30} {st:8}  images={imgs} videos={vids}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -2,7 +2,14 @@
 
 Same pattern as Scout: deterministic input + single LLM synthesis call.
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -34,7 +41,6 @@ CONTEXT_FILES = {
 
 ANTI_REPEAT_DAYS = 3  # look at last N days of briefs to avoid repeating hooks
 
-
 def load_project_context() -> dict[str, str]:
     """Load all .md context files. Missing files return empty string (graceful)."""
     out: dict[str, str] = {}
@@ -44,7 +50,6 @@ def load_project_context() -> dict[str, str]:
         except Exception:
             out[key] = ""
     return out
-
 
 def recent_hooks(today: str, days: int = ANTI_REPEAT_DAYS) -> list[str]:
     """Return list of recent hooks from copy_*.json files (recommended_hook)."""
@@ -71,7 +76,6 @@ def recent_hooks(today: str, days: int = ANTI_REPEAT_DAYS) -> list[str]:
             break
     return hooks[: days * 5]
 
-
 def recent_archetypes(today: str, days: int = 2) -> list[str]:
     """Return recent hook_archetypes (last N days) — Director should rotate, not repeat."""
     files = sorted(OUT_DIR.glob("copy_*.json"), reverse=True)
@@ -92,7 +96,6 @@ def recent_archetypes(today: str, days: int = 2) -> list[str]:
             break
     return out[: days * 2]
 
-
 def sprint_day(today: str, sprint_start: str = "2026-05-14") -> int:
     """Day N of the 7-14 day validation sprint (1-indexed)."""
     try:
@@ -102,7 +105,6 @@ def sprint_day(today: str, sprint_start: str = "2026-05-14") -> int:
         return max(1, (t - s).days + 1)
     except Exception:
         return 1
-
 
 def latest_trend_report(today: str) -> dict:
     candidate = OUT_DIR / f"trend_report_{today}.json"
@@ -117,7 +119,6 @@ def latest_trend_report(today: str) -> dict:
     print(f"[strategist] using fallback report: {reports[0].name}")
     return json.loads(reports[0].read_text(encoding="utf-8"))
 
-
 def _strip_fences(s: str) -> str:
     s = s.strip()
     if s.startswith("```"):
@@ -126,7 +127,6 @@ def _strip_fences(s: str) -> str:
             s = s[4:]
         s = s.rsplit("```", 1)[0]
     return s.strip()
-
 
 def synthesize(trend_report: dict, today: str) -> dict:
     from prompts import load_prompt
@@ -197,7 +197,6 @@ Output valid JSON only. Schema in system prompt.
         num_ctx=8192,
     )
 
-
 VALID_FORMATS = {"REEL", "CAROUSEL", "STORY", "STATIC"}
 VALID_STAGES = {"AWARENESS", "INTEREST", "WAITLIST", "LAUNCH"}
 BRAGGY_PHRASES = [
@@ -206,14 +205,12 @@ BRAGGY_PHRASES = [
     "better than anyone", "we win",
 ]
 
-
 def _hook_overlap(a: str, b: str) -> float:
     aw = set(a.lower().split())
     bw = set(b.lower().split())
     if not aw or not bw:
         return 0.0
     return len(aw & bw) / len(aw | bw)
-
 
 def validate_brief(brief: dict, anti_repeat: list[str] | None = None) -> dict:
     """Shape + anti-repeat check for Marketing Director schema.
@@ -257,7 +254,6 @@ def validate_brief(brief: dict, anti_repeat: list[str] | None = None) -> dict:
         brief["_validation_notes"] = notes
     return brief
 
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, help="custom trend_report JSON")
@@ -283,7 +279,6 @@ def main() -> int:
     print(json.dumps(brief, indent=2))
     print(f"\nSaved: {out_path}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

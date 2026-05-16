@@ -6,7 +6,14 @@ them to an LLM that synthesises into one operator checklist.
 
 Saves: outputs/operator_console_YYYY-MM-DD.json (strict schema) + .md (human read).
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -33,14 +40,12 @@ ARTIFACT_PREFIXES = [
     "manual_post_state",
 ]
 
-
 def _latest(prefix: str, today: str) -> Path | None:
     direct = OUT_DIR / f"{prefix}_{today}.json"
     if direct.exists():
         return direct
     files = sorted(OUT_DIR.glob(f"{prefix}_*.json"), reverse=True)
     return files[0] if files else None
-
 
 def _load_artifact(prefix: str, today: str) -> tuple[Path | None, dict | list | None]:
     p = _latest(prefix, today)
@@ -51,11 +56,9 @@ def _load_artifact(prefix: str, today: str) -> tuple[Path | None, dict | list | 
     except json.JSONDecodeError as e:
         return p, {"_parse_error": str(e)}
 
-
 def _truncate(obj, limit: int = 3000) -> str:
     s = json.dumps(obj, indent=2, ensure_ascii=False, default=str)
     return s if len(s) <= limit else s[:limit] + f"\n... [truncated {len(s) - limit} chars]"
-
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -184,7 +187,6 @@ def main() -> int:
         md_path.write_text("\n".join(lines), encoding="utf-8")
     print(f"Saved: {md_path}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

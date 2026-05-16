@@ -3,7 +3,14 @@
 Reads today's manual_reel_state, seeds a manual_post_state. Preserves
 existing entries on re-run. No LLM.
 """
+
 from __future__ import annotations
+import sys as _sys
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import argparse
 import json
@@ -25,14 +32,12 @@ PLATFORM_BY_SERIES = {
     "WL": ["Instagram Story"],
 }
 
-
 def _latest(prefix: str, today: str) -> Path | None:
     direct = OUT_DIR / f"{prefix}_{today}.json"
     if direct.exists():
         return direct
     files = sorted(OUT_DIR.glob(f"{prefix}_*.json"), reverse=True)
     return files[0] if files else None
-
 
 def _load_existing(path: Path) -> dict:
     if path.exists():
@@ -41,7 +46,6 @@ def _load_existing(path: Path) -> dict:
         except json.JSONDecodeError:
             pass
     return {}
-
 
 def _series_from_post_id(post_id: str, brief_path: Path | None) -> str:
     """Try to infer series code from visual_brief if available."""
@@ -57,7 +61,6 @@ def _series_from_post_id(post_id: str, brief_path: Path | None) -> str:
             meta = b.get("_meta") or {}
             return meta.get("series") or b.get("series") or "TR"
     return "TR"
-
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -115,7 +118,6 @@ def main() -> int:
     if ready:
         print(f"[manual_post] {ready} reel(s) EXPORTED and ready to schedule/post.")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

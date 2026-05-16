@@ -510,7 +510,7 @@ async def _run_subprocess(job_id: str, cmd: list[str], agent: str | None = None)
                 bufsize=1,
                 encoding="utf-8",
                 errors="replace",
-                env={**os.environ, "PYTHONUNBUFFERED": "1"},
+                env={**os.environ, "PYTHONUNBUFFERED": "1", "PYTHONIOENCODING": "utf-8"},
             )
             assert proc.stdout
             for line in proc.stdout:
@@ -719,7 +719,7 @@ async def owui_run_stage(req: OWUIRunReq) -> dict:
                 timeout=req.timeout_s,
                 encoding="utf-8",
                 errors="replace",
-                env={**os.environ, "PYTHONUNBUFFERED": "1"},
+                env={**os.environ, "PYTHONUNBUFFERED": "1", "PYTHONIOENCODING": "utf-8"},
             )
             log = (res.stdout or "") + (res.stderr or "")
             rc = res.returncode
