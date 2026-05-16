@@ -119,18 +119,24 @@ const IconBtn = ({ children, onClick, tone = 'default', size = 'md', style = {},
 
 // ───────────────────────── Agent inventory ─────────────────────────
 const AGENT_META = {
-  scout:        { name: 'Trend Scout',         glyph: '◉', group: 'pipeline', desc: 'Search UK watch accessory trends · pytrends + web', stage: 1 },
-  strategist:   { name: 'Content Strategist',  glyph: '◈', group: 'pipeline', desc: 'Turn trends into 3–5 reel ideas with 12-word hooks', stage: 2 },
-  writer:       { name: 'Copy Writer',         glyph: '◆', group: 'pipeline', desc: 'Full scripts + captions in brand voice', stage: 3 },
-  gate:         { name: 'Quality Gate',        glyph: '◇', group: 'pipeline', desc: 'Brand safety checks · hard + soft blocks', stage: 4 },
-  visual:       { name: 'Visual Brief',        glyph: '▣', group: 'pipeline', desc: 'Shot lists + FLUX / LTX-Video prompts', stage: 5 },
-  scheduler:    { name: 'Scheduler',           glyph: '▤', group: 'pipeline', desc: 'UK posting windows + Notion payload', stage: 6 },
-  render_image: { name: 'Image Render',        glyph: '▦', group: 'render',   desc: 'FLUX.1 / SDXL via ComfyUI', stage: 7 },
-  render_video: { name: 'Video Render',        glyph: '▩', group: 'render',   desc: 'LTX-Video via ComfyUI', stage: 8 },
+  scout:           { name: 'Trend Scout',        glyph: '◉', group: 'marketing', desc: 'Search UK watch accessory trends · pytrends + web', stage: 1 },
+  strategist:      { name: 'Marketing Director', glyph: '◈', group: 'marketing', desc: 'Trend signal → campaign play of the day', stage: 2 },
+  writer:          { name: 'Copy',               glyph: '◆', group: 'marketing', desc: 'Hooks + scripts + captions A/B + CTA', stage: 3 },
+  gate:            { name: 'QA',                 glyph: '◇', group: 'marketing', desc: 'Blocks weak / risky / spec-wrong copy', stage: 4 },
+  visual:          { name: 'Visual Brief',       glyph: '▣', group: 'marketing', desc: 'Shot list + edit brief for manual production', stage: 5 },
+  manual_reel:     { name: 'Manual Reel',        glyph: '▥', group: 'marketing', desc: 'Human production step — film + edit + export', stage: 6 },
+  manual_post:     { name: 'Manual Post',        glyph: '▧', group: 'marketing', desc: 'Human publishing step — schedule + post + log metrics', stage: 7 },
+  output_director: { name: 'Output Director',    glyph: '◐', group: 'marketing', desc: 'Operator console · synthesises everything into next-action list', stage: 8 },
+  scheduler:       { name: 'Scheduler',          glyph: '▤', group: 'tools',     desc: 'UK posting windows + Notion payload (optional)', stage: 9 },
+  render_image:    { name: 'Image Render',       glyph: '▦', group: 'render',    desc: 'FLUX.1 / SDXL via ComfyUI (optional)', stage: 10 },
+  render_video:    { name: 'Video Render',       glyph: '▩', group: 'render',    desc: 'LTX-Video via ComfyUI (optional)', stage: 11 },
+  reel_director:   { name: 'Reel Director',      glyph: '◑', group: 'reels',     desc: 'Generates 5 ranked reel/TikTok ideas from full pipeline output', stage: 12 },
 };
 
-const PIPELINE_IDS = ['scout', 'strategist', 'writer', 'gate', 'visual', 'scheduler'];
+const PIPELINE_IDS = ['scout', 'strategist', 'writer', 'gate', 'visual', 'manual_reel', 'manual_post', 'output_director'];
+const TOOLS_IDS = ['scheduler'];
 const RENDER_IDS = ['render_image', 'render_video'];
+const REEL_IDS = ['reel_director'];
 
 // ───────────────────────── Top bar ─────────────────────────
 function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }) {
@@ -162,9 +168,12 @@ function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         {[
           { id: 'overview', label: 'Overview' },
+          { id: 'console', label: 'Console' },
+          { id: 'reels', label: 'Reels' },
           { id: 'text', label: 'Text agent' },
           { id: 'visual', label: 'Visual' },
           { id: 'outputs', label: 'Outputs' },
+          { id: 'history', label: 'History' },
           { id: 'models', label: 'Models' },
         ].map(v => (
           <button key={v.id} onClick={() => setView(v.id)} style={{
@@ -192,6 +201,10 @@ function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontFamily: HF.mono, fontSize: 11 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: HF.textDim }} title={health.cloud && health.cloud.reason ? health.cloud.reason : ''}>
+          <StatusDot status={health.cloud && health.cloud.ok ? 'done' : (health.cloud && health.cloud.configured ? 'err' : 'idle')} />
+          cloud <span style={{ color: HF.textFaint }}>{health.cloud && health.cloud.project ? health.cloud.project.slice(0,8) : '—'}</span>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: HF.textDim }}>
           <StatusDot status={health.ollama ? 'done' : 'err'} /> ollama <span style={{ color: HF.textFaint }}>:11434</span>
         </div>
@@ -250,8 +263,10 @@ function HFSidebar({ activeId, statuses, onPick, progress }) {
       display: 'flex', flexDirection: 'column',
     }}>
       <div style={{ padding: '14px 8px 4px', flex: 1, overflowY: 'auto' }}>
-        <Group title="Pipeline" ids={PIPELINE_IDS} index={1} />
-        <Group title="Render" ids={RENDER_IDS} index={2} />
+        <Group title="Marketing" ids={PIPELINE_IDS} index={1} />
+        <Group title="Tools" ids={TOOLS_IDS} index={2} />
+        <Group title="Render" ids={RENDER_IDS} index={3} />
+        <Group title="Reels" ids={REEL_IDS} index={4} />
       </div>
       {progress && (
         <div style={{ padding: 12, borderTop: `1px solid ${HF.border}` }}>
@@ -275,7 +290,7 @@ function HFSidebar({ activeId, statuses, onPick, progress }) {
 }
 
 // ───────────────────────── Agent header ─────────────────────────
-const LLM_AGENT_IDS = new Set(['scout', 'strategist', 'writer', 'gate', 'visual']);
+const LLM_AGENT_IDS = new Set(['scout', 'strategist', 'writer', 'gate', 'visual', 'output_director', 'reel_director']);
 
 function HFAgentHeader({ agentId, status, onRun, running, agentsConfig, onAgentConfigUpdate }) {
   const agent = AGENT_META[agentId];
@@ -432,6 +447,837 @@ function HFExecLog({ lines, live }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Preview Panel (Output + Prompt) ─────────────────────────
+const OUTPUT_FILE_BY_AGENT = {
+  scout:           'trend_report',
+  strategist:      'content_brief',
+  writer:          'copy',
+  gate:            'approved_copy',
+  visual:          'visual_brief',
+  manual_reel:     'manual_reel_state',
+  manual_post:     'manual_post_state',
+  output_director: 'operator_console',
+  reel_director:   'reel_ideas',
+  scheduler:       'schedule',
+};
+
+function _todayStr() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10);
+}
+
+function PreviewPanel({ agentId, refreshSignal }) {
+  const [tab, setTab] = useState('output');  // 'output' | 'prompt'
+  const [outputData, setOutputData] = useState(null);
+  const [outputFile, setOutputFile] = useState(null);
+  const [promptText, setPromptText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const loadOutput = useCallback(async () => {
+    setError('');
+    const prefix = OUTPUT_FILE_BY_AGENT[agentId];
+    if (!prefix) {
+      setOutputData(null);
+      return;
+    }
+    setLoading(true);
+    try {
+      // Find latest file with this prefix for today, or most recent if not today
+      const list = await apiGet('/api/outputs');
+      const candidates = (list.files || [])
+        .filter(f => f.name.startsWith(prefix + '_'))
+        .sort((a, b) => b.mtime - a.mtime);
+      if (candidates.length === 0) {
+        setOutputData(null);
+        setOutputFile(null);
+        setLoading(false);
+        return;
+      }
+      const f = candidates[0];
+      const r = await fetch('/api/outputs/' + encodeURIComponent(f.name));
+      const data = await r.json();
+      setOutputData(data);
+      setOutputFile(f.name);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [agentId]);
+
+  const loadPrompt = useCallback(async () => {
+    try {
+      const r = await apiGet(`/api/prompts/${agentId}`);
+      setPromptText(r.prompt || '');
+    } catch (e) {
+      setPromptText('Error loading prompt: ' + e.message);
+    }
+  }, [agentId]);
+
+  useEffect(() => {
+    loadOutput();
+    loadPrompt();
+  }, [loadOutput, loadPrompt, refreshSignal]);
+
+  return (
+    <div style={{
+      borderRadius: 10, background: HF.surface, border: `1px solid ${HF.border}`,
+      display: 'flex', flexDirection: 'column', minHeight: 0,
+    }}>
+      <div style={{
+        padding: '10px 14px', borderBottom: `1px solid ${HF.borderSoft}`,
+        display: 'flex', alignItems: 'center', gap: 10,
+      }}>
+        <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.text, letterSpacing: '.14em' }}>PREVIEW</span>
+        <div style={{ display: 'flex', gap: 4 }}>
+          {['output', 'prompt'].map(t => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              style={{
+                padding: '4px 10px', borderRadius: 4,
+                background: tab === t ? HF.bg : 'transparent',
+                color: tab === t ? HF.accent : HF.textDim,
+                border: `1px solid ${tab === t ? HF.accent : HF.borderSoft}`,
+                fontFamily: HF.mono, fontSize: 10, letterSpacing: '.06em', cursor: 'pointer',
+                textTransform: 'uppercase',
+              }}>{t}</button>
+          ))}
+        </div>
+        <span style={{ flex: 1 }} />
+        {tab === 'output' && outputFile && (
+          <span style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint }}>{outputFile}</span>
+        )}
+        <IconBtn size="sm" tone="ghost" onClick={tab === 'output' ? loadOutput : loadPrompt}>↻</IconBtn>
+      </div>
+
+      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 14px', minHeight: 0 }}>
+        {error && (
+          <div style={{ color: HF.err, fontFamily: HF.mono, fontSize: 10.5, marginBottom: 8 }}>
+            {error}
+          </div>
+        )}
+        {tab === 'prompt' && (
+          <pre style={{
+            margin: 0, fontFamily: HF.mono, fontSize: 10.5, color: HF.textDim,
+            whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.6,
+          }}>{promptText || '(loading…)'}</pre>
+        )}
+        {tab === 'output' && !loading && !outputData && (
+          <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint, padding: 20, textAlign: 'center' }}>
+            no output yet · run this agent
+          </div>
+        )}
+        {tab === 'output' && loading && (
+          <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint }}>loading…</div>
+        )}
+        {tab === 'output' && outputData && (
+          <AgentOutputView agentId={agentId} data={outputData} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Per-agent output formatters ──────────────────────────────
+function AgentOutputView({ agentId, data }) {
+  switch (agentId) {
+    case 'scout':           return <ScoutOutput data={data} />;
+    case 'strategist':      return <StrategistOutput data={data} />;
+    case 'writer':          return <WriterOutput data={data} />;
+    case 'gate':            return <GateOutput data={data} />;
+    case 'visual':          return <VisualOutput data={data} />;
+    case 'scheduler':       return <SchedulerOutput data={data} />;
+    case 'manual_reel':     return <ManualReelOutput data={data} />;
+    case 'manual_post':     return <ManualPostOutput data={data} />;
+    case 'output_director': return <OutputDirectorOutput data={data} />;
+    case 'reel_director':   return <ReelIdeasOutput data={data} />;
+    default: return <RawJSON data={data} />;
+  }
+}
+
+const REEL_STATE_COLOR = {
+  WAITING:     '#8A8582',
+  IN_PROGRESS: '#f5e74a',
+  EXPORTED:    '#7fd96b',
+  BLOCKED:     '#ff5a5a',
+  SCHEDULED:   '#f5e74a',
+  LIVE:        '#7fd96b',
+  FAILED:      '#ff5a5a',
+  APPROVED:    '#7fd96b',
+  DONE:        '#7fd96b',
+};
+
+function StateChip({ state }) {
+  const c = REEL_STATE_COLOR[state] || '#8A8582';
+  return (
+    <span style={{
+      fontFamily: HF.mono, fontSize: 9, letterSpacing: '.12em',
+      color: c, border: `1px solid ${c}`, padding: '2px 7px',
+      borderRadius: 3, textTransform: 'uppercase',
+    }}>{state || 'idle'}</span>
+  );
+}
+
+function ManualReelOutput({ data }) {
+  const items = data.items || [];
+  if (!items.length) return <div style={{ color: HF.textFaint, fontFamily: HF.mono, fontSize: 11 }}>no reels in queue · run Visual Brief first</div>;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{
+          padding: 10, borderRadius: 6, background: HF.bg,
+          border: `1px solid ${HF.borderSoft}`,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.accent }}>{it.post_id}</span>
+            <span style={{ flex: 1 }} />
+            <StateChip state={it.status} />
+          </div>
+          {it.exported_file && (
+            <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, marginTop: 4 }}>
+              file: {it.exported_file}
+            </div>
+          )}
+          {it.notes && (
+            <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.textDim, marginTop: 4 }}>
+              {it.notes}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ManualPostOutput({ data }) {
+  const items = data.items || [];
+  if (!items.length) return <div style={{ color: HF.textFaint, fontFamily: HF.mono, fontSize: 11 }}>nothing queued · waiting on Manual Reel</div>;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{
+          padding: 10, borderRadius: 6, background: HF.bg,
+          border: `1px solid ${HF.borderSoft}`,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <span style={{ fontFamily: HF.mono, fontSize: 11, color: HF.accent }}>{it.post_id}</span>
+            <span style={{ flex: 1 }} />
+            <StateChip state={it.status} />
+          </div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textFaint, marginTop: 4 }}>
+            {(it.platforms || []).join(' · ')}
+          </div>
+          {it.scheduled_for && (
+            <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, marginTop: 4 }}>
+              scheduled: {it.scheduled_for}
+            </div>
+          )}
+          {it.metrics_24h && Object.keys(it.metrics_24h).length > 0 && (
+            <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, marginTop: 6 }}>
+              24h: {Object.entries(it.metrics_24h).map(([k, v]) => `${k}=${v}`).join(' · ')}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function OutputDirectorOutput({ data }) {
+  if (data._text_only) {
+    return (
+      <pre style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textDim, whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0, lineHeight: 1.6 }}>
+        {data._text_only}
+      </pre>
+    );
+  }
+  const cs = data.campaign_status || {};
+  const approved = data.approved_deliverables || [];
+  const blocked = data.blocked_items || [];
+  const next3 = data.next_3_actions || [];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div>
+        <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>URGENCY</div>
+        <StateChip state={cs.urgency || 'IDLE'} />
+        <div style={{ fontFamily: HF.body, fontSize: 12.5, color: HF.text, marginTop: 8 }}>
+          {cs.current_focus || '—'}
+        </div>
+      </div>
+      {data.today_priority && (
+        <div style={{ padding: 12, background: 'rgba(245,231,74,.06)', border: `1px solid ${HF.accent}`, borderRadius: 6 }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, letterSpacing: '.14em', marginBottom: 6 }}>TODAY PRIORITY</div>
+          <div style={{ fontFamily: HF.body, fontSize: 13, color: HF.text, lineHeight: 1.45 }}>{data.today_priority}</div>
+        </div>
+      )}
+      {next3.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>NEXT 3 ACTIONS</div>
+          <ol style={{ margin: 0, paddingLeft: 18, color: HF.text, fontFamily: HF.body, fontSize: 12, lineHeight: 1.6 }}>
+            {next3.map((a, i) => <li key={i}>{a}</li>)}
+          </ol>
+        </div>
+      )}
+      {blocked.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.err, letterSpacing: '.14em', marginBottom: 6 }}>BLOCKED</div>
+          {blocked.map((b, i) => (
+            <div key={i} style={{ padding: 8, marginBottom: 6, borderRadius: 4, background: 'rgba(255,90,90,.05)', border: `1px solid ${HF.err}` }}>
+              <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.err }}>{b.post_id} · {b.stage}</div>
+              <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.text, marginTop: 2 }}>{b.reason}</div>
+              <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.textDim, marginTop: 4, fontStyle: 'italic' }}>fix: {b.required_fix}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      {approved.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.ok, letterSpacing: '.14em', marginBottom: 6 }}>APPROVED ({approved.length})</div>
+          {approved.map((d, i) => (
+            <div key={i} style={{ padding: 8, marginBottom: 4, borderRadius: 4, background: HF.bg, border: `1px solid ${HF.borderSoft}` }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.accent }}>{d.post_id}</span>
+                <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>{d.series}</span>
+                <span style={{ flex: 1 }} />
+                <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>cap {d.caption_version}</span>
+              </div>
+              <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.text, marginTop: 4 }}>{d.angle}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      {data.success_condition && (
+        <div style={{ padding: 10, borderRadius: 6, background: HF.bg, border: `1px dashed ${HF.borderSoft}` }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>SUCCESS TODAY</div>
+          <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.textDim }}>{data.success_condition}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RawJSON({ data }) {
+  return (
+    <pre style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, whiteSpace: 'pre-wrap', wordBreak: 'break-all', margin: 0 }}>
+      {JSON.stringify(data, null, 2)}
+    </pre>
+  );
+}
+
+function ScoutOutput({ data }) {
+  const clusters = data.trend_clusters || [];
+  const formats = data.winning_formats || [];
+  const tensions = data.audience_tensions || [];
+  const opp = data.opportunity_recommendation || {};
+  const avoid = data.avoid || [];
+  const handoff = data.handoff_note_for_marketing_director;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {data.status && data.status !== 'OK' && (
+        <div style={{ padding: 8, borderRadius: 5, border: `1px solid ${HF.accent}`, fontFamily: HF.mono, fontSize: 10, color: HF.accent }}>
+          STATUS: {data.status}
+        </div>
+      )}
+      {clusters.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>TREND CLUSTERS ({clusters.length})</div>
+          {clusters.map((c, i) => (
+            <div key={i} style={{ padding: 10, marginBottom: 6, background: HF.bg, border: `1px solid ${HF.borderSoft}`, borderRadius: 5 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
+                <span style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 14, color: HF.text }}>{c.name}</span>
+                <span style={{ flex: 1 }} />
+                <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent }}>fit {c.audience_fit_score}/10</span>
+                <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>nov {c.novelty_score}</span>
+                <span style={{ fontFamily: HF.mono, fontSize: 9, color: c.risk_score >= 7 ? HF.err : HF.textFaint }}>risk {c.risk_score}</span>
+              </div>
+              <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.textDim, lineHeight: 1.5 }}>{c.why_it_matters}</div>
+              {Array.isArray(c.evidence) && c.evidence.length > 0 && (
+                <div style={{ marginTop: 4, fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>
+                  evidence: {c.evidence.length}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      {formats.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>WINNING FORMATS</div>
+          {formats.map((f, i) => (
+            <div key={i} style={{ padding: 6, marginBottom: 4, background: HF.surface2, borderRadius: 4, fontFamily: HF.body, fontSize: 11, color: HF.textDim }}>
+              <span style={{ color: HF.accent, fontFamily: HF.mono, marginRight: 6 }}>{f.format}</span>{f.hook_style} <span style={{ color: HF.textFaint }}>· {f.why_it_works}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {tensions.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>AUDIENCE TENSIONS</div>
+          {tensions.map((t, i) => (
+            <div key={i} style={{ padding: 6, marginBottom: 4, background: HF.surface2, borderRadius: 4, fontFamily: HF.body, fontSize: 11, color: HF.textDim, lineHeight: 1.5 }}>
+              <strong style={{ color: HF.text }}>{t.tension}</strong> <span style={{ color: HF.textFaint }}>— {t.explanation}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {opp.best_angle_now && (
+        <div style={{ padding: 12, background: 'rgba(245,231,74,.06)', border: `1px solid ${HF.accent}`, borderRadius: 6 }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, letterSpacing: '.14em', marginBottom: 4 }}>OPPORTUNITY · confidence {opp.confidence}</div>
+          <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 15, color: HF.text, marginBottom: 6, lineHeight: 1.35 }}>{opp.best_angle_now}</div>
+          <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.textDim, lineHeight: 1.5 }}>{opp.why_now}</div>
+        </div>
+      )}
+      {avoid.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.err, letterSpacing: '.14em', marginBottom: 4 }}>AVOID</div>
+          {avoid.map((a, i) => (
+            <div key={i} style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5 }}>· {a}</div>
+          ))}
+        </div>
+      )}
+      {handoff && (
+        <div style={{ padding: 10, background: HF.surface2, borderRadius: 6, borderLeft: `2px solid ${HF.accent}` }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>HAND-OFF TO MARKETING DIRECTOR</div>
+          <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.text, fontStyle: 'italic', lineHeight: 1.6 }}>{handoff}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StrategistOutput({ data }) {
+  const pa = data.primary_angle || {};
+  const sa = data.supporting_angle || {};
+  const cd = data.content_decision || {};
+  const cdir = data.creative_direction || {};
+  const sm = data.success_metric || {};
+  const bfc = data.brief_for_copy || {};
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {data.campaign_stage && <Pill tone="accent">{data.campaign_stage}</Pill>}
+        {data.status && data.status !== 'OK' && <Pill tone={data.status === 'REJECTED_TREND' ? 'err' : 'accent'}>{data.status}</Pill>}
+        {data.campaign_id && <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, marginLeft: 'auto' }}>{data.campaign_id}</span>}
+      </div>
+      {pa.title && (
+        <div style={{ padding: 14, background: 'rgba(245,231,74,.06)', border: `1px solid ${HF.accent}`, borderRadius: 8 }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, letterSpacing: '.14em', marginBottom: 6 }}>PRIMARY ANGLE</div>
+          <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 17, color: HF.text, marginBottom: 8, lineHeight: 1.3 }}>"{pa.title}"</div>
+          {pa.core_message && (
+            <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.textDim, marginBottom: 6, lineHeight: 1.5 }}>{pa.core_message}</div>
+          )}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontFamily: HF.mono, fontSize: 9.5, color: HF.textDim }}>
+            {pa.audience && <div><span style={{ color: HF.textFaint }}>audience:</span> {pa.audience}</div>}
+            {pa.desired_reaction && <div><span style={{ color: HF.textFaint }}>reaction:</span> {pa.desired_reaction}</div>}
+            {pa.why_this_wins && <div style={{ gridColumn: '1 / -1' }}><span style={{ color: HF.textFaint }}>why wins:</span> {pa.why_this_wins}</div>}
+            {pa.cta && <div style={{ gridColumn: '1 / -1' }}><span style={{ color: HF.textFaint }}>cta:</span> <span style={{ color: HF.accent }}>{pa.cta}</span></div>}
+          </div>
+        </div>
+      )}
+      {sa.title && (
+        <div style={{ padding: 8, background: HF.bg, border: `1px solid ${HF.borderSoft}`, borderRadius: 5 }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 3 }}>SUPPORTING</div>
+          <div style={{ fontFamily: HF.body, fontSize: 12, color: HF.text }}>{sa.title}</div>
+          {sa.purpose && <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, marginTop: 2 }}>{sa.purpose}</div>}
+        </div>
+      )}
+      {(cd.format || cd.goal) && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>CONTENT DECISION</div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 4 }}>
+            {cd.format && <Pill>{cd.format}</Pill>}
+            {cd.conversion_role && <Pill>{cd.conversion_role}</Pill>}
+          </div>
+          {cd.goal && <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.textDim, lineHeight: 1.5 }}>{cd.goal}</div>}
+          {cd.hook_direction && <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, fontStyle: 'italic', marginTop: 2 }}>hook → {cd.hook_direction}</div>}
+        </div>
+      )}
+      {(cdir.tone || (cdir.must_show && cdir.must_show.length)) && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>CREATIVE DIRECTION</div>
+          <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, lineHeight: 1.6 }}>
+            {cdir.tone && <div>tone: {cdir.tone}</div>}
+            {cdir.pace && <div>pace: {cdir.pace}</div>}
+            {cdir.visual_energy && <div>visual: {cdir.visual_energy}</div>}
+          </div>
+          {Array.isArray(cdir.must_show) && cdir.must_show.length > 0 && (
+            <div style={{ marginTop: 4 }}>
+              <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.ok, marginRight: 4 }}>SHOW:</span>
+              {cdir.must_show.map((m, i) => <Pill key={i} tone="ok" style={{ marginRight: 3 }}>{m}</Pill>)}
+            </div>
+          )}
+          {Array.isArray(cdir.must_not_do) && cdir.must_not_do.length > 0 && (
+            <div style={{ marginTop: 4 }}>
+              <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.err, marginRight: 4 }}>AVOID:</span>
+              {cdir.must_not_do.map((m, i) => <Pill key={i} tone="err" style={{ marginRight: 3 }}>{m}</Pill>)}
+            </div>
+          )}
+        </div>
+      )}
+      {bfc.script_goal && (
+        <div style={{ padding: 8, background: HF.surface2, borderLeft: `2px solid ${HF.accent}`, borderRadius: 4 }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 3 }}>BRIEF FOR COPY</div>
+          <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5 }}>
+            <div>script: {bfc.script_goal}</div>
+            {bfc.caption_goal && <div>caption: {bfc.caption_goal}</div>}
+            {bfc.cta_language && <div>cta: <span style={{ color: HF.accent }}>{bfc.cta_language}</span></div>}
+            {Array.isArray(bfc.proof_points_to_include) && bfc.proof_points_to_include.length > 0 && (
+              <div style={{ marginTop: 3 }}>proof: {bfc.proof_points_to_include.join(' · ')}</div>
+            )}
+          </div>
+        </div>
+      )}
+      {(sm.primary || sm.secondary) && (
+        <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textDim }}>
+          success: <span style={{ color: HF.accent }}>{sm.primary}</span>{sm.secondary && ` · ${sm.secondary}`}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function WriterOutput({ data }) {
+  const pieces = data.pieces || (Array.isArray(data) ? data : [data]);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {pieces.map((p, i) => {
+        const meta = p._meta || {};
+        const fail = p._gate_status === 'FAIL';
+        const notes = p._validation_notes || [];
+        const hooks = p.hook_options || [];
+        const recHook = p.recommended_hook;
+        const beats = (p.reel_script && p.reel_script.beats) || [];
+        const captions = p.caption_options || [];
+        const recCap = p.recommended_caption;
+        return (
+          <div key={i} style={{
+            padding: 14, borderRadius: 8,
+            background: HF.bg, border: `1px solid ${fail ? HF.err : HF.borderSoft}`,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.accent }}>{p.post_id || meta.campaign_id}</span>
+              {meta.format && <Pill>{meta.format}</Pill>}
+              <span style={{ flex: 1 }} />
+              {p._gate_status && <Pill tone={fail ? 'err' : 'ok'}>{p._gate_status}</Pill>}
+            </div>
+            {hooks.length > 0 && (
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>HOOK OPTIONS</div>
+                {hooks.map((h, j) => {
+                  const isRec = h === recHook;
+                  return (
+                    <div key={j} style={{
+                      padding: '6px 10px', marginBottom: 3, borderRadius: 4,
+                      background: isRec ? 'rgba(245,231,74,.08)' : HF.surface2,
+                      border: `1px solid ${isRec ? HF.accent : HF.borderSoft}`,
+                      fontFamily: HF.serif, fontStyle: 'italic', fontSize: 13,
+                      color: isRec ? HF.text : HF.textDim,
+                    }}>
+                      {isRec && <span style={{ fontFamily: HF.mono, fontSize: 8, color: HF.accent, marginRight: 6, fontStyle: 'normal' }}>★</span>}
+                      "{h}"
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {beats.length > 0 && (
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>
+                  REEL SCRIPT{p.reel_script.duration_target ? ` · ${p.reel_script.duration_target}` : ''}
+                </div>
+                {beats.map((b, j) => (
+                  <div key={j} style={{
+                    display: 'grid', gridTemplateColumns: '38px 50px 1fr', gap: 6,
+                    padding: '4px 6px', borderBottom: `1px solid ${HF.borderSoft}`,
+                    fontFamily: HF.body, fontSize: 11, lineHeight: 1.4,
+                  }}>
+                    <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>{b.time}</span>
+                    <span style={{ fontFamily: HF.mono, fontSize: 8.5, color: HF.accent }}>{b.purpose}</span>
+                    <span style={{ color: HF.text }}>{b.line}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {Array.isArray(p.on_screen_text) && p.on_screen_text.length > 0 && (
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>ON-SCREEN TEXT</div>
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                  {p.on_screen_text.map((t, j) => <Pill key={j}>{t}</Pill>)}
+                </div>
+              </div>
+            )}
+            {captions.length > 0 && (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>CAPTION OPTIONS</div>
+                {captions.map((c, j) => {
+                  const isRec = c.label === recCap;
+                  return (
+                    <div key={j} style={{
+                      padding: 8, marginBottom: 4, borderRadius: 4,
+                      background: isRec ? 'rgba(245,231,74,.06)' : HF.surface2,
+                      border: `1px solid ${isRec ? HF.accent : HF.borderSoft}`,
+                    }}>
+                      <div style={{ fontFamily: HF.mono, fontSize: 9, color: isRec ? HF.accent : HF.textFaint, marginBottom: 3 }}>
+                        {isRec && '★ '}{c.label}
+                      </div>
+                      <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{c.caption}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {p.cta && (
+              <div style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.accent, marginTop: 4 }}>
+                <span style={{ color: HF.textFaint, marginRight: 4 }}>CTA:</span>{p.cta}
+              </div>
+            )}
+            {Array.isArray(p.legal_safety_notes) && p.legal_safety_notes.length > 0 && (
+              <div style={{ marginTop: 8, padding: 6, background: 'rgba(196,168,106,.05)', borderLeft: `2px solid ${HF.accent}`, borderRadius: 3 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, marginBottom: 2 }}>LEGAL NOTES</div>
+                {p.legal_safety_notes.map((n, j) => (
+                  <div key={j} style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim }}>· {n}</div>
+                ))}
+              </div>
+            )}
+            {notes.length > 0 && (
+              <div style={{ marginTop: 8, padding: 6, background: 'rgba(255,90,90,.06)', borderRadius: 4, borderLeft: `2px solid ${HF.err}` }}>
+                {notes.map((n, j) => (
+                  <div key={j} style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.err }}>· {n}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ScoreBar({ label, value }) {
+  const v = Math.max(0, Math.min(10, value || 0));
+  const c = v >= 8 ? HF.ok : v >= 5 ? HF.accent : HF.err;
+  return (
+    <div style={{ marginBottom: 4 }}>
+      <div style={{ display: 'flex', fontFamily: HF.mono, fontSize: 9, color: HF.textDim, marginBottom: 2 }}>
+        <span style={{ flex: 1, textTransform: 'uppercase', letterSpacing: '.1em' }}>{label}</span>
+        <span style={{ color: c }}>{v}/10</span>
+      </div>
+      <div style={{ height: 3, background: HF.surface2, borderRadius: 2 }}>
+        <div style={{ width: `${v * 10}%`, height: '100%', background: c, borderRadius: 2 }} />
+      </div>
+    </div>
+  );
+}
+
+function GateOutput({ data }) {
+  const pieces = data.pieces || (Array.isArray(data) ? data : [data]);
+  const stats = data._stats;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {stats && (
+        <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, padding: '4px 0' }}>
+          {stats.passed}/{stats.total} passed · {stats.failed} failed
+        </div>
+      )}
+      {pieces.map((p, i) => {
+        const status = p._gate_status || p.status || 'UNKNOWN';
+        const isPass = status === 'PASS';
+        const isBlock = status === 'BLOCK';
+        const score = p._qa_score || p.score || {};
+        const problems = p._qa_problems || p.problems || [];
+        const autoFix = p._auto_fix_applied || [];
+        const visualInstr = p._qa_visual_instruction || p.final_instruction_for_visual_brief;
+        return (
+          <div key={i} style={{
+            padding: 12, borderRadius: 6, background: HF.bg,
+            border: `1px solid ${isPass ? HF.ok : isBlock ? HF.err : HF.accent}`,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.accent }}>{p.post_id || `piece-${i}`}</span>
+              <Pill tone={isPass ? 'ok' : isBlock ? 'err' : 'accent'}>{status}</Pill>
+              <span style={{ flex: 1 }} />
+              {p._gate_attempts && (
+                <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>
+                  {p._gate_attempts} attempt{p._gate_attempts > 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+            {Object.keys(score).length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
+                {Object.entries(score).map(([k, v]) => (
+                  <ScoreBar key={k} label={k.replace(/_/g, ' ')} value={v} />
+                ))}
+              </div>
+            )}
+            {problems.length > 0 && (
+              <div style={{ marginBottom: 6 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>PROBLEMS</div>
+                {problems.map((pr, j) => {
+                  const sev = pr.severity || 'LOW';
+                  const sevColor = sev === 'HIGH' ? HF.err : sev === 'MEDIUM' ? HF.accent : HF.textFaint;
+                  return (
+                    <div key={j} style={{ padding: 6, marginBottom: 4, borderRadius: 3, background: HF.surface2 }}>
+                      <div style={{ display: 'flex', gap: 6, marginBottom: 2 }}>
+                        <span style={{ fontFamily: HF.mono, fontSize: 8.5, color: sevColor }}>{sev}</span>
+                        {pr.gate && <span style={{ fontFamily: HF.mono, fontSize: 8.5, color: HF.textFaint }}>· {pr.gate}</span>}
+                      </div>
+                      <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.text, lineHeight: 1.4 }}>{pr.issue}</div>
+                      {pr.fix && (
+                        <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, fontStyle: 'italic', marginTop: 2 }}>
+                          fix: {pr.fix}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {autoFix.length > 0 && (
+              <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent }}>
+                auto-fixed: {autoFix.length} pattern{autoFix.length > 1 ? 's' : ''}
+              </div>
+            )}
+            {visualInstr && (
+              <div style={{ marginTop: 8, padding: 6, background: HF.surface2, borderLeft: `2px solid ${HF.accent}`, borderRadius: 3 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 3 }}>HAND-OFF TO VISUAL</div>
+                <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.text, fontStyle: 'italic', lineHeight: 1.5 }}>{visualInstr}</div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function VisualOutput({ data }) {
+  const briefs = data.briefs || (Array.isArray(data) ? data : [data]);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {briefs.map((b, i) => {
+        const vd = b.visual_direction || {};
+        const shots = b.shot_list || [];
+        const edits = b.edit_plan || [];
+        const assets = b.asset_requirements || [];
+        const flag = b._visual_status === 'FLAG';
+        return (
+          <div key={i} style={{ padding: 12, background: HF.bg, border: `1px solid ${flag ? HF.accent : HF.borderSoft}`, borderRadius: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.accent }}>{b.post_id || `brief-${i}`}</span>
+              {vd.style && <Pill tone="accent">{vd.style}</Pill>}
+              <span style={{ flex: 1 }} />
+              <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>
+                {shots.length} shots · {edits.length} edits
+              </span>
+              {b._visual_status && <Pill tone={flag ? 'accent' : 'ok'}>{b._visual_status}</Pill>}
+            </div>
+            {(vd.mood || vd.motion_style) && (
+              <div style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.textDim, marginBottom: 8, lineHeight: 1.5 }}>
+                {vd.mood && <div>mood: {vd.mood}</div>}
+                {vd.reference_energy && <div>energy: {vd.reference_energy}</div>}
+                {vd.color_bias && <div>color: {vd.color_bias}</div>}
+                {vd.motion_style && <div>motion: {vd.motion_style}</div>}
+              </div>
+            )}
+            {shots.length > 0 && (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>SHOT LIST</div>
+                {shots.map((s, j) => (
+                  <div key={j} style={{
+                    display: 'grid', gridTemplateColumns: '24px 80px 1fr 50px', gap: 6,
+                    padding: '5px 6px', borderBottom: `1px solid ${HF.borderSoft}`,
+                    fontFamily: HF.body, fontSize: 10.5, lineHeight: 1.4,
+                  }}>
+                    <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent }}>{s.shot_no}</span>
+                    <span style={{ fontFamily: HF.mono, fontSize: 8.5, color: HF.textFaint }}>{s.shot_type}</span>
+                    <span style={{ color: HF.text }}>
+                      <strong style={{ color: HF.text }}>{s.subject}</strong>
+                      {s.action && <span style={{ color: HF.textDim }}> — {s.action}</span>}
+                      {s.must_capture && <div style={{ fontSize: 9.5, color: HF.textFaint, fontStyle: 'italic', marginTop: 2 }}>★ {s.must_capture}</div>}
+                    </span>
+                    {s.duration_hint && <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, textAlign: 'right' }}>{s.duration_hint}</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+            {edits.length > 0 && (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>EDIT PLAN</div>
+                {edits.map((e, j) => (
+                  <div key={j} style={{
+                    padding: '5px 6px', borderBottom: `1px solid ${HF.borderSoft}`,
+                    fontFamily: HF.body, fontSize: 10.5, color: HF.text, lineHeight: 1.4,
+                  }}>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+                      <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, minWidth: 20 }}>{e.sequence_no}</span>
+                      <span style={{ flex: 1 }}>{e.edit_instruction}</span>
+                      {e.transition && <Pill>{e.transition}</Pill>}
+                    </div>
+                    {e.on_screen_text && (
+                      <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 11, color: HF.accent, marginLeft: 26, marginTop: 2 }}>
+                        "{e.on_screen_text}"
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            {assets.length > 0 && (
+              <div style={{ marginBottom: 6, fontFamily: HF.mono, fontSize: 10, color: HF.textDim }}>
+                <span style={{ color: HF.textFaint, marginRight: 6 }}>ASSETS:</span>
+                {assets.map((a, j) => <Pill key={j} style={{ marginRight: 3 }}>{a}</Pill>)}
+              </div>
+            )}
+            {b.cover_frame_direction && (
+              <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, marginTop: 4 }}>
+                <span style={{ color: HF.textFaint, fontFamily: HF.mono, fontSize: 9, marginRight: 4 }}>COVER:</span>
+                {b.cover_frame_direction}
+              </div>
+            )}
+            {b.handoff_for_manual_reel && (
+              <div style={{ marginTop: 8, padding: 6, background: HF.surface2, borderLeft: `2px solid ${HF.accent}`, borderRadius: 3 }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 3 }}>HAND-OFF TO MANUAL REEL</div>
+                <div style={{ fontFamily: HF.body, fontSize: 11, color: HF.text, lineHeight: 1.5 }}>{b.handoff_for_manual_reel}</div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function SchedulerOutput({ data }) {
+  const items = data.items || data.calendar || [];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{
+          padding: 10, background: HF.bg, border: `1px solid ${HF.borderSoft}`, borderRadius: 6,
+          display: 'grid', gridTemplateColumns: '60px 1fr', gap: 10, alignItems: 'center',
+        }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.accent, textAlign: 'center' }}>
+            {(it.scheduled_for || it.time_bst || '').slice(11, 16) || (it.time_bst || '—')}
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3, flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: HF.mono, fontSize: 9.5, color: HF.accent, fontWeight: 700 }}>P{it.priority}</span>
+              {it.platform && <Pill style={{ padding: '1px 6px', fontSize: 9 }}>{Array.isArray(it.platform) ? it.platform.join(' · ') : it.platform}</Pill>}
+              {it.format && <Pill style={{ padding: '1px 6px', fontSize: 9 }}>{it.format}</Pill>}
+              {it.pillar && <Pill style={{ padding: '1px 6px', fontSize: 9 }}>{it.pillar}</Pill>}
+            </div>
+            <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.text, lineHeight: 1.4, fontStyle: 'italic' }}>
+              {it.preview || it.hook_3sec || it.core_message || '—'}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -635,6 +1481,454 @@ function PipelineOverview({ statuses, onPickAgent, lastRunInfo }) {
             <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.textDim, marginTop: 4 }}>{s.sub}</div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// ───────────────────────── Console (Output Director) ─────────────────────────
+function ConsoleView({ refreshSignal, onRunDirector, running }) {
+  const [data, setData] = useState(null);
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const load = useCallback(async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const list = await apiGet('/api/outputs');
+      const cand = (list.files || [])
+        .filter(f => f.name.startsWith('operator_console_') && f.name.endsWith('.json'))
+        .sort((a, b) => b.mtime - a.mtime);
+      if (!cand.length) {
+        setData(null);
+        setFile(null);
+        return;
+      }
+      setFile(cand[0].name);
+      const r = await fetch('/api/outputs/' + encodeURIComponent(cand[0].name));
+      setData(await r.json());
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load, refreshSignal]);
+
+  return (
+    <div style={{ padding: 18, overflowY: 'auto', background: HF.bg }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
+        <div>
+          <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 28, color: HF.text, lineHeight: 1 }}>
+            Operator <span style={{ color: HF.accent }}>Console</span>
+          </div>
+          <div style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textFaint, letterSpacing: '.12em', textTransform: 'uppercase', marginTop: 6 }}>
+            output director · synthesised from upstream artifacts
+          </div>
+        </div>
+        <span style={{ flex: 1 }} />
+        {file && (
+          <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint }}>{file}</span>
+        )}
+        <IconBtn size="sm" tone="ghost" onClick={load}>↻ reload</IconBtn>
+        <IconBtn size="sm" tone="accent" onClick={onRunDirector} disabled={running}>▶ Run Director</IconBtn>
+      </div>
+
+      {error && (
+        <div style={{ color: HF.err, fontFamily: HF.mono, fontSize: 11, marginBottom: 14 }}>{error}</div>
+      )}
+      {loading && (
+        <div style={{ color: HF.textFaint, fontFamily: HF.mono, fontSize: 11 }}>loading…</div>
+      )}
+      {!loading && !data && (
+        <div style={{
+          padding: 30, borderRadius: 8, border: `1px dashed ${HF.borderSoft}`,
+          color: HF.textFaint, fontFamily: HF.mono, fontSize: 12, textAlign: 'center',
+        }}>
+          No operator console yet. Run the marketing pipeline, then ▶ Run Director.
+        </div>
+      )}
+      {data && (
+        <div style={{ padding: 18, borderRadius: 10, background: HF.surface, border: `1px solid ${HF.border}` }}>
+          <OutputDirectorOutput data={data} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ───────────────────────── Reel Ideas (5-card grid) ─────────────────────────
+const ARCH_COLOR = {
+  PROBLEM:   '#ff5a5a',
+  SPEC:      '#7fd96b',
+  AESTHETIC: '#c084fc',
+  CONTRAST:  '#f5e74a',
+  PROOF:     '#60a5fa',
+};
+
+function ReelIdeaCard({ idea, isBestBet }) {
+  const [expanded, setExpanded] = useState(false);
+  const archCol = ARCH_COLOR[idea.hook_archetype] || HF.accent;
+  return (
+    <div style={{
+      padding: 14, borderRadius: 10,
+      background: HF.surface,
+      border: `1px solid ${isBestBet ? HF.accent : HF.border}`,
+      boxShadow: isBestBet ? `0 0 0 1px ${HF.accent}` : 'none',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
+        <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.accent, fontWeight: 700 }}>{idea.idea_id}</span>
+        {isBestBet && <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, padding: '2px 6px', border: `1px solid ${HF.accent}`, borderRadius: 3 }}>★ BEST BET</span>}
+        <span style={{ flex: 1 }} />
+        <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>{idea.duration_target}</span>
+      </div>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 10, flexWrap: 'wrap' }}>
+        <span style={{ fontFamily: HF.mono, fontSize: 9, color: archCol, border: `1px solid ${archCol}`, padding: '2px 6px', borderRadius: 3 }}>{idea.hook_archetype}</span>
+        <Pill>{idea.opening_shot_type}</Pill>
+        <Pill>{idea.emotional_logic}</Pill>
+      </div>
+      <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 16, color: HF.text, lineHeight: 1.3, marginBottom: 10 }}>
+        "{idea.hook}"
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.1em' }}>EFFORT</div>
+          <div style={{ display: 'flex', gap: 2, marginTop: 3 }}>
+            {[1,2,3,4,5].map(n => (
+              <div key={n} style={{
+                width: 16, height: 4, borderRadius: 1,
+                background: n <= (idea.production_effort_score || 0) ? HF.accent : HF.surface2,
+              }} />
+            ))}
+          </div>
+        </div>
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.1em' }}>ENGAGEMENT</div>
+          <div style={{ fontFamily: HF.mono, fontSize: 14, color: (idea.expected_engagement_score || 0) >= 8 ? HF.ok : HF.accent, fontWeight: 700 }}>
+            {idea.expected_engagement_score || 0}/10
+          </div>
+        </div>
+      </div>
+      {idea.why_this_wins && (
+        <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5, marginBottom: 8 }}>
+          {idea.why_this_wins}
+        </div>
+      )}
+      <button
+        onClick={() => setExpanded(e => !e)}
+        style={{
+          width: '100%', padding: '6px 0', marginTop: 4,
+          background: 'transparent', border: `1px solid ${HF.borderSoft}`, borderRadius: 4,
+          color: HF.textDim, fontFamily: HF.mono, fontSize: 9.5, letterSpacing: '.1em',
+          textTransform: 'uppercase', cursor: 'pointer',
+        }}>
+        {expanded ? '↑ collapse' : '↓ full script + captions'}
+      </button>
+      {expanded && (
+        <div style={{ marginTop: 10 }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>BEATS</div>
+          {(idea.beats || []).map((b, i) => (
+            <div key={i} style={{ padding: '6px 4px', borderBottom: `1px solid ${HF.borderSoft}`, fontFamily: HF.body, fontSize: 10.5 }}>
+              <div style={{ display: 'flex', gap: 6, marginBottom: 2 }}>
+                <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>{b.time}</span>
+                <span style={{ fontFamily: HF.mono, fontSize: 8.5, color: HF.accent }}>{b.purpose}</span>
+              </div>
+              {b.shot && <div style={{ color: HF.text, marginTop: 2 }}><span style={{ color: HF.textFaint }}>shot:</span> {b.shot}</div>}
+              {b.voiceover_or_caption_line && <div style={{ color: HF.textDim, marginTop: 2, fontStyle: 'italic' }}>"{b.voiceover_or_caption_line}"</div>}
+              {b.on_screen_text && <div style={{ color: HF.accent, marginTop: 2, fontFamily: HF.mono, fontSize: 9.5 }}>OST: {b.on_screen_text}</div>}
+            </div>
+          ))}
+          {idea.cover_frame_direction && (
+            <div style={{ marginTop: 8, padding: 6, background: HF.surface2, borderRadius: 4, fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5 }}>
+              <span style={{ color: HF.textFaint, fontFamily: HF.mono, fontSize: 9, marginRight: 4 }}>COVER:</span>{idea.cover_frame_direction}
+            </div>
+          )}
+          {(idea.caption_options || []).map((c, i) => {
+            const rec = c.label === idea.recommended_caption;
+            return (
+              <div key={i} style={{
+                marginTop: 8, padding: 8, borderRadius: 4,
+                background: rec ? 'rgba(245,231,74,.06)' : HF.surface2,
+                border: `1px solid ${rec ? HF.accent : HF.borderSoft}`,
+              }}>
+                <div style={{ fontFamily: HF.mono, fontSize: 9, color: rec ? HF.accent : HF.textFaint, marginBottom: 3 }}>
+                  {rec && '★ '}CAPTION {c.label}
+                </div>
+                <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{c.caption}</div>
+              </div>
+            );
+          })}
+          {Array.isArray(idea.hashtag_pack) && idea.hashtag_pack.length > 0 && (
+            <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+              {idea.hashtag_pack.map((h, i) => (
+                <span key={i} style={{ padding: '2px 6px', borderRadius: 2, background: HF.surface2, color: HF.textDim, fontFamily: HF.mono, fontSize: 9.5 }}>
+                  {h.startsWith('#') ? h : '#' + h}
+                </span>
+              ))}
+            </div>
+          )}
+          {idea.cta && (
+            <div style={{ marginTop: 8, fontFamily: HF.mono, fontSize: 10.5, color: HF.accent }}>
+              <span style={{ color: HF.textFaint, marginRight: 4 }}>CTA:</span>{idea.cta}
+            </div>
+          )}
+          {idea.what_could_kill_it && (
+            <div style={{ marginTop: 8, padding: 6, borderLeft: `2px solid ${HF.err}`, background: 'rgba(255,90,90,.04)', borderRadius: 3 }}>
+              <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.err, marginBottom: 2 }}>WHAT COULD KILL IT</div>
+              <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5 }}>{idea.what_could_kill_it}</div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ReelIdeasOutput({ data }) {
+  if (data && data._text_only) {
+    return <pre style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textDim, whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0, lineHeight: 1.6 }}>{data._text_only}</pre>;
+  }
+  const ideas = (data && data.ideas) || [];
+  const bestBet = data && data.operators_best_bet;
+  const informed = data && data.informed_by;
+  if (!ideas.length) {
+    return <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint, padding: 20, textAlign: 'center' }}>no reel ideas yet · run Reel Director</div>;
+  }
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {informed && (informed.primary_angle_title || informed.historical_winner_used) && (
+        <div style={{ padding: 8, borderRadius: 5, background: HF.surface2, fontFamily: HF.mono, fontSize: 10, color: HF.textDim, lineHeight: 1.6 }}>
+          {informed.primary_angle_title && <div>angle: <span style={{ color: HF.text }}>{informed.primary_angle_title}</span></div>}
+          {informed.trend_cluster_used && <div>trend: <span style={{ color: HF.text }}>{informed.trend_cluster_used}</span></div>}
+          {informed.historical_winner_used && <div style={{ color: HF.accent }}>★ informed by historical winner: {informed.historical_winner_used}</div>}
+        </div>
+      )}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 12 }}>
+        {ideas.map((idea, i) => (
+          <ReelIdeaCard key={i} idea={idea} isBestBet={idea.idea_id === bestBet} />
+        ))}
+      </div>
+      {data.execution_note_for_operator && (
+        <div style={{ padding: 12, borderRadius: 6, background: 'rgba(245,231,74,.04)', borderLeft: `2px solid ${HF.accent}` }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, letterSpacing: '.14em', marginBottom: 4 }}>EXECUTION NOTE</div>
+          <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.text, lineHeight: 1.5 }}>{data.execution_note_for_operator}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ───────────────────────── Reels view (full tab) ─────────────────────────
+function ReelsView({ refreshSignal, onRunReels, running }) {
+  const [data, setData] = useState(null);
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const load = useCallback(async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const list = await apiGet('/api/outputs');
+      const cand = (list.files || [])
+        .filter(f => f.name.startsWith('reel_ideas_') && f.name.endsWith('.json'))
+        .sort((a, b) => b.mtime - a.mtime);
+      if (!cand.length) {
+        setData(null);
+        setFile(null);
+        return;
+      }
+      setFile(cand[0].name);
+      const r = await fetch('/api/outputs/' + encodeURIComponent(cand[0].name));
+      setData(await r.json());
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load, refreshSignal]);
+
+  return (
+    <div style={{ padding: 18, overflowY: 'auto', background: HF.bg }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
+        <div>
+          <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 28, color: HF.text, lineHeight: 1 }}>
+            Reel <span style={{ color: HF.accent }}>Director</span>
+          </div>
+          <div style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textFaint, letterSpacing: '.12em', textTransform: 'uppercase', marginTop: 6 }}>
+            5 ready-to-shoot ideas · synthesised from full pipeline
+          </div>
+        </div>
+        <span style={{ flex: 1 }} />
+        {file && <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint }}>{file}</span>}
+        <IconBtn size="sm" tone="ghost" onClick={load}>↻ reload</IconBtn>
+        <IconBtn size="sm" tone="accent" onClick={onRunReels} disabled={running}>▶ Generate 5 Ideas</IconBtn>
+      </div>
+      {error && (
+        <div style={{ color: HF.err, fontFamily: HF.mono, fontSize: 11, marginBottom: 14 }}>{error}</div>
+      )}
+      {loading && (
+        <div style={{ color: HF.textFaint, fontFamily: HF.mono, fontSize: 11 }}>loading…</div>
+      )}
+      {!loading && !data && (
+        <div style={{
+          padding: 30, borderRadius: 8, border: `1px dashed ${HF.borderSoft}`,
+          color: HF.textFaint, fontFamily: HF.mono, fontSize: 12, textAlign: 'center',
+        }}>
+          No reel ideas yet. Run the marketing pipeline, then ▶ Generate 5 Ideas.
+        </div>
+      )}
+      {data && <ReelIdeasOutput data={data} />}
+    </div>
+  );
+}
+
+// ───────────────────────── History (cloud runs viewer) ─────────────────────────
+function HistoryView() {
+  const [runs, setRuns] = useState([]);
+  const [winners, setWinners] = useState([]);
+  const [agentFilter, setAgentFilter] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [cloudOk, setCloudOk] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [payload, setPayload] = useState(null);
+
+  const load = useCallback(async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const h = await apiGet('/api/cloud/health');
+      setCloudOk(h);
+      if (!h.ok) { setRuns([]); setWinners([]); return; }
+      const q = agentFilter ? `?agent=${encodeURIComponent(agentFilter)}&limit=50` : '?limit=50';
+      const r = await apiGet('/api/cloud/runs' + q);
+      setRuns(r.rows || []);
+      const w = await apiGet('/api/cloud/winners?limit=20&days=30');
+      setWinners(w.rows || []);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [agentFilter]);
+
+  useEffect(() => { load(); }, [load]);
+
+  return (
+    <div style={{ padding: 18, display: 'grid', gridTemplateRows: 'auto 1fr', gap: 14, minHeight: 0, background: HF.bg }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div>
+          <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 28, color: HF.text, lineHeight: 1 }}>
+            Cloud <span style={{ color: HF.accent }}>History</span>
+          </div>
+          <div style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textFaint, letterSpacing: '.12em', textTransform: 'uppercase', marginTop: 6 }}>
+            every agent run · self-learning corpus
+          </div>
+        </div>
+        <span style={{ flex: 1 }} />
+        <select
+          value={agentFilter}
+          onChange={e => setAgentFilter(e.target.value)}
+          style={{
+            padding: '6px 10px', borderRadius: 4,
+            background: HF.surface, color: HF.text,
+            border: `1px solid ${HF.border}`, fontFamily: HF.mono, fontSize: 11,
+          }}>
+          <option value="">all agents</option>
+          {Object.entries(AGENT_META).map(([id, m]) => (
+            <option key={id} value={id}>{m.name}</option>
+          ))}
+        </select>
+        <IconBtn size="sm" tone="ghost" onClick={load}>↻ reload</IconBtn>
+      </div>
+      {cloudOk && !cloudOk.ok && (
+        <div style={{ padding: 12, borderRadius: 6, background: 'rgba(255,90,90,.06)', border: `1px solid ${HF.err}`, color: HF.err, fontFamily: HF.mono, fontSize: 11 }}>
+          Cloud not connected: {cloudOk.reason || '(unknown)'}
+        </div>
+      )}
+      {error && (
+        <div style={{ color: HF.err, fontFamily: HF.mono, fontSize: 11 }}>{error}</div>
+      )}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 14, minHeight: 0 }}>
+        {/* Left: runs table */}
+        <div style={{
+          borderRadius: 8, background: HF.surface, border: `1px solid ${HF.border}`,
+          display: 'flex', flexDirection: 'column', minHeight: 0,
+        }}>
+          <div style={{ padding: '8px 14px', borderBottom: `1px solid ${HF.borderSoft}`, fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.14em' }}>
+            RUNS ({runs.length})
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            {loading && <div style={{ padding: 14, color: HF.textFaint, fontFamily: HF.mono, fontSize: 11 }}>loading…</div>}
+            {!loading && runs.length === 0 && cloudOk && cloudOk.ok && (
+              <div style={{ padding: 20, color: HF.textFaint, fontFamily: HF.mono, fontSize: 11, textAlign: 'center' }}>
+                no runs yet · run an agent to populate
+              </div>
+            )}
+            {runs.map(r => (
+              <div key={r.id} onClick={async () => {
+                setSelected(r);
+                try {
+                  // Re-fetch via runs table (no specific endpoint yet) — show summary only
+                  setPayload({ note: 'Open Supabase dashboard to see full payload (row id ' + r.id + ').' });
+                } catch (e) { setPayload({ _error: e.message }); }
+              }} style={{
+                display: 'grid', gridTemplateColumns: '50px 90px 130px 1fr 110px',
+                gap: 8, padding: '6px 14px', borderBottom: `1px solid ${HF.borderSoft}`,
+                fontFamily: HF.mono, fontSize: 10.5, color: HF.textDim, cursor: 'pointer',
+                background: selected && selected.id === r.id ? HF.bg : 'transparent',
+              }}>
+                <span style={{ color: HF.accent }}>#{r.id}</span>
+                <span>{r.run_date}</span>
+                <span style={{ color: HF.text }}>{AGENT_META[r.agent_id]?.name || r.agent_id}</span>
+                <span style={{ color: HF.textFaint }}>{r.artifact_type}</span>
+                <span style={{ color: HF.textFaint, textAlign: 'right' }}>
+                  {new Date(r.created_at).toISOString().slice(11, 19)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Right: winners */}
+        <div style={{
+          borderRadius: 8, background: HF.surface, border: `1px solid ${HF.border}`,
+          display: 'flex', flexDirection: 'column', minHeight: 0,
+        }}>
+          <div style={{ padding: '8px 14px', borderBottom: `1px solid ${HF.borderSoft}`, fontFamily: HF.mono, fontSize: 10, color: HF.accent, letterSpacing: '.14em' }}>
+            ★ WINNERS — LAST 30D ({winners.length})
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto', padding: 8 }}>
+            {winners.length === 0 && (
+              <div style={{ padding: 14, color: HF.textFaint, fontFamily: HF.mono, fontSize: 10.5, textAlign: 'center' }}>
+                no winners yet · use Manual Post `metrics … 24h` to promote
+              </div>
+            )}
+            {winners.map((w, i) => (
+              <div key={i} style={{
+                padding: 8, marginBottom: 6, borderRadius: 4,
+                background: HF.bg, border: `1px solid ${HF.borderSoft}`,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <Pill tone="ok">{w.engagement_score}/10</Pill>
+                  {w.format && <Pill>{w.format}</Pill>}
+                  <span style={{ flex: 1 }} />
+                  <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>
+                    {w.promoted_at ? new Date(w.promoted_at).toISOString().slice(0, 10) : ''}
+                  </span>
+                </div>
+                <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 12, color: HF.text, lineHeight: 1.4 }}>
+                  "{w.hook_text}"
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -1559,6 +2853,7 @@ function App() {
   const [jobId, setJobId] = useState(null);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(null);
+  const [previewRefresh, setPreviewRefresh] = useState(0);
   const runStartRef = useRef(null);
   const eventSourceRef = useRef(null);
 
@@ -1635,6 +2930,7 @@ function App() {
       eventSourceRef.current = null;
       setJobId(null);
       setRunning(false);
+      setPreviewRefresh(n => n + 1);
     });
     es.onerror = () => {
       setLogLines(prev => [...prev, '[stream error]']);
@@ -1773,6 +3069,16 @@ function App() {
           <PipelineOverview statuses={statuses} onPickAgent={pickAgent} lastRunInfo={lastRunInfo} />
         )}
 
+        {view === 'console' && (
+          <ConsoleView refreshSignal={previewRefresh} onRunDirector={() => runAgent('output_director')} running={running} />
+        )}
+
+        {view === 'reels' && (
+          <ReelsView refreshSignal={previewRefresh} onRunReels={() => runAgent('reel_director')} running={running} />
+        )}
+
+        {view === 'history' && <HistoryView />}
+
         {view === 'outputs' && <OutputsView />}
 
         {view === 'models' && <ModelsView />}
@@ -1787,8 +3093,9 @@ function App() {
               agentsConfig={agentsConfig}
               onAgentConfigUpdate={updateAgentConfig}
             />
-            <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 1fr', gap: 14, minHeight: 0 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, minHeight: 0 }}>
               <HFExecLog lines={logLines} live={running} />
+              <PreviewPanel agentId={selectedAgent} refreshSignal={previewRefresh} />
               <HFChat
                 agentId={selectedAgent}
                 messages={chatMessagesByAgent[selectedAgent] || []}

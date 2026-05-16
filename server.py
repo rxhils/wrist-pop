@@ -49,8 +49,10 @@ app.add_middleware(
 )
 
 AGENTS: dict[str, dict[str, Any]] = {
+    # ─── MARKETING CHAIN ───
     "scout": {
         "label": "Trend Scout",
+        "tier": "marketing",
         "stage": 1,
         "script": "run_scout.py",
         "kind": "llm",
@@ -58,7 +60,8 @@ AGENTS: dict[str, dict[str, Any]] = {
         "prompt_file": "trend_scout.md",
     },
     "strategist": {
-        "label": "Strategist",
+        "label": "Marketing Director",
+        "tier": "marketing",
         "stage": 2,
         "script": "run_strategist.py",
         "kind": "llm",
@@ -66,7 +69,8 @@ AGENTS: dict[str, dict[str, Any]] = {
         "prompt_file": "strategist.md",
     },
     "writer": {
-        "label": "Copy Writer",
+        "label": "Copy",
+        "tier": "marketing",
         "stage": 3,
         "script": "run_writer.py",
         "kind": "llm",
@@ -74,7 +78,8 @@ AGENTS: dict[str, dict[str, Any]] = {
         "prompt_file": "copy_writer.md",
     },
     "gate": {
-        "label": "Quality Gate",
+        "label": "QA",
+        "tier": "marketing",
         "stage": 4,
         "script": "run_gate.py",
         "kind": "llm",
@@ -83,15 +88,45 @@ AGENTS: dict[str, dict[str, Any]] = {
     },
     "visual": {
         "label": "Visual Brief",
+        "tier": "marketing",
         "stage": 5,
         "script": "run_visual.py",
         "kind": "llm",
         "outputs": ["visual_brief"],
         "prompt_file": "visual_brief.md",
     },
+    "manual_reel": {
+        "label": "Manual Reel",
+        "tier": "marketing",
+        "stage": 6,
+        "script": "run_manual_reel.py",
+        "kind": "manual",
+        "outputs": ["manual_reel_state"],
+        "prompt_file": "manual_reel.md",
+    },
+    "manual_post": {
+        "label": "Manual Post",
+        "tier": "marketing",
+        "stage": 7,
+        "script": "run_manual_post.py",
+        "kind": "manual",
+        "outputs": ["manual_post_state"],
+        "prompt_file": "manual_post.md",
+    },
+    "output_director": {
+        "label": "Output Director",
+        "tier": "marketing",
+        "stage": 8,
+        "script": "run_output_director.py",
+        "kind": "llm",
+        "outputs": ["operator_console"],
+        "prompt_file": "output_director.md",
+    },
+    # ─── TOOLS (optional, off-chain) ───
     "scheduler": {
         "label": "Scheduler",
-        "stage": 6,
+        "tier": "tools",
+        "stage": 9,
         "script": "run_scheduler.py",
         "kind": "det",
         "outputs": ["schedule", "notion_payload", "digest"],
@@ -99,7 +134,8 @@ AGENTS: dict[str, dict[str, Any]] = {
     },
     "render_image": {
         "label": "Image Render",
-        "stage": 7,
+        "tier": "tools",
+        "stage": 10,
         "script": "run_render_image.py",
         "kind": "render",
         "outputs": ["image_render"],
@@ -107,15 +143,63 @@ AGENTS: dict[str, dict[str, Any]] = {
     },
     "render_video": {
         "label": "Video Render",
-        "stage": 8,
+        "tier": "tools",
+        "stage": 11,
         "script": "run_render_video.py",
         "kind": "render",
         "outputs": ["video_render"],
         "prompt_file": None,
     },
+    # ─── REELS (post-pipeline creative engine) ───
+    "reel_director": {
+        "label": "Reel Director",
+        "tier": "reels",
+        "stage": 12,
+        "script": "run_reel_director.py",
+        "kind": "llm",
+        "outputs": ["reel_ideas"],
+        "prompt_file": "reel_director.md",
+    },
 }
 
 JOBS: dict[str, dict[str, Any]] = {}
+
+
+def _autosave_cloud(agent: str) -> None:
+    """After a successful agent run, push today's matching artifact files to Supabase.
+    Silent no-op when cloud not configured. Best-effort; never raises upstream.
+    """
+    try:
+        import cloud_store as _cs
+        if not _cs.is_configured():
+            return
+    except ImportError:
+        return
+
+    today = date.today().isoformat()
+    if agent == "pipeline":
+        agents_to_save = [k for k, v in AGENTS.items() if v.get("tier") == "marketing"]
+    elif agent in AGENTS:
+        agents_to_save = [agent]
+    else:
+        return
+
+    for ag in agents_to_save:
+        cfg = AGENTS.get(ag)
+        if not cfg:
+            continue
+        for prefix in cfg.get("outputs") or []:
+            path = OUT_DIR / f"{prefix}_{today}.json"
+            if not path.exists():
+                continue
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            try:
+                _cs.save_run(ag, prefix, payload, run_date=today)
+            except Exception as e:
+                print(f"[cloud autosave] {ag}/{prefix} failed: {e}", flush=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -132,17 +216,94 @@ def health() -> dict:
         except Exception:
             return False
 
+    try:
+        import cloud_store as _cs
+        cloud = _cs.health()
+    except Exception as e:
+        cloud = {"configured": False, "ok": False, "reason": str(e)[:200]}
+
     return {
         "ok": True,
         "model": os.getenv("MODEL_CREATIVE", "qwen2.5:14b"),
         "ollama": _check(ollama_url, "/api/tags"),
         "comfyui": _check(comfy_url, "/system_stats"),
+        "cloud": cloud,
     }
 
 
 @app.get("/api/agents")
 def list_agents() -> dict:
     return {"agents": [{"key": k, **v} for k, v in AGENTS.items()]}
+
+
+@app.get("/api/cloud/health")
+def cloud_health() -> dict:
+    try:
+        import cloud_store as _cs
+        return _cs.health()
+    except Exception as e:
+        return {"configured": False, "ok": False, "reason": str(e)[:200]}
+
+
+@app.get("/api/cloud/runs")
+def cloud_runs(agent: str | None = None, limit: int = 30) -> dict:
+    try:
+        import cloud_store as _cs
+        rows = _cs.recent_runs(agent_id=agent, limit=min(limit, 100))
+        return {"rows": rows, "count": len(rows)}
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@app.get("/api/cloud/winners")
+def cloud_winners(limit: int = 10, days: int = 30) -> dict:
+    try:
+        import cloud_store as _cs
+        rows = _cs.recent_winners(limit=min(limit, 100), days=days)
+        return {"rows": rows, "count": len(rows)}
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+class PromoteWinnerReq(BaseModel):
+    hook_text: str
+    format: str | None = None
+    engagement_score: int | None = None
+    source_run_id: int | None = None
+
+
+@app.post("/api/cloud/winners")
+def cloud_promote_winner(req: PromoteWinnerReq) -> dict:
+    import cloud_store as _cs
+    wid = _cs.promote_winner(
+        req.hook_text,
+        format=req.format,
+        engagement_score=req.engagement_score,
+        source_run_id=req.source_run_id,
+    )
+    return {"id": wid}
+
+
+class RecordMetricsReq(BaseModel):
+    post_id: str
+    run_id: int | None = None
+    platform: str | None = None
+    saves: int | None = None
+    shares: int | None = None
+    comments: int | None = None
+    waitlist_signups: int | None = None
+    posted_at: str | None = None
+
+
+@app.post("/api/cloud/metrics")
+def cloud_record_metrics(req: RecordMetricsReq) -> dict:
+    import cloud_store as _cs
+    mid = _cs.record_metrics(
+        req.post_id, run_id=req.run_id, platform=req.platform,
+        saves=req.saves, shares=req.shares, comments=req.comments,
+        waitlist_signups=req.waitlist_signups, posted_at=req.posted_at,
+    )
+    return {"id": mid}
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -160,6 +321,32 @@ def list_outputs(d: str | None = None) -> dict:
             "mtime": int(p.stat().st_mtime),
         })
     return {"date": today, "files": files}
+
+
+@app.get("/api/prompts/{agent}")
+def get_agent_prompt(agent: str, inlined: bool = True) -> dict:
+    """Return agent's system prompt.
+
+    inlined=True (default): @include directives resolved (what the LLM actually sees).
+    inlined=False: raw file as-is on disk.
+    """
+    if agent not in AGENTS:
+        raise HTTPException(404, f"unknown agent '{agent}'")
+    cfg = AGENTS[agent]
+    pf = cfg.get("prompt_file")
+    if not pf:
+        return {"agent": agent, "prompt": "(no prompt file — deterministic agent)", "path": None}
+    path = PROMPTS / pf
+    if not path.exists():
+        raise HTTPException(404, f"prompt file missing: {pf}")
+    from prompts import load_prompt
+    text = load_prompt(pf) if inlined else path.read_text(encoding="utf-8")
+    return {
+        "agent": agent,
+        "prompt": text,
+        "path": str(path.relative_to(ROOT)),
+        "inlined": inlined,
+    }
 
 
 @app.get("/api/outputs/{name}")
@@ -215,8 +402,9 @@ async def start_job(req: RunReq) -> dict:
         "status": "queued",
         "queue": asyncio.Queue(),
         "rc": None,
+        "agent": req.agent,
     }
-    asyncio.create_task(_run_subprocess(job_id, cmd))
+    asyncio.create_task(_run_subprocess(job_id, cmd, req.agent))
     return {"job_id": job_id, "cmd": JOBS[job_id]["cmd"]}
 
 
@@ -244,7 +432,7 @@ def _maybe_proxy_through_docker(cmd: list[str]) -> list[str]:
     return ["docker", "exec", "-i", "pws-agent", "python", *cmd[1:]]
 
 
-async def _run_subprocess(job_id: str, cmd: list[str]) -> None:
+async def _run_subprocess(job_id: str, cmd: list[str], agent: str | None = None) -> None:
     """Run subprocess in a thread (asyncio.create_subprocess_exec broken on Windows uvicorn SelectorEventLoop)."""
     import subprocess as _sp
     import threading
@@ -276,6 +464,13 @@ async def _run_subprocess(job_id: str, cmd: list[str]) -> None:
             rc = proc.wait()
             job["rc"] = rc
             job["status"] = "done" if rc == 0 else "failed"
+            # Auto-save artifacts to cloud (best-effort; never blocks UI)
+            if rc == 0 and agent:
+                try:
+                    _autosave_cloud(agent)
+                    _put({"event": "log", "data": "[cloud] artifacts saved"})
+                except Exception as e:
+                    _put({"event": "log", "data": f"[cloud] autosave failed: {e}"})
             _put({"event": "end", "data": json.dumps({"rc": rc, "status": job["status"]})})
         except Exception as e:
             import traceback
@@ -370,7 +565,8 @@ def chat(req: ChatReq) -> dict:
         raise HTTPException(400, "unknown agent")
     cfg = AGENTS[req.agent]
     if cfg["prompt_file"]:
-        system_prompt = (PROMPTS / cfg["prompt_file"]).read_text(encoding="utf-8")
+        from prompts import load_prompt
+        system_prompt = load_prompt(cfg["prompt_file"])
     else:
         system_prompt = META_PROMPTS.get(req.agent, "Generic assistant.")
 

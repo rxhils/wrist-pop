@@ -184,7 +184,8 @@ def _extract_url_catalog(signals: dict) -> list[dict]:
 
 
 def synthesize(signals: dict, today: str) -> dict:
-    system_prompt = PROMPT_PATH.read_text(encoding="utf-8")
+    from prompts import load_prompt
+    system_prompt = load_prompt(PROMPT_PATH.name)
     catalog = _extract_url_catalog(signals)
     trends_errored = isinstance(signals.get("google_trends_interest"), dict) and "error" in signals["google_trends_interest"]
 
@@ -211,16 +212,13 @@ Cluster results into 3–5 distinct trends (one trend may cite ONE URL from the 
 Output valid JSON only. Schema in system prompt. Every `source_url` must come from the catalog above.
 """
 
-    from providers import llm_call
-    content = llm_call(
+    from providers import llm_json
+    return llm_json(
         agent_name="scout",
         system_prompt=system_prompt,
         user_prompt=user_prompt,
-        json_mode=True,
         num_ctx=8192,
     )
-    cleaned = _strip_fences(content)
-    return json.loads(cleaned)
 
 
 def _collect_real_urls(signals: dict) -> set[str]:
@@ -252,28 +250,38 @@ def _collect_real_urls(signals: dict) -> set[str]:
 
 
 def validate_report(report: dict, signals: dict) -> dict:
+    """Validate trend_clusters[].evidence URLs against the real catalogue.
+
+    New schema: drop fabricated evidence URLs; if a cluster ends with zero
+    evidence it stays but is flagged in _validation_notes.
+    """
     real_urls = _collect_real_urls(signals)
-    trends_errored = isinstance(signals.get("google_trends_interest"), dict) and "error" in signals["google_trends_interest"]
+    notes: list[str] = []
 
-    cleaned: list[dict] = []
-    dropped: list[str] = []
-    for t in report.get("top_trends", []):
-        url = (t.get("source_url") or "").strip()
-        plat = t.get("platform", "")
-        if plat == "Google Trends" and trends_errored:
-            dropped.append(f"DROP fabricated Google Trends entry: {t.get('topic')}")
-            continue
-        if not url or url not in real_urls:
-            dropped.append(f"DROP fabricated URL: {url!r} ({t.get('topic')})")
-            continue
-        cleaned.append(t)
+    clusters = report.get("trend_clusters") or []
+    if not isinstance(clusters, list):
+        return report
 
-    cleaned.sort(key=lambda x: x.get("urgency", 0), reverse=True)
-    report["top_trends"] = cleaned[:5]
-    if dropped:
-        report["_validation_notes"] = dropped
-    if not cleaned:
-        report["recommendation"] = "No verifiable trends found. Retry later."
+    for c in clusters:
+        evidence = c.get("evidence") or []
+        if not isinstance(evidence, list):
+            continue
+        kept = []
+        for ev in evidence:
+            url = ev if isinstance(ev, str) else (ev.get("url") if isinstance(ev, dict) else None)
+            if not url:
+                continue
+            if url in real_urls:
+                kept.append(ev)
+            else:
+                notes.append(f"DROP fabricated evidence URL: {url!r} (cluster: {c.get('name')})")
+        c["evidence"] = kept
+
+    if notes:
+        report["_validation_notes"] = notes
+    if not clusters:
+        report["status"] = "LOW_CONFIDENCE"
+        report["handoff_note_for_marketing_director"] = "No verifiable trend clusters found. Retry later."
     return report
 
 

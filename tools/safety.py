@@ -53,16 +53,14 @@ AUTO_FIX = {
 
 DISCLAIMER = "Independent brand. Not affiliated with Swatch or Audemars Piguet."
 
-PUBLIC_FACING_FORMATS = {"Video script", "Carousel", "Caption", "Email copy"}
+PUBLIC_FACING_FORMATS = {"REEL", "CAROUSEL", "CAPTION", "STORY", "STATIC", "EMAIL"}
 
 # Real product specs — used in regex spec validation
 VALID_PRICES = {"£59", "£79", "£99"}
-INVALID_SPECS = [
-    r"\b40\.35\s*mm\b",
-    r"\b6\.2\s*mm\b",
-    r"\b0\.7\s*mm\b",
-    r"\b22\s*mm\b",
-    r"\bFKM\s+rubber\b",  # we use silicone by default in validation phase
+INVALID_SPECS: list[str] = [
+    # Real specs (40.35mm socket / 0.7mm lip / 22mm lug / 6.2mm depth / FKM rubber)
+    # are CORRECT. Add patterns here only if you want to flag a DIFFERENT product's
+    # specs leaking into copy (e.g. "41mm strap" would be wrong for our 22mm lug).
 ]
 
 # ── optional detoxify ────────────────────────────────────────────
@@ -93,7 +91,7 @@ def gather_text(value: Any) -> str:
 
 
 def auto_fix_piece(piece: dict) -> tuple[dict, list[str]]:
-    """Apply AUTO_FIX substitutions in-place. Return (piece, list of fixes applied)."""
+    """Apply AUTO_FIX substitutions + disclaimer injection. Return (piece, fixes applied)."""
     applied: list[str] = []
 
     def fix_str(s: str) -> str:
@@ -114,6 +112,26 @@ def auto_fix_piece(piece: dict) -> tuple[dict, list[str]]:
         return v
 
     cleaned = walk(piece)
+
+    # Disclaimer injection: append to every caption_option if not present.
+    # Covers new Copy schema (caption_options: [{label, caption}]).
+    if isinstance(cleaned, dict) and isinstance(cleaned.get("caption_options"), list):
+        injected = False
+        for opt in cleaned["caption_options"]:
+            if isinstance(opt, dict):
+                cap = (opt.get("caption") or "").rstrip()
+                if cap and DISCLAIMER.lower() not in cap.lower():
+                    opt["caption"] = cap + "\n\n" + DISCLAIMER
+                    injected = True
+        if injected:
+            applied.append("auto-injected disclaimer into caption_options")
+    # Legacy single-caption shape:
+    elif isinstance(cleaned, dict) and isinstance(cleaned.get("caption"), str):
+        cap = cleaned["caption"].rstrip()
+        if cap and DISCLAIMER.lower() not in cap.lower():
+            cleaned["caption"] = cap + "\n\n" + DISCLAIMER
+            applied.append("auto-injected disclaimer into caption")
+
     return cleaned, applied
 
 
@@ -142,19 +160,26 @@ def hard_check(piece: dict, idea: dict) -> list[str]:
         if re.search(pat, text, flags=re.IGNORECASE):
             issues.append(f"invalid spec pattern '{pat}' present (belongs to a different product)")
 
-    # disclaimer required on public-facing
-    if idea.get("format") in PUBLIC_FACING_FORMATS:
+    # New schema: format lives in piece._meta.format OR director_brief.content_decision.format
+    fmt = None
+    if isinstance(idea, dict):
+        fmt = (
+            (idea.get("content_decision") or {}).get("format")
+            or idea.get("format")
+        )
+    fmt = (fmt or "").upper()
+
+    # Disclaimer required on public-facing formats (any caption_option carries it OK)
+    if fmt in PUBLIC_FACING_FORMATS:
         if DISCLAIMER.lower() not in text_lc:
             issues.append("required disclaimer missing")
 
-    # hashtag count
+    # Legacy hashtag check — only if piece exposes a hashtags list
     hashtags = piece.get("hashtags")
-    if hashtags is not None:
-        if not isinstance(hashtags, list):
-            issues.append("hashtags must be a list")
-        elif len(hashtags) > 8:
+    if isinstance(hashtags, list):
+        if len(hashtags) > 8:
             issues.append(f"too many hashtags: {len(hashtags)} (max 8)")
-        elif len(hashtags) < 4 and idea.get("format") in {"Video script", "Carousel", "Caption"}:
+        elif len(hashtags) < 4 and fmt in {"REEL", "CAROUSEL", "CAPTION"}:
             issues.append(f"too few hashtags: {len(hashtags)} (min 4)")
 
     return issues

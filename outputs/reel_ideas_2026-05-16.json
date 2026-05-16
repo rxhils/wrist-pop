@@ -1,0 +1,539 @@
+{
+  "status": "OK",
+  "scan_date": "2026-05-16",
+  "informed_by": {
+    "primary_angle_title": "The Royal Pop was never meant for the wrist — until now",
+    "trend_cluster_used": "Independent strap brands racing to market with Royal Pop wrist adapters",
+    "historical_winner_used": null
+  },
+  "operators_best_bet": "REEL_1",
+  "ideas": [
+    {
+      "idea_id": "REEL_1",
+      "rank": 1,
+      "hook_archetype": "PROBLEM",
+      "opening_shot_type": "WRIST",
+      "emotional_logic": "CURIOSITY",
+      "duration_target": "30s",
+      "hook": "Your Royal Pop wasn’t made for this.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Wrist shot: Royal Pop in Cradle Adapter V1, awkward angle, crown digging into wrist",
+          "voiceover_or_caption_line": "Your Royal Pop wasn’t made for this.",
+          "on_screen_text": "Not a wristwatch.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Close-up: 40.35mm inner socket aligning with Royal Pop case",
+          "voiceover_or_caption_line": "But what if it could be?",
+          "on_screen_text": "Precision fit.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:06",
+          "shot": "Macro: 0.7mm retaining lip snapping into place",
+          "voiceover_or_caption_line": "40.35mm socket. 0.7mm lip.",
+          "on_screen_text": "Engineered for the Royal Pop.",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:09",
+          "shot": "Wrist shot: Royal Pop now flush on wrist, no gap",
+          "voiceover_or_caption_line": "No gap. No wobble.",
+          "on_screen_text": "Designed for daily wear.",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:12",
+          "shot": "Macro: FKM rubber texture, fingers pressing",
+          "voiceover_or_caption_line": "FKM rubber. Non-slip. Non-invasive.",
+          "on_screen_text": "Premium material.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:15",
+          "shot": "Split-screen: Royal Pop in pocket vs. on wrist with adapter",
+          "voiceover_or_caption_line": "Pocket watch or wristwatch? Now you choose.",
+          "on_screen_text": "Reversible design.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:18",
+          "shot": "Montage: All 8 colourways on wrist",
+          "voiceover_or_caption_line": "Eight colours. One adapter.",
+          "on_screen_text": "Match your style.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:21",
+          "shot": "Close-up: Adapter being removed, no residue",
+          "voiceover_or_caption_line": "Remove it anytime. No damage.",
+          "on_screen_text": "Built to last.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:24",
+          "shot": "Wrist shot: Royal Pop on wrist, walking",
+          "voiceover_or_caption_line": "The Royal Pop, reimagined for the wrist.",
+          "on_screen_text": "Join the waitlist.",
+          "purpose": "CTA"
+        },
+        {
+          "time": "0:27",
+          "shot": "Text overlay: Pop Wrist Studio logo + waitlist link",
+          "voiceover_or_caption_line": "Link in bio.",
+          "on_screen_text": "PopWristStudio.com/waitlist",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Close-up of 0.7mm retaining lip with Royal Pop case edge visible",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "The Royal Pop wasn’t made for the wrist. Until now. \n\nIntroducing the Cradle Adapter V1: precision-engineered to turn your Royal Pop into a wristwatch without compromise. \n\n✔ 40.35mm inner socket \n✔ 0.7mm retaining lip \n✔ FKM rubber \n✔ Reversible & non-invasive \n✔ 8 colourways \n\nJoin the waitlist to be first in line. Link in bio. \n\n#PopWristStudio #CradleAdapterV1 #FKMRubber #RoyalPop #Wristwatch #DesignIcon #PrecisionEngineering #WatchAccessories #IndependentBrand"
+        },
+        {
+          "label": "B",
+          "caption": "Your Royal Pop deserves better than a makeshift strap. \n\nThe Cradle Adapter V1 is the first precision-engineered solution for wearing your Royal Pop on your wrist—reversible, non-invasive, and built for daily wear. \n\nJoin the waitlist now. \n\n#PopWristStudio #CradleAdapterV1 #WatchEnthusiast #PremiumDesign #FKMRubber #NoCompromises"
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#FKMRubber",
+        "#RoyalPop",
+        "#Wristwatch",
+        "#DesignIcon",
+        "#PrecisionEngineering",
+        "#WatchAccessories",
+        "#IndependentBrand",
+        "#NoCompromises",
+        "#WatchMods",
+        "#LuxuryAccessories",
+        "#EngineeringLed",
+        "#WatchCollectors",
+        "#ReversibleDesign"
+      ],
+      "cta": "Join the waitlist (link in bio)",
+      "production_effort_score": 3,
+      "expected_engagement_score": 9,
+      "why_this_wins": "Directly addresses the core problem (Royal Pop not designed for wrist) with a clear, engineering-led solution. High-contrast visuals (awkward fit vs. perfect fit) create strong emotional pull. Uses proven 'problem-solution' hook archetype with high curiosity value.",
+      "what_could_kill_it": "Poor execution of the 'awkward fit' shot (must feel genuinely uncomfortable). Overly technical voiceover could alienate casual viewers."
+    },
+    {
+      "idea_id": "REEL_2",
+      "rank": 2,
+      "hook_archetype": "SPEC",
+      "opening_shot_type": "MACRO",
+      "emotional_logic": "AUTHORITY",
+      "duration_target": "25s",
+      "hook": "40.35mm. Not 40. Not 41.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Extreme macro: calipers measuring 40.35mm on Royal Pop case",
+          "voiceover_or_caption_line": "40.35mm. Not 40. Not 41.",
+          "on_screen_text": "Precision matters.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Macro: Cradle Adapter V1 socket aligning with Royal Pop",
+          "voiceover_or_caption_line": "The exact inner diameter of the Royal Pop.",
+          "on_screen_text": "Perfect fit.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:06",
+          "shot": "Macro: 0.7mm retaining lip snapping into place",
+          "voiceover_or_caption_line": "0.7mm retaining lip. No glue. No tools.",
+          "on_screen_text": "Secure. Reversible.",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:09",
+          "shot": "Macro: FKM rubber texture, slow zoom",
+          "voiceover_or_caption_line": "FKM rubber. Not silicone. Not plastic.",
+          "on_screen_text": "Built to last.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:12",
+          "shot": "Wrist shot: Royal Pop on wrist, rotating",
+          "voiceover_or_caption_line": "22mm lug width. Standard straps.",
+          "on_screen_text": "Compatible with any strap.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:15",
+          "shot": "Split-screen: Royal Pop in pocket vs. on wrist",
+          "voiceover_or_caption_line": "Pocket watch or wristwatch? Your choice.",
+          "on_screen_text": "Non-invasive design.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:18",
+          "shot": "Montage: All 8 colourways",
+          "voiceover_or_caption_line": "Eight colours. One adapter.",
+          "on_screen_text": "Match your style.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:21",
+          "shot": "Text overlay: Pop Wrist Studio logo + waitlist link",
+          "voiceover_or_caption_line": "Join the waitlist. Link in bio.",
+          "on_screen_text": "PopWristStudio.com/waitlist",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Calipers measuring 40.35mm on Royal Pop case edge",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "40.35mm. Not 40. Not 41. \n\nThe Cradle Adapter V1 is precision-engineered for the Royal Pop’s exact dimensions—no guesswork, no compromises. \n\n✔ 40.35mm inner socket \n✔ 0.7mm retaining lip \n✔ FKM rubber \n✔ 22mm lug width \n✔ Reversible & non-invasive \n\nJoin the waitlist to secure yours. Link in bio. \n\n#PopWristStudio #CradleAdapterV1 #PrecisionEngineering #RoyalPop #WatchMods #FKMRubber #IndependentBrand #NoCompromises"
+        },
+        {
+          "label": "B",
+          "caption": "Most straps are designed for watches. The Cradle Adapter V1 is designed for the Royal Pop. \n\nExact tolerances. Premium materials. Built to last. \n\nJoin the waitlist now. \n\n#PopWristStudio #EngineeringLed #WatchAccessories #LuxuryDesign"
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#PrecisionEngineering",
+        "#RoyalPop",
+        "#WatchMods",
+        "#FKMRubber",
+        "#IndependentBrand",
+        "#NoCompromises",
+        "#WatchCollectors",
+        "#LuxuryAccessories",
+        "#EngineeringDetails",
+        "#TolerancesMatter",
+        "#DesignPrecision",
+        "#WatchEnthusiast",
+        "#ReversibleDesign"
+      ],
+      "cta": "Join the waitlist (link in bio)",
+      "production_effort_score": 4,
+      "expected_engagement_score": 8,
+      "why_this_wins": "Appeals to watch enthusiasts and engineers who geek out over tolerances and material specs. Macro shots create a premium, technical feel that aligns with the brand’s engineering-led positioning. High authority value.",
+      "what_could_kill_it": "Overly dry or technical tone could bore casual viewers. Requires high-quality macro shots to land the precision angle."
+    },
+    {
+      "idea_id": "REEL_3",
+      "rank": 3,
+      "hook_archetype": "AESTHETIC",
+      "opening_shot_type": "SPLIT_SCREEN",
+      "emotional_logic": "ASPIRATION",
+      "duration_target": "30s",
+      "hook": "A pocket watch on your wrist—without looking like a hack.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Split-screen: Left—Royal Pop in pocket (elegant); Right—Royal Pop on wrist with generic strap (awkward)",
+          "voiceover_or_caption_line": "A pocket watch on your wrist—without looking like a hack.",
+          "on_screen_text": "Design matters.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Split-screen: Left—Royal Pop in pocket; Right—Royal Pop on wrist with Cradle Adapter V1 (flush, intentional)",
+          "voiceover_or_caption_line": "Introducing the Cradle Adapter V1.",
+          "on_screen_text": "Reimagined for the wrist.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:06",
+          "shot": "Close-up: Adapter aligning with Royal Pop, no gap",
+          "voiceover_or_caption_line": "Precision-engineered to match the Royal Pop’s design.",
+          "on_screen_text": "No compromises.",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:09",
+          "shot": "Wrist shot: Royal Pop on wrist, rotating to show profile",
+          "voiceover_or_caption_line": "Flush. Secure. Intentional.",
+          "on_screen_text": "Designed for daily wear.",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:12",
+          "shot": "Macro: FKM rubber texture, matte finish",
+          "voiceover_or_caption_line": "FKM rubber. Matte. Premium.",
+          "on_screen_text": "Material matters.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:15",
+          "shot": "Montage: All 8 colourways on wrist, slow pan",
+          "voiceover_or_caption_line": "Eight colours. One adapter.",
+          "on_screen_text": "Match your style.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:18",
+          "shot": "Close-up: Adapter being removed, no residue",
+          "voiceover_or_caption_line": "Reversible. Non-invasive. No damage.",
+          "on_screen_text": "Built to last.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:21",
+          "shot": "Wrist shot: Royal Pop on wrist, walking in slow motion",
+          "voiceover_or_caption_line": "The Royal Pop, reimagined for the wrist.",
+          "on_screen_text": "Join the waitlist.",
+          "purpose": "CTA"
+        },
+        {
+          "time": "0:24",
+          "shot": "Text overlay: Pop Wrist Studio logo + waitlist link",
+          "voiceover_or_caption_line": "Link in bio.",
+          "on_screen_text": "PopWristStudio.com/waitlist",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Split-screen: Royal Pop in pocket (left) vs. on wrist with adapter (right)",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "A pocket watch on your wrist—without looking like a hack. \n\nThe Cradle Adapter V1 is precision-engineered to turn your Royal Pop into a wristwatch while preserving its design integrity. \n\n✔ Flush, intentional fit \n✔ FKM rubber, matte finish \n✔ Reversible & non-invasive \n✔ 8 colourways \n\nJoin the waitlist to secure yours. Link in bio. \n\n#PopWristStudio #CradleAdapterV1 #DesignIcon #WatchAccessories #LuxuryDesign #FKMRubber #IndependentBrand #NoCompromises"
+        },
+        {
+          "label": "B",
+          "caption": "The Royal Pop is a design icon. Don’t ruin it with a cheap strap. \n\nThe Cradle Adapter V1 is the first premium solution for wearing your Royal Pop on your wrist—without compromising its aesthetics. \n\nJoin the waitlist now. \n\n#PopWristStudio #AestheticMatters #WatchCollectors #PremiumDesign"
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#DesignIcon",
+        "#WatchAccessories",
+        "#LuxuryDesign",
+        "#FKMRubber",
+        "#IndependentBrand",
+        "#NoCompromises",
+        "#AestheticMatters",
+        "#WatchCollectors",
+        "#PremiumDesign",
+        "#IntentionalDesign",
+        "#DailyWear",
+        "#ReversibleDesign",
+        "#MatteFinish"
+      ],
+      "cta": "Join the waitlist (link in bio)",
+      "production_effort_score": 3,
+      "expected_engagement_score": 8,
+      "why_this_wins": "Strong visual contrast (awkward vs. intentional) creates aspirational pull. Appeals to design-led buyers who care about aesthetics and intentionality. Split-screen format is highly engaging and easy to produce.",
+      "what_could_kill_it": "Generic split-screen execution could feel clichéd. Must ensure the 'awkward' side looks genuinely unappealing."
+    },
+    {
+      "idea_id": "REEL_4",
+      "rank": 4,
+      "hook_archetype": "CONTRAST",
+      "opening_shot_type": "TIME_LAPSE",
+      "emotional_logic": "FOMO",
+      "duration_target": "20s",
+      "hook": "3D-printed kits vs. precision engineering.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Time-lapse: 3D printer creating a generic Royal Pop adapter (rough, misaligned)",
+          "voiceover_or_caption_line": "3D-printed kits vs. precision engineering.",
+          "on_screen_text": "The difference matters.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Macro: Generic adapter wobbling on Royal Pop",
+          "voiceover_or_caption_line": "Rough tolerances. Poor fit.",
+          "on_screen_text": "Not good enough.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:06",
+          "shot": "Macro: Cradle Adapter V1 snapping into place, no gap",
+          "voiceover_or_caption_line": "40.35mm socket. 0.7mm lip.",
+          "on_screen_text": "Precision fit.",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:09",
+          "shot": "Macro: FKM rubber texture vs. generic plastic",
+          "voiceover_or_caption_line": "FKM rubber vs. cheap plastic.",
+          "on_screen_text": "Built to last.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:12",
+          "shot": "Split-screen: Royal Pop with generic adapter (wobbling) vs. Cradle Adapter V1 (flush)",
+          "voiceover_or_caption_line": "Which would you choose?",
+          "on_screen_text": "No contest.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:15",
+          "shot": "Text overlay: Pop Wrist Studio logo + waitlist link",
+          "voiceover_or_caption_line": "Join the waitlist. Link in bio.",
+          "on_screen_text": "PopWristStudio.com/waitlist",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Split-screen: Generic adapter wobbling (left) vs. Cradle Adapter V1 flush (right)",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "3D-printed kits vs. precision engineering. \n\nThe Cradle Adapter V1 is built to the exact tolerances of the Royal Pop—no wobble, no guesswork, no compromises. \n\n✔ 40.35mm inner socket \n✔ 0.7mm retaining lip \n✔ FKM rubber \n✔ Reversible & non-invasive \n\nJoin the waitlist to secure yours. Link in bio. \n\n#PopWristStudio #CradleAdapterV1 #PrecisionEngineering #RoyalPop #NoCompromises #FKMRubber #IndependentBrand #WatchMods"
+        },
+        {
+          "label": "B",
+          "caption": "Most Royal Pop adapters are 3D-printed. Ours is precision-engineered. \n\nJoin the waitlist now. \n\n#PopWristStudio #EngineeringLed #WatchAccessories #LuxuryDesign"
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#PrecisionEngineering",
+        "#RoyalPop",
+        "#NoCompromises",
+        "#FKMRubber",
+        "#IndependentBrand",
+        "#WatchMods",
+        "#WatchCollectors",
+        "#LuxuryAccessories",
+        "#EngineeringMatters",
+        "#TolerancesMatter",
+        "#BuiltToLast",
+        "#ReversibleDesign",
+        "#MatteFinish"
+      ],
+      "cta": "Join the waitlist (link in bio)",
+      "production_effort_score": 4,
+      "expected_engagement_score": 7,
+      "why_this_wins": "Leverages the trend of 3D-printed kits flooding the market to position Pop Wrist Studio as the premium alternative. Contrast format is highly engaging and creates FOMO for a superior product.",
+      "what_could_kill_it": "Risk of alienating viewers who use 3D-printed kits. Must avoid direct comparisons to specific brands (per `do_not_do` rules). Requires high-quality footage of generic adapter to land the contrast."
+    },
+    {
+      "idea_id": "REEL_5",
+      "rank": 5,
+      "hook_archetype": "PROOF",
+      "opening_shot_type": "UNBOXING",
+      "emotional_logic": "DESIRE",
+      "duration_target": "30s",
+      "hook": "This is how you wear a Royal Pop on your wrist.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Unboxing: Cradle Adapter V1 in matte black box, slow reveal",
+          "voiceover_or_caption_line": "This is how you wear a Royal Pop on your wrist.",
+          "on_screen_text": "The Cradle Adapter V1.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Close-up: Adapter being removed from box, FKM rubber texture",
+          "voiceover_or_caption_line": "Precision-engineered. Premium materials.",
+          "on_screen_text": "Built to last.",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:06",
+          "shot": "Macro: Adapter aligning with Royal Pop case",
+          "voiceover_or_caption_line": "40.35mm socket. Perfect fit.",
+          "on_screen_text": "No wobble.",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:09",
+          "shot": "Macro: 0.7mm retaining lip snapping into place",
+          "voiceover_or_caption_line": "0.7mm lip. Secure. Reversible.",
+          "on_screen_text": "No tools needed.",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:12",
+          "shot": "Wrist shot: Royal Pop on wrist, rotating",
+          "voiceover_or_caption_line": "Flush. Intentional. Designed for daily wear.",
+          "on_screen_text": "Looks like it belongs.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:15",
+          "shot": "Macro: FKM rubber texture, fingers pressing",
+          "voiceover_or_caption_line": "FKM rubber. Non-slip. Non-invasive.",
+          "on_screen_text": "Premium material.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:18",
+          "shot": "Montage: All 8 colourways on wrist",
+          "voiceover_or_caption_line": "Eight colours. One adapter.",
+          "on_screen_text": "Match your style.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:21",
+          "shot": "Close-up: Adapter being removed, no residue",
+          "voiceover_or_caption_line": "Remove it anytime. No damage.",
+          "on_screen_text": "Built to last.",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:24",
+          "shot": "Wrist shot: Royal Pop on wrist, walking in slow motion",
+          "voiceover_or_caption_line": "The Royal Pop, reimagined for the wrist.",
+          "on_screen_text": "Join the waitlist.",
+          "purpose": "CTA"
+        },
+        {
+          "time": "0:27",
+          "shot": "Text overlay: Pop Wrist Studio logo + waitlist link",
+          "voiceover_or_caption_line": "Link in bio.",
+          "on_screen_text": "PopWristStudio.com/waitlist",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Cradle Adapter V1 in matte black box, lid half-open",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "This is how you wear a Royal Pop on your wrist. \n\nThe Cradle Adapter V1 is precision-engineered for the Royal Pop’s exact dimensions, with premium FKM rubber and a reversible design. \n\n✔ 40.35mm inner socket \n✔ 0.7mm retaining lip \n✔ FKM rubber \n✔ Reversible & non-invasive \n✔ 8 colourways \n\nJoin the waitlist to secure yours. Link in bio. \n\n#PopWristStudio #CradleAdapterV1 #RoyalPop #WatchAccessories #LuxuryDesign #FKMRubber #IndependentBrand #NoCompromises"
+        },
+        {
+          "label": "B",
+          "caption": "The Cradle Adapter V1 isn’t just another strap. It’s the first precision-engineered solution for wearing your Royal Pop on your wrist—without compromise. \n\nJoin the waitlist now. \n\n#PopWristStudio #EngineeringLed #WatchCollectors #PremiumDesign"
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#RoyalPop",
+        "#WatchAccessories",
+        "#LuxuryDesign",
+        "#FKMRubber",
+        "#IndependentBrand",
+        "#NoCompromises",
+        "#WatchCollectors",
+        "#PremiumMaterials",
+        "#DailyWear",
+        "#ReversibleDesign",
+        "#MatteFinish",
+        "#Unboxing",
+        "#EngineeringLed"
+      ],
+      "cta": "Join the waitlist (link in bio)",
+      "production_effort_score": 2,
+      "expected_engagement_score": 7,
+      "why_this_wins": "Unboxing format creates desire and perceived value. Appeals to collectors and buyers who appreciate premium packaging and presentation. Easy to produce with existing assets.",
+      "what_could_kill_it": "Generic unboxing execution could feel uninspired. Must emphasize the adapter’s engineering details to avoid looking like a standard strap unboxing."
+    }
+  ],
+  "execution_note_for_operator": "REEL_1 is the best bet for today’s priority (drive waitlist sign-ups). It directly addresses the core problem with a strong visual contrast and engineering-led solution. Use the approved caption (A) and ensure the 'awkward fit' shot feels genuinely uncomfortable to maximize emotional impact. Film with a tripod and good lighting to highlight the precision details."
+}

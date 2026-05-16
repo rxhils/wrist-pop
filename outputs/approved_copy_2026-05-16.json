@@ -1,0 +1,164 @@
+{
+  "date": "2026-05-16",
+  "pieces": [
+    {
+      "status": "OK",
+      "post_id": "2026-05-16-REEL-ATIONS",
+      "hook_options": [
+        "The Royal Pop is a design icon. But it’s not a wristwatch.",
+        "You love the Royal Pop. But it wasn’t made for your wrist.",
+        "The Royal Pop belongs in your pocket. Until now."
+      ],
+      "recommended_hook": "The Royal Pop is a design icon. But it’s not a wristwatch.",
+      "reel_script": {
+        "duration_target": "0:25 - 0:30",
+        "beats": [
+          {
+            "time": "0:00",
+            "line": "The Royal Pop is a design icon.",
+            "purpose": "HOOK"
+          },
+          {
+            "time": "0:02",
+            "line": "But it’s not a wristwatch.",
+            "purpose": "HOOK"
+          },
+          {
+            "time": "0:04",
+            "line": "Until now.",
+            "purpose": "HOOK"
+          },
+          {
+            "time": "0:06",
+            "line": "Introducing the Cradle Adapter V1.",
+            "purpose": "BODY"
+          },
+          {
+            "time": "0:08",
+            "line": "Precision-engineered to turn your Royal Pop",
+            "purpose": "BODY"
+          },
+          {
+            "time": "0:10",
+            "line": "into a wristwatch. Without compromise.",
+            "purpose": "BODY"
+          },
+          {
+            "time": "0:12",
+            "line": "40.35mm inner socket for a perfect fit.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:14",
+            "line": "0.7mm retaining lip to keep it secure.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:16",
+            "line": "FKM rubber for durability and grip.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:18",
+            "line": "Reversible. Non-invasive. Built for daily wear.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:20",
+            "line": "Eight colourways to match your style.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:22",
+            "line": "The Royal Pop, reimagined for the wrist.",
+            "purpose": "BODY"
+          },
+          {
+            "time": "0:24",
+            "line": "Join the waitlist to be first in line.",
+            "purpose": "CTA"
+          },
+          {
+            "time": "0:26",
+            "line": "Link in bio.",
+            "purpose": "CTA"
+          }
+        ]
+      },
+      "on_screen_text": [
+        "Cradle Adapter V1",
+        "40.35mm inner socket",
+        "0.7mm retaining lip",
+        "FKM rubber",
+        "Reversible design",
+        "8 colourways"
+      ],
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "The Royal Pop was never meant for the wrist—until now. Introducing the Cradle Adapter V1: a precision-engineered conversion kit that turns your Royal Pop into a wristwatch without compromising its design. Reversible, non-invasive, and built for daily wear. Limited first batch. Join the waitlist via link in bio.\n\nIndependent brand. Not affiliated with Swatch or Audemars Piguet."
+        },
+        {
+          "label": "B",
+          "caption": "A pocket watch. A wristwatch. The Cradle Adapter V1 bridges the gap. Engineered with a 40.35mm inner socket, 0.7mm retaining lip, and FKM rubber for durability. Reversible, non-invasive, and available in 8 colourways. First batch is limited. Join the waitlist now.\n\nIndependent brand. Not affiliated with Swatch or Audemars Piguet."
+        }
+      ],
+      "recommended_caption": "A",
+      "cta": "Join the waitlist to be first in line for the Cradle Adapter V1. Link in bio.",
+      "legal_safety_notes": [],
+      "handoff_note_for_qa": "Recommended caption A aligns more closely with the primary angle's core message ('The Royal Pop was never meant for the wrist—until now') and reinforces the reversible, non-invasive design upfront. It also subtly introduces scarcity with 'Limited first batch,' which may drive urgency without hype.",
+      "_meta": {
+        "campaign_id": "PW-0516-03-VARIATIONS",
+        "format": "REEL",
+        "campaign_stage": "WAITLIST",
+        "primary_angle_title": "The Royal Pop was never meant for the wrist — until now"
+      },
+      "_gate_status": "PASS",
+      "_gate_attempts": 1,
+      "_gate_history": [
+        {
+          "attempt": 0,
+          "hard_issues": [],
+          "auto_fix_applied": [
+            "auto-injected disclaimer into caption_options"
+          ],
+          "soft_status": "PASS",
+          "soft_score": {
+            "brand_fit": 9,
+            "clarity": 9,
+            "conversion_strength": 8,
+            "legal_safety": 10,
+            "novelty": 8
+          },
+          "soft_problems": []
+        }
+      ],
+      "_auto_fix_applied": [
+        "auto-injected disclaimer into caption_options"
+      ],
+      "_qa_score": {
+        "brand_fit": 9,
+        "clarity": 9,
+        "conversion_strength": 8,
+        "legal_safety": 10,
+        "novelty": 8
+      },
+      "_qa_approved_elements": [
+        "hook_options",
+        "recommended_hook",
+        "reel_script",
+        "on_screen_text",
+        "caption_options",
+        "recommended_caption",
+        "cta",
+        "legal_safety_notes"
+      ],
+      "_qa_visual_instruction": "Ensure all must-show elements from the creative direction are captured: Royal Pop in pocket vs. wrist with adapter, close-ups of 40.35mm socket and 0.7mm lip, FKM rubber texture, reversible design, and all 8 colourways in a quick montage. Maintain high contrast between pocket and wrist versions."
+    }
+  ],
+  "_stats": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0
+  }
+}

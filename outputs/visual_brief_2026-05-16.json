@@ -1,0 +1,176 @@
+{
+  "date": "2026-05-16",
+  "briefs": [
+    {
+      "status": "OK",
+      "post_id": "2026-05-16-REEL-ATIONS",
+      "visual_direction": {
+        "style": "HERO",
+        "mood": "Premium, precise, understated confidence",
+        "reference_energy": "Apple product launch films (clean, minimal, engineering-focused)",
+        "color_bias": "High contrast: #0D0D0D background, #F0EDE8 text, #C9A84C gold accents, FKM rubber in true matte colors",
+        "motion_style": "Slow push-ins, controlled reveals, no handheld shake, deliberate pacing"
+      },
+      "shot_list": [
+        {
+          "shot_no": 1,
+          "shot_type": "MEDIUM",
+          "subject": "Royal Pop in pocket (jeans or tailored trousers)",
+          "action": "Hand reaches into pocket, pulls out Royal Pop, holds it up to camera",
+          "framing": "Waist-level shot, focus on pocket and hand, shallow depth of field",
+          "duration_hint": "2s",
+          "must_capture": "Royal Pop design clearly visible, pocket context established"
+        },
+        {
+          "shot_no": 2,
+          "shot_type": "CLOSE",
+          "subject": "Cradle Adapter V1 (Monochrome) being placed onto Royal Pop",
+          "action": "Fingers align adapter onto Royal Pop, press-fit engagement",
+          "framing": "Top-down macro, focus on 40.35mm socket and 0.7mm lip",
+          "duration_hint": "3s",
+          "must_capture": "Precision fit, retaining lip detail, FKM rubber texture"
+        },
+        {
+          "shot_no": 3,
+          "shot_type": "WRIST SHOT",
+          "subject": "Royal Pop secured in Cradle Adapter on wrist",
+          "action": "Wrist rotates to show front, side, and back of adapter",
+          "framing": "Over-shoulder, wrist centered, background blurred",
+          "duration_hint": "3s",
+          "must_capture": "Adapter flush with Royal Pop, reversible design hint (no branding), FKM grip texture"
+        },
+        {
+          "shot_no": 4,
+          "shot_type": "MACRO",
+          "subject": "Close-up of 0.7mm retaining lip",
+          "action": "Static shot, focus pull to emphasize lip detail",
+          "framing": "Extreme close-up, lip fills frame",
+          "duration_hint": "2s",
+          "must_capture": "Lip thickness, FKM edge crispness"
+        },
+        {
+          "shot_no": 5,
+          "shot_type": "DETAIL MACRO",
+          "subject": "FKM rubber texture",
+          "action": "Fingers lightly press and release rubber to show grip",
+          "framing": "Close-up, texture fills frame",
+          "duration_hint": "2s",
+          "must_capture": "Matte finish, slight grain, no gloss"
+        },
+        {
+          "shot_no": 6,
+          "shot_type": "WIDE",
+          "subject": "All 8 colourways of Cradle Adapter V1",
+          "action": "Quick montage of adapters on wrist or held in hand",
+          "framing": "Top-down or wrist-level, consistent lighting",
+          "duration_hint": "4s (0.5s per colourway)",
+          "must_capture": "True colour representation, no distortion"
+        },
+        {
+          "shot_no": 7,
+          "shot_type": "CLOSE",
+          "subject": "Reversible design demonstration",
+          "action": "Adapter flipped to show both sides (no branding)",
+          "framing": "Hand-held, adapter fills frame",
+          "duration_hint": "2s",
+          "must_capture": "Clean reversibility, no visible attachment points"
+        }
+      ],
+      "edit_plan": [
+        {
+          "sequence_no": 1,
+          "edit_instruction": "Open on Shot 1 (Royal Pop in pocket). Text overlay: 'The Royal Pop is a design icon.'",
+          "on_screen_text": "The Royal Pop is a design icon.",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 2,
+          "edit_instruction": "Cut to Shot 1 (continued). Text overlay: 'But it’s not a wristwatch.'",
+          "on_screen_text": "But it’s not a wristwatch.",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 3,
+          "edit_instruction": "Cut to Shot 2 (adapter placement). Text overlay: 'Until now.'",
+          "on_screen_text": "Until now.",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 4,
+          "edit_instruction": "Cut to Shot 2 (continued). Text overlay: 'Introducing the Cradle Adapter V1.'",
+          "on_screen_text": "Introducing the Cradle Adapter V1.",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 5,
+          "edit_instruction": "Cut to Shot 3 (wrist shot). Text overlay: 'Precision-engineered to turn your Royal Pop into a wristwatch. Without compromise.'",
+          "on_screen_text": "Precision-engineered to turn your Royal Pop into a wristwatch. Without compromise.",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 6,
+          "edit_instruction": "Cut to Shot 4 (0.7mm lip macro). Text overlay: '40.35mm inner socket for a perfect fit. 0.7mm retaining lip to keep it secure.'",
+          "on_screen_text": "40.35mm inner socket | 0.7mm retaining lip",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 7,
+          "edit_instruction": "Cut to Shot 5 (FKM texture). Text overlay: 'FKM rubber for durability and grip.'",
+          "on_screen_text": "FKM rubber",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 8,
+          "edit_instruction": "Cut to Shot 7 (reversible demo). Text overlay: 'Reversible. Non-invasive. Built for daily wear.'",
+          "on_screen_text": "Reversible design",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 9,
+          "edit_instruction": "Cut to Shot 6 (colourway montage). Text overlay: 'Eight colourways to match your style.'",
+          "on_screen_text": "8 colourways",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 10,
+          "edit_instruction": "Cut to Shot 3 (wrist shot, repeat). Text overlay: 'The Royal Pop, reimagined for the wrist.'",
+          "on_screen_text": "The Royal Pop, reimagined for the wrist.",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 11,
+          "edit_instruction": "Cut to black screen with white text: 'Join the waitlist to be first in line. Link in bio.'",
+          "on_screen_text": "Join the waitlist to be first in line. Link in bio.",
+          "transition": "NONE"
+        }
+      ],
+      "asset_requirements": [
+        "Royal Pop (physical or high-res 3D render)",
+        "Cradle Adapter V1 in all 8 colourways (physical or high-res 3D renders)",
+        "Neutral wrist model (skin tone: light to medium, no distracting jewelry/tattoos)",
+        "Pocket context (jeans or tailored trousers, minimal branding)",
+        "Controlled lighting setup (soft key light, no harsh shadows)",
+        "Tripod or gimbal for stable shots"
+      ],
+      "cover_frame_direction": "Shot 3 (wrist shot) with Royal Pop secured in Cradle Adapter, wrist slightly angled to show adapter profile. Text overlay: 'The Royal Pop, reimagined for the wrist.'",
+      "subtitle_style": "Font: Helvetica Neue Bold, #F0EDE8, center-aligned, 80% width, drop shadow (1px, #0D0D0D at 50% opacity). Timing: 1.5s per line, fade in/out 0.3s.",
+      "handoff_for_manual_reel": "Shoot all shots in 4K, 24fps. Use a tripod for stability. Prioritize shallow depth of field for macro shots (Shots 4, 5, 7). Ensure FKM rubber texture is visible in all adapter shots. For the colourway montage (Shot 6), use consistent lighting and framing. Avoid showing any Swatch or AP branding. Edit to the provided edit_plan with text overlays and transitions. Export at 9:16, 1080x1920, H.264, 8Mbps.",
+      "_meta": {
+        "campaign_id": "PW-0516-03-VARIATIONS",
+        "format": "REEL",
+        "campaign_stage": "WAITLIST",
+        "primary_angle_title": "The Royal Pop was never meant for the wrist — until now"
+      },
+      "_validation_notes": [
+        "shot[2].shot_type 'WRIST SHOT' not in ['CLOSE', 'MACRO', 'MEDIUM', 'OVER-SHOULDER', 'WIDE']",
+        "shot[4].shot_type 'DETAIL MACRO' not in ['CLOSE', 'MACRO', 'MEDIUM', 'OVER-SHOULDER', 'WIDE']"
+      ],
+      "_visual_status": "FLAG"
+    }
+  ],
+  "_stats": {
+    "total": 1,
+    "pass": 0,
+    "flag": 1
+  }
+}

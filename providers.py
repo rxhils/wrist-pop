@@ -216,7 +216,18 @@ def _call_llm_once(
     if json_mode and cfg.get("supports_json_response_format"):
         kwargs["response_format"] = {"type": "json_object"}
     resp = client.chat.completions.create(**kwargs)
-    return resp.choices[0].message.content.strip()
+    msg = resp.choices[0].message
+    content = getattr(msg, "content", None)
+    if content is None:
+        # Some OpenRouter models return only reasoning tokens — recover them.
+        reasoning = getattr(msg, "reasoning", None) or getattr(msg, "reasoning_content", None)
+        if reasoning:
+            return reasoning.strip()
+        raise RuntimeError(
+            f"Provider '{provider}' model '{resolved_model}' returned empty content. "
+            f"Try a different model (current may be returning only thinking tokens)."
+        )
+    return content.strip()
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -272,3 +283,173 @@ def has_key(provider: str) -> bool:
     if not env:
         return True  # ollama
     return bool(os.getenv(env))
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Robust JSON extraction + retry-on-parse-fail.
+# Free OpenRouter models (gpt-oss-120b etc) often leak <|channel|>analysis
+# tokens, trailing prose, or trailing commas. This handles all of that.
+# ─────────────────────────────────────────────────────────────────────────
+import re as _re
+from pathlib import Path as _Path
+
+
+def _strip_fences(s: str) -> str:
+    s = s.strip()
+    # Drop OpenAI gpt-oss "thinking" channel tokens entirely
+    s = _re.sub(r"<\|channel\|>[\s\S]*?<\|message\|>", "", s)
+    s = _re.sub(r"<\|[a-z_]+\|>", "", s)
+    # Strip standard ``` fences
+    if s.startswith("```"):
+        s = s.split("```", 2)[1]
+        if s.startswith("json"):
+            s = s[4:]
+        if "```" in s:
+            s = s.rsplit("```", 1)[0]
+    return s.strip()
+
+
+def _find_balanced_json(s: str) -> str | None:
+    """Return outermost balanced {...} or [...] block. None if not found."""
+    s = s.strip()
+    starts = [s.find("{"), s.find("[")]
+    starts = [i for i in starts if i >= 0]
+    if not starts:
+        return None
+    start = min(starts)
+    open_c = s[start]
+    close_c = "}" if open_c == "{" else "]"
+    depth = 0
+    in_str = False
+    esc = False
+    for i in range(start, len(s)):
+        c = s[i]
+        if esc:
+            esc = False
+            continue
+        if c == "\\":
+            esc = True
+            continue
+        if c == '"':
+            in_str = not in_str
+            continue
+        if in_str:
+            continue
+        if c == open_c:
+            depth += 1
+        elif c == close_c:
+            depth -= 1
+            if depth == 0:
+                return s[start:i + 1]
+    return None
+
+
+def _sanitize_json(s: str) -> str:
+    # Smart quotes → ASCII
+    s = s.replace("“", '"').replace("”", '"')
+    s = s.replace("‘", "'").replace("’", "'")
+    # Trailing commas before } or ]
+    s = _re.sub(r",(\s*[}\]])", r"\1", s)
+    return s
+
+
+def extract_json(raw: str) -> dict | list:
+    """Parse model output → dict/list. Raises json.JSONDecodeError on hard fail."""
+    cleaned = _strip_fences(raw)
+    # First attempt: direct
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+    # Second: extract balanced block
+    block = _find_balanced_json(cleaned)
+    if block:
+        try:
+            return json.loads(block)
+        except json.JSONDecodeError:
+            sanitized = _sanitize_json(block)
+            return json.loads(sanitized)  # may still raise → caller handles
+    # Last resort
+    return json.loads(_sanitize_json(cleaned))
+
+
+def _dump_debug(agent_name: str, raw: str, err: str) -> _Path:
+    dbg = _Path(__file__).parent / "outputs" / "_debug"
+    dbg.mkdir(parents=True, exist_ok=True)
+    ts = time.strftime("%Y%m%d_%H%M%S")
+    p = dbg / f"{agent_name}_parse_fail_{ts}.txt"
+    p.write_text(f"=== ERROR ===\n{err}\n\n=== RAW RESPONSE ===\n{raw}\n", encoding="utf-8")
+    return p
+
+
+def llm_json(
+    agent_name: str,
+    system_prompt: str,
+    user_prompt: str,
+    num_ctx: int = 8192,
+    temperature: Optional[float] = None,
+    max_tokens: Optional[int] = None,
+    parse_retries: int = 1,
+) -> dict | list:
+    """LLM call that GUARANTEES valid parsed JSON or raises with debug dump.
+
+    On parse failure: retry once with stricter "JSON ONLY, no prose" reminder.
+    """
+    last_raw = ""
+    last_err = ""
+    for attempt in range(parse_retries + 1):
+        if attempt == 0:
+            sp = system_prompt
+            up = user_prompt
+        else:
+            # Stricter reminder
+            sp = system_prompt + (
+                "\n\nCRITICAL: Your previous response could not be parsed as JSON. "
+                "Return ONLY a single valid JSON object. "
+                "NO prose. NO markdown fences. NO trailing commas. "
+                "Start with { and end with }. Nothing else."
+            )
+            up = user_prompt + "\n\nPREVIOUS PARSE ERROR: " + last_err[:300]
+
+        last_raw = _call_via(agent_name, sp, up, num_ctx, temperature, max_tokens)
+        try:
+            return extract_json(last_raw)
+        except json.JSONDecodeError as e:
+            last_err = f"{type(e).__name__}: {e}"
+            print(f"[providers] {agent_name} JSON parse fail (attempt {attempt + 1}): {last_err}")
+            if attempt == parse_retries:
+                p = _dump_debug(agent_name, last_raw, last_err)
+                raise json.JSONDecodeError(
+                    f"{e.msg} (raw dumped to {p.name})", e.doc, e.pos
+                )
+    raise RuntimeError("llm_json: unreachable")
+
+
+def _call_via(agent_name, sp, up, num_ctx, temperature, max_tokens) -> str:
+    """Wrapper so llm_json can use either llm_call (agent-config aware)."""
+    # Re-implement llm_call lookup so we don't recurse via the public name above.
+    try:
+        from pipeline_config import AGENT_CONFIG
+        cfg = AGENT_CONFIG.get(agent_name, {})
+    except ImportError:
+        cfg = {}
+    provider = cfg.get("provider", "ollama")
+    model = cfg.get("model")
+    if temperature is None:
+        temperature = cfg.get("temperature", 0.4)
+    if max_tokens is None:
+        max_tokens = cfg.get("max_tokens", 8192)
+    env_provider = os.getenv("PWS_PROVIDER_OVERRIDE")
+    if env_provider:
+        provider = env_provider
+        model = os.getenv("PWS_MODEL_OVERRIDE") or None
+    return call_llm(
+        system_prompt=sp,
+        user_prompt=up,
+        provider=provider,
+        model=model,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        json_mode=True,
+        num_ctx=num_ctx,
+    )

@@ -1,0 +1,48 @@
+{
+  "campaign_status": {
+    "current_focus": "Drive waitlist sign‑ups with engineering‑focused Reel",
+    "campaign_stage": "WAITLIST",
+    "urgency": "HIGH"
+  },
+  "today_priority": "Produce the Reel for post_id 2026-05-16-REEL-ATIONS so it can be scheduled and start collecting waitlist sign‑ups.",
+  "approved_deliverables": [],
+  "blocked_items": [
+    {
+      "post_id": "2026-05-16-REEL-ATIONS",
+      "stage": "VISUAL",
+      "reason": "Visual assets not yet created; Visual Brief exists but Reel is still in WAITING state.",
+      "required_fix": "Film and edit the Reel according to the Visual Brief shot list, then upload the exported file to the Manual Reel State."
+    },
+    {
+      "post_id": "2026-05-16-REEL-ATIONS",
+      "stage": "MANUAL_REEL",
+      "reason": "Manual Reel State shows status WAITING with no exported file.",
+      "required_fix": "Upload the completed Reel file and set status to READY_FOR_REVIEW."
+    },
+    {
+      "post_id": "2026-05-16-REEL-ATIONS",
+      "stage": "MANUAL_POST",
+      "reason": "Post status is WAITING; no scheduled time or platform upload.",
+      "required_fix": "Once Reel is approved, schedule it on Instagram Reel and TikTok with link in bio to waitlist."
+    }
+  ],
+  "manual_reel_actions": [
+    "Upload completed Reel file for post_id 2026-05-16-REEL-ATIONS",
+    "Mark Reel status as READY_FOR_REVIEW"
+  ],
+  "manual_post_actions": [
+    "Schedule Reel on Instagram and TikTok after approval",
+    "Add waitlist CTA link in bio and post description"
+  ],
+  "next_3_actions": [
+    "Film and edit Reel according to Visual Brief (shots 1‑6).",
+    "Upload exported Reel file and change Manual Reel status to READY_FOR_REVIEW.",
+    "Schedule the Reel on Instagram and TikTok with the approved caption and waitlist link."
+  ],
+  "do_not_do": [
+    "Use any language implying Swatch or Audemars Piguet affiliation.",
+    "Add generic countdown timers or hype‑bro urgency.",
+    "Compare directly to 3D‑printed kits by name."
+  ],
+  "success_condition": "Reel published with approved copy and visual assets, generating at least 500 waitlist sign‑ups within the first 48 hours and achieving an engagement rate above 8 %."
+}

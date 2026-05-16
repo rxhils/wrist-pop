@@ -47,21 +47,28 @@ def load_project_context() -> dict[str, str]:
 
 
 def recent_hooks(today: str, days: int = ANTI_REPEAT_DAYS) -> list[str]:
-    """Return list of hooks from last N days of content_brief_*.json (excluding today)."""
-    briefs = sorted(OUT_DIR.glob("content_brief_*.json"), reverse=True)
+    """Return list of recent hooks from copy_*.json files (recommended_hook)."""
+    files = sorted(OUT_DIR.glob("copy_*.json"), reverse=True)
     hooks: list[str] = []
-    for path in briefs:
+    for path in files:
         if today in path.name:
             continue
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
-            for idea in data.get("ideas", []):
-                h = (idea.get("hook") or "").strip()
-                if h:
-                    hooks.append(h)
         except Exception:
             continue
-        if len(hooks) >= days * 5:  # ~5 ideas per day
+        # data is list or dict
+        items = data if isinstance(data, list) else [data]
+        for it in items:
+            if not isinstance(it, dict):
+                continue
+            h = (it.get("recommended_hook") or "").strip()
+            if h:
+                hooks.append(h)
+            for opt in it.get("hook_options") or []:
+                if isinstance(opt, str) and opt.strip():
+                    hooks.append(opt.strip())
+        if len(hooks) >= days * 5:
             break
     return hooks[: days * 5]
 
@@ -102,7 +109,8 @@ def _strip_fences(s: str) -> str:
 
 
 def synthesize(trend_report: dict, today: str) -> dict:
-    system_prompt = PROMPT_PATH.read_text(encoding="utf-8")
+    from prompts import load_prompt
+    system_prompt = load_prompt(PROMPT_PATH.name)
     ctx = load_project_context()
     prior_hooks = recent_hooks(today)
     day_n = sprint_day(today)
@@ -119,82 +127,63 @@ def synthesize(trend_report: dict, today: str) -> dict:
     }
     focus = day_focus_map.get(((day_n - 1) % 7) + 1, "Mixed")
 
-    user_prompt = f"""Today is {today}. **Sprint day {day_n} of 7-14**. Calendar focus today: **{focus}**.
+    user_prompt = f"""Today is {today}. Sprint day {day_n}. Calendar focus today: **{focus}**.
 
 ============ PROJECT CONTEXT ============
 
-POSITIONING (01-strategy/positioning.md):
+POSITIONING:
 {ctx['positioning'][:1500]}
 
-REEL HOOK BANK (03-content/reel-hooks.md — use these patterns, do NOT duplicate verbatim):
-{ctx['reel_hooks'][:2500]}
+REEL HOOK BANK (patterns — do NOT duplicate verbatim):
+{ctx['reel_hooks'][:2000]}
 
-7-DAY CALENDAR (03-content/7-day-calendar.md):
-{ctx['calendar'][:1500]}
+7-DAY CALENDAR:
+{ctx['calendar'][:1200]}
 
-OBJECTION CATEGORIES (07-metrics/objection-log.md — address these in content where you can):
+OBJECTION CATEGORIES (address where you can):
 {ctx['objection_log'][:1000]}
 
-WINNING HOOKS so far (03-content/winning-hooks.md — if any, use as gold standard):
-{ctx['winning_hooks'][:1000]}
-
 ============ ANTI-REPEAT LIST ============
-Hooks used in last {ANTI_REPEAT_DAYS} days — DO NOT repeat verbatim or near-verbatim:
+Hooks used in last {ANTI_REPEAT_DAYS} days — your `primary_angle.title` must NOT verbatim-overlap any of these:
 {json.dumps(prior_hooks, indent=2) if prior_hooks else '(none yet — first run)'}
 
-============ TODAY'S TREND REPORT ============
+============ TREND SCOUT OUTPUT ============
 ```json
-{json.dumps(trend_report, indent=2)[:5000]}
+{json.dumps(trend_report, indent=2)[:6000]}
 ```
 
 ============ TASK ============
-Generate today's content brief — 3–5 ideas, ranked by priority. Each idea must be executable as-is (no placeholders in the hook).
+Make ONE clear campaign decision today. Choose the lead angle + supporting angle + content_decision.
 
-PRIORITY RULES:
-1. If any trend has urgency >= 8, priority 1 MUST be informed by that trend.
-2. At least ONE idea must address the day's calendar focus: "{focus}".
-3. At least ONE idea must address an objection from the categories above.
+RULES:
+1. If Scout `opportunity_recommendation.confidence` = HIGH, your `primary_angle` must adopt that angle.
+2. If a trend cluster has audience_fit_score >= 8, lead with it.
+3. If today's calendar focus ("{focus}") is misaligned with Scout's top signal, choose Scout — note conflict in `supporting_angle.purpose`.
 4. NEVER repeat a hook from the anti-repeat list.
-5. Rotate pillars — never same pillar twice in one brief.
+5. Set `campaign_stage` to WAITLIST (current product stage).
 
 Output valid JSON only. Schema in system prompt.
 """
 
-    from providers import llm_call
-    content = llm_call(
+    from providers import llm_json
+    return llm_json(
         agent_name="strategist",
         system_prompt=system_prompt,
         user_prompt=user_prompt,
-        json_mode=True,
         num_ctx=8192,
     )
-    return json.loads(_strip_fences(content))
 
 
-VALID_COMBOS = {
-    "TikTok": {"Video script"},
-    "Instagram Reel": {"Video script"},
-    "Instagram Feed": {"Carousel", "Caption"},
-    "Instagram Story": {"Poll", "Caption"},
-    "Email": {"Email copy"},
-}
-VALID_PILLARS = {"Problem", "Build journey", "Poll", "Premium", "Competitor"}
+VALID_FORMATS = {"REEL", "CAROUSEL", "STORY", "STATIC"}
+VALID_STAGES = {"AWARENESS", "INTEREST", "WAITLIST", "LAUNCH"}
 BRAGGY_PHRASES = [
-    "ours are better",
-    "ours is better",
-    "we're the best",
-    "we are the best",
-    "still the best",
-    "we beat",
-    "our kit beats",
-    "nobody else",
-    "better than anyone",
-    "we win",
+    "ours are better", "ours is better", "we're the best", "we are the best",
+    "still the best", "we beat", "our kit beats", "nobody else",
+    "better than anyone", "we win",
 ]
 
 
 def _hook_overlap(a: str, b: str) -> float:
-    """Cheap Jaccard overlap on lowercase words."""
     aw = set(a.lower().split())
     bw = set(b.lower().split())
     if not aw or not bw:
@@ -203,64 +192,43 @@ def _hook_overlap(a: str, b: str) -> float:
 
 
 def validate_brief(brief: dict, anti_repeat: list[str] | None = None) -> dict:
-    ideas = brief.get("ideas", [])
-    anti_repeat = anti_repeat or []
-    cleaned: list[dict] = []
+    """Shape + anti-repeat check for Marketing Director schema.
+
+    New schema: primary_angle, supporting_angle, content_decision, creative_direction,
+    success_metric, brief_for_copy. No more `ideas[]`.
+    """
     notes: list[str] = []
-    seen_pillars: set[str] = set()
+    anti_repeat = anti_repeat or []
 
-    for i, idea in enumerate(ideas):
-        plat = idea.get("platform")
-        fmt = idea.get("format")
-        pill = idea.get("pillar")
-        hook = (idea.get("hook") or "").strip()
+    if brief.get("status") == "BLOCKED":
+        return brief
 
-        if plat not in VALID_COMBOS:
-            notes.append(f"idea[{i}]: platform '{plat}' invalid — dropped")
-            continue
-        if fmt not in VALID_COMBOS[plat]:
-            notes.append(
-                f"idea[{i}]: format '{fmt}' invalid for {plat} (allowed: {sorted(VALID_COMBOS[plat])}) — dropped"
-            )
-            continue
-        if pill not in VALID_PILLARS:
-            notes.append(f"idea[{i}]: pillar '{pill}' invalid")
-            idea["pillar"] = "Problem"
-
-        if not hook:
-            notes.append(f"idea[{i}]: hook missing — dropped")
-            continue
-        word_count = len(hook.split())
-        if word_count > 12:
-            notes.append(f"idea[{i}]: hook {word_count} words (>12) — flagged for rewrite")
-
-        hook_lc = hook.lower()
+    pa = brief.get("primary_angle") or {}
+    title = (pa.get("title") or "").strip()
+    if not title:
+        notes.append("primary_angle.title missing — Director must restate")
+    else:
         for phrase in BRAGGY_PHRASES:
-            if phrase in hook_lc:
-                notes.append(f"idea[{i}]: braggy phrase '{phrase}' in hook — needs rewrite")
-                idea["_needs_rewrite"] = True
+            if phrase in title.lower():
+                notes.append(f"primary_angle.title contains braggy phrase '{phrase}'")
                 break
-
-        # anti-repeat check vs last N days
         for prior in anti_repeat:
-            overlap = _hook_overlap(hook, prior)
+            overlap = _hook_overlap(title, prior)
             if overlap >= 0.7:
                 notes.append(
-                    f"idea[{i}]: hook overlap {int(overlap*100)}% with recent '{prior[:60]}' — flag rewrite"
+                    f"primary_angle.title overlap {int(overlap*100)}% with recent '{prior[:60]}'"
                 )
-                idea["_needs_rewrite"] = True
                 break
 
-        # pillar deduplication
-        pill = idea.get("pillar")
-        if pill in seen_pillars:
-            notes.append(f"idea[{i}]: pillar '{pill}' duplicated within brief — flag rotation")
-        seen_pillars.add(pill)
+    cd = brief.get("content_decision") or {}
+    fmt = (cd.get("format") or "").upper()
+    if fmt and fmt not in VALID_FORMATS:
+        notes.append(f"content_decision.format '{fmt}' invalid (allowed: {sorted(VALID_FORMATS)})")
 
-        cleaned.append(idea)
+    stage = (brief.get("campaign_stage") or "").upper()
+    if stage and stage not in VALID_STAGES:
+        notes.append(f"campaign_stage '{stage}' invalid (allowed: {sorted(VALID_STAGES)})")
 
-    cleaned.sort(key=lambda x: x.get("priority", 99))
-    brief["ideas"] = cleaned[:5]
     if notes:
         brief["_validation_notes"] = notes
     return brief

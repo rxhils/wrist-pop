@@ -61,110 +61,120 @@ def _strip_fences(s: str) -> str:
     return s.strip()
 
 
-def soft_check(piece: dict, idea: dict) -> dict:
-    """LLM tone/voice review. Returns {status, issues, revision_notes}."""
-    system_prompt = PROMPT_PATH.read_text(encoding="utf-8")
+def soft_check(piece: dict, director_brief: dict) -> dict:
+    """LLM QA review against new schema. Returns full QA JSON (status/score/problems)."""
+    from prompts import load_prompt
+    system_prompt = load_prompt(PROMPT_PATH.name)
 
-    user_prompt = f"""ORIGINAL IDEA (from Strategist):
+    user_prompt = f"""MARKETING DIRECTOR BRIEF:
 ```json
-{json.dumps(idea, indent=2)}
+{json.dumps(director_brief, indent=2, ensure_ascii=False)}
 ```
 
-CONTENT PIECE TO REVIEW (from Copy Writer):
+COPY PIECE TO REVIEW:
 ```json
 {json.dumps({k: v for k, v in piece.items() if not k.startswith('_')}, indent=2, ensure_ascii=False)}
 ```
 
-Review against the soft checks in your system prompt. Return JSON only.
+Run all 6 QA gates. Return strict JSON per schema in your system prompt.
 """
 
-    from providers import llm_call
-    content = llm_call(
+    from providers import llm_json
+    return llm_json(
         agent_name="gate",
         system_prompt=system_prompt,
         user_prompt=user_prompt,
-        json_mode=True,
         num_ctx=6144,
     )
-    return json.loads(_strip_fences(content))
 
 
-def gate_one(piece: dict, idea: dict, today: str) -> dict:
-    """Hard checks BLOCK + retry. Soft check is ADVISORY — attached as notes only.
+def gate_one(piece: dict, director_brief: dict, today: str) -> dict:
+    """Hard regex + auto-fix → LLM soft QA. BLOCK on hard fail after retries.
 
-    Rationale: small local model can fix one soft issue but often creates a new
-    one. Soft-blocking causes infinite loops. Hard rules (banned phrases,
-    disclaimer, hashtag counts) are deterministic and stay blocking. Soft brand
-    voice notes attached to the PASS piece so the founder can decide manually.
+    LLM QA status PASS  → _gate_status PASS
+    LLM QA status REVISE → write rewrite_one once, re-soft-check
+    LLM QA status BLOCK  → _gate_status BLOCK, do not retry
     """
     current = {k: v for k, v in piece.items() if not k.startswith("_")}
     history: list[dict] = []
-    prio = piece.get("_meta", {}).get("priority")
     auto_fix_log: list[str] = []
 
     for attempt in range(MAX_RETRIES + 1):
-        hard_issues = hard_check(current, idea)
-
-        # Try auto-fix BEFORE retrying via LLM. Fast + deterministic.
+        # Deterministic hard regex
+        hard_issues = hard_check(current, director_brief)
         if hard_issues:
             fixed, applied = auto_fix_piece(current)
             if applied:
                 auto_fix_log.extend(applied)
                 current = fixed
-                hard_issues = hard_check(current, idea)
+                hard_issues = hard_check(current, director_brief)
 
-        history.append({
-            "attempt": attempt,
-            "hard_issues": hard_issues,
-            "auto_fix_applied": list(applied) if 'applied' in locals() else [],
-        })
+        attempt_log = {"attempt": attempt, "hard_issues": hard_issues, "auto_fix_applied": list(auto_fix_log)}
 
-        if not hard_issues:
-            tox_issues = toxicity_check(current) if detoxify_available() else []
-            soft_result = soft_check(current, idea)
+        if hard_issues and attempt >= MAX_RETRIES:
+            attempt_log["final"] = "HARD_FAIL"
+            history.append(attempt_log)
+            break
+
+        if hard_issues:
+            print(f"[gate] hard FAIL attempt {attempt+1}: {len(hard_issues)} issue(s). Rewriting...")
+            try:
+                current = rewrite_one(director_brief, current, hard_issues, today)
+            except Exception as e:
+                attempt_log["rewrite_error"] = str(e)
+                history.append(attempt_log)
+                break
+            history.append(attempt_log)
+            continue
+
+        # No hard issues → LLM soft QA
+        tox_issues = toxicity_check(current) if detoxify_available() else []
+        soft_result = soft_check(current, director_brief)
+        soft_status = (soft_result.get("status") or "").upper()
+        attempt_log["soft_status"] = soft_status
+        attempt_log["soft_score"] = soft_result.get("score")
+        attempt_log["soft_problems"] = soft_result.get("problems")
+        history.append(attempt_log)
+
+        if soft_status == "PASS":
             current["_meta"] = piece.get("_meta", {})
             current["_gate_status"] = "PASS"
             current["_gate_attempts"] = attempt + 1
             current["_gate_history"] = history
             current["_auto_fix_applied"] = auto_fix_log
+            current["_qa_score"] = soft_result.get("score")
+            current["_qa_approved_elements"] = soft_result.get("approved_elements")
+            current["_qa_visual_instruction"] = soft_result.get("final_instruction_for_visual_brief")
             if tox_issues:
                 current["_toxicity_advisory"] = tox_issues
-            if soft_result.get("status") == "FAIL":
-                current["_advisory_notes"] = soft_result.get("issues", [])
-                current["_advisory_revisions"] = soft_result.get("revision_notes", [])
             return current
 
+        if soft_status == "BLOCK":
+            current["_meta"] = piece.get("_meta", {})
+            current["_gate_status"] = "BLOCK"
+            current["_gate_attempts"] = attempt + 1
+            current["_gate_history"] = history
+            current["_qa_problems"] = soft_result.get("problems")
+            return current
+
+        # REVISE — try one rewrite
         if attempt >= MAX_RETRIES:
             break
-
-        print(
-            f"[gate] P{prio} attempt {attempt + 1} hard FAIL "
-            f"({len(hard_issues)} issues, {len(auto_fix_log)} auto-fixes so far). Rewriting..."
-        )
+        notes = [p.get("fix") for p in (soft_result.get("problems") or []) if p.get("fix")]
+        if not notes:
+            notes = [soft_result.get("final_instruction_for_copy_if_revision_needed") or "tighten brand voice"]
         try:
-            current = rewrite_one(idea, current, hard_issues, today)
+            current = rewrite_one(director_brief, current, notes, today)
         except Exception as e:
             history[-1]["rewrite_error"] = str(e)
             break
 
     current["_meta"] = piece.get("_meta", {})
-    current["_gate_status"] = "FAIL"
-    current["_gate_attempts"] = len(history)
+    current["_gate_status"] = "BLOCK" if current.get("_gate_status") != "PASS" else "PASS"
+    current.setdefault("_gate_attempts", len(history))
     current["_gate_history"] = history
     current["_auto_fix_applied"] = auto_fix_log
     return current
-
-
-def _idea_from_meta(piece: dict, brief: dict) -> dict:
-    meta = piece.get("_meta", {})
-    for idea in brief.get("ideas", []):
-        if idea.get("priority") == meta.get("priority"):
-            return idea
-    return {
-        "platform": meta.get("platform"),
-        "format": meta.get("format"),
-        "pillar": meta.get("pillar"),
-    }
 
 
 def main() -> int:
@@ -180,13 +190,12 @@ def main() -> int:
         print(f"[gate] using custom input: {args.input}")
     else:
         copy_doc = latest_copy(today)
-    pieces = copy_doc.get("pieces", [])
+    pieces = copy_doc.get("pieces", []) if isinstance(copy_doc, dict) else (copy_doc if isinstance(copy_doc, list) else [])
 
     brief_path = args.brief or (OUT_DIR / f"content_brief_{today}.json")
-    brief = (
+    director_brief = (
         json.loads(brief_path.read_text(encoding="utf-8"))
-        if brief_path.exists()
-        else {"ideas": []}
+        if brief_path.exists() else {}
     )
 
     import time as _time
@@ -194,10 +203,9 @@ def main() -> int:
     for i, piece in enumerate(pieces):
         if i > 0:
             _time.sleep(6)
-        idea = _idea_from_meta(piece, brief)
-        prio = piece.get("_meta", {}).get("priority")
-        print(f"[gate] reviewing priority {prio} ({idea.get('format')})...")
-        reviewed.append(gate_one(piece, idea, today))
+        post_id = piece.get("post_id") or piece.get("_meta", {}).get("campaign_id") or f"piece-{i}"
+        print(f"[gate] reviewing {post_id}...")
+        reviewed.append(gate_one(piece, director_brief, today))
 
     pass_count = sum(1 for p in reviewed if p.get("_gate_status") == "PASS")
     output = {

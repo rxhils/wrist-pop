@@ -64,69 +64,76 @@ def _strip_fences(s: str) -> str:
 
 
 def brief_one(piece: dict, today: str) -> dict:
-    system_prompt = PROMPT_PATH.read_text(encoding="utf-8")
+    from prompts import load_prompt
+    system_prompt = load_prompt(PROMPT_PATH.name)
     meta = piece.get("_meta", {})
-    plat = meta.get("platform")
-    fmt = meta.get("format")
-    aspect = ASPECT_BY_PLATFORM_FORMAT.get((plat, fmt), "9:16")
+    fmt = (meta.get("format") or "REEL").upper()
+    aspect = {"REEL": "9:16", "STORY": "9:16", "CAROUSEL": "1:1", "STATIC": "4:5"}.get(fmt, "9:16")
 
     public_piece = {k: v for k, v in piece.items() if not k.startswith("_")}
+    post_id = piece.get("post_id") or "unknown"
 
     user_prompt = f"""Today: {today}
-
-APPROVED CONTENT PIECE:
-Platform: {plat}
+post_id: {post_id}
 Format: {fmt}
 Required aspect ratio: {aspect}
-Priority: {meta.get("priority")}
-Pillar: {meta.get("pillar")}
-Informed by trend: {meta.get("informed_by_trend")}
 
-Content body:
+APPROVED COPY (from QA):
 ```json
 {json.dumps(public_piece, indent=2, ensure_ascii=False)}
 ```
 
-Produce the visual brief. Use `aspect_ratio` = `{aspect}`. Make every AI prompt complete (no placeholders). Output VALID JSON only.
+QA visual instruction: {piece.get('_qa_visual_instruction') or '(none)'}
+
+Produce the visual brief using your output schema. shot_list must have 3–8 shots. edit_plan steps must align with reel_script.beats. Output VALID JSON only.
 """
 
-    from providers import llm_call
-    content = llm_call(
+    from providers import llm_json
+    brief = llm_json(
         agent_name="visual",
         system_prompt=system_prompt,
         user_prompt=user_prompt,
-        json_mode=True,
         num_ctx=6144,
     )
-    brief = json.loads(_strip_fences(content))
     brief["_meta"] = meta
+    brief["post_id"] = brief.get("post_id") or post_id
     return brief
 
 
 def validate_brief(brief: dict) -> dict:
+    """New schema: visual_direction + shot_list + edit_plan."""
     notes: list[str] = []
-    shot_ids = set()
     shots = brief.get("shot_list") or []
-    prompts = brief.get("ai_prompts") or []
+    edits = brief.get("edit_plan") or []
+    vd = brief.get("visual_direction") or {}
+
+    valid_styles = {"HERO", "TECHNICAL BOARD", "COLOURWAY CARD", "WRIST SHOT", "DETAIL MACRO"}
+    style = (vd.get("style") or "").upper()
+    if style and style not in valid_styles:
+        notes.append(f"visual_direction.style '{style}' not in {sorted(valid_styles)}")
 
     if not isinstance(shots, list) or not shots:
         notes.append("shot_list empty")
+    elif len(shots) < 3 or len(shots) > 8:
+        notes.append(f"shot_list has {len(shots)} shots — should be 3–8 for video formats")
     else:
+        shot_nos = set()
+        valid_shot_types = {"CLOSE", "MEDIUM", "WIDE", "MACRO", "OVER-SHOULDER"}
         for i, s in enumerate(shots):
-            sid = s.get("id")
-            if sid in shot_ids:
-                notes.append(f"shot[{i}] duplicate id {sid}")
-            shot_ids.add(sid)
-            if s.get("type") not in {"live_phone", "ai_image", "ai_video", "reuse_existing"}:
-                notes.append(f"shot[{i}] invalid type {s.get('type')!r}")
+            n = s.get("shot_no")
+            if n in shot_nos:
+                notes.append(f"shot[{i}] duplicate shot_no {n}")
+            shot_nos.add(n)
+            st = (s.get("shot_type") or "").upper()
+            if st and st not in valid_shot_types:
+                notes.append(f"shot[{i}].shot_type '{st}' not in {sorted(valid_shot_types)}")
 
-    for i, p in enumerate(prompts):
-        if p.get("for_shot_id") not in shot_ids:
-            notes.append(f"ai_prompt[{i}] references unknown shot id {p.get('for_shot_id')}")
-        neg = (p.get("negative_prompt") or "").lower()
-        missing = [t for t in REQUIRED_NEGATIVE_TOKENS if t.lower() not in neg]
-        if missing:
-            notes.append(f"ai_prompt[{i}] negative_prompt missing tokens: {missing}")
+    if isinstance(edits, list) and edits:
+        valid_trans = {"CUT", "DISSOLVE", "WHIP", "NONE"}
+        for i, e in enumerate(edits):
+            tr = (e.get("transition") or "").upper()
+            if tr and tr not in valid_trans:
+                notes.append(f"edit_plan[{i}].transition '{tr}' not in {sorted(valid_trans)}")
 
     if notes:
         brief["_validation_notes"] = notes
@@ -149,9 +156,7 @@ def main() -> int:
         print(f"[visual] using custom input: {args.input}")
     else:
         approved = latest_approved(today)
-    pieces = approved.get("pieces", [])
-    if args.pick is not None:
-        pieces = [p for p in pieces if p.get("_meta", {}).get("priority") == args.pick]
+    pieces = approved.get("pieces", []) if isinstance(approved, dict) else (approved if isinstance(approved, list) else [])
     if not pieces:
         print("[visual] no pieces to brief.")
         return 1
@@ -161,16 +166,13 @@ def main() -> int:
     first = True
     for piece in pieces:
         if piece.get("_gate_status") != "PASS":
-            print(
-                f"[visual] skipping P{piece.get('_meta', {}).get('priority')} — gate FAIL"
-            )
+            print(f"[visual] skipping {piece.get('post_id')} — gate {piece.get('_gate_status')}")
             continue
         if not first:
             _time.sleep(8)
         first = False
-        meta = piece.get("_meta", {})
-        prio = meta.get("priority")
-        print(f"[visual] briefing P{prio} {meta.get('platform')}/{meta.get('format')}...")
+        post_id = piece.get("post_id") or "unknown"
+        print(f"[visual] briefing {post_id}...")
         b = brief_one(piece, today)
         b = validate_brief(b)
         briefs.append(b)

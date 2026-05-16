@@ -17,7 +17,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-STAGES = ["scout", "strategist", "writer", "gate", "visual", "scheduler", "render_image", "render_video"]
+STAGES = [
+    "scout", "strategist", "writer", "gate", "visual",
+    "manual_reel", "manual_post", "output_director",
+]
 
 
 def _run(name: str) -> int:
@@ -38,6 +41,15 @@ def _run(name: str) -> int:
     elif name == "visual":
         from run_visual import main as visual_main
         rc = visual_main()
+    elif name == "manual_reel":
+        from run_manual_reel import main as mr_main
+        rc = mr_main()
+    elif name == "manual_post":
+        from run_manual_post import main as mp_main
+        rc = mp_main()
+    elif name == "output_director":
+        from run_output_director import main as od_main
+        rc = od_main()
     elif name == "scheduler":
         from run_scheduler import main as sched_main
         rc = sched_main()
