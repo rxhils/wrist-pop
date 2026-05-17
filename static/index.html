@@ -171,7 +171,7 @@ function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }
           { id: 'overview', label: 'Overview' },
           { id: 'console', label: 'Console' },
           { id: 'reels', label: 'Reels' },
-          { id: 'render', label: 'Render' },
+          // { id: 'render', label: 'Render' },  // paused while pipeline focus
           { id: 'text', label: 'Text agent' },
           { id: 'visual', label: 'Visual' },
           { id: 'outputs', label: 'Outputs' },
@@ -271,8 +271,9 @@ function HFSidebar({ activeId, statuses, onPick, progress }) {
       <div style={{ padding: '14px 8px 4px', flex: 1, overflowY: 'auto' }}>
         <Group title="Marketing" ids={PIPELINE_IDS} index={1} />
         <Group title="Tools" ids={TOOLS_IDS} index={2} />
-        <Group title="Render" ids={RENDER_IDS} index={3} />
-        <Group title="Reels" ids={REEL_IDS} index={4} />
+        {/* Render group hidden — image/video render paused while we focus on pipeline */}
+        {/* <Group title="Render" ids={RENDER_IDS} index={3} /> */}
+        <Group title="Reels" ids={REEL_IDS} index={3} />
       </div>
       {progress && (
         <div style={{ padding: 12, borderTop: `1px solid ${HF.border}` }}>
