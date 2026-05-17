@@ -84,6 +84,20 @@ AGENT_CONFIG = {
         "max_tokens": 12288,
         "description": "Generates 5 ranked reel/TikTok ideas from full pipeline output (qwen3-80b is preferred but rate-limited; gpt-oss-120b is reliable fallback).",
     },
+    "image_director": {
+        "provider": "mistral",
+        "model":    "mistral-large-latest",
+        "temperature": 0.55,
+        "max_tokens": 12288,
+        "description": "Generates 5 ranked image render ideas with viral_score (FLUX / nano_banana_2 / gpt_image_2 ready prompts).",
+    },
+    "orchestrator": {
+        "provider": "mistral",
+        "model":    "mistral-large-latest",
+        "temperature": 0.3,
+        "max_tokens": 4096,
+        "description": "Top-level agent: reads operator intent, plans sub-agent calls, streams progress, consolidates final brief.",
+    },
 }
 
 

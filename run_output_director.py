@@ -35,9 +35,12 @@ ARTIFACT_PREFIXES = [
     "content_brief",
     "copy",
     "approved_copy",
+    "asset_plan",
     "visual_brief",
     "manual_reel_state",
     "manual_post_state",
+    "reel_ideas",
+    "image_ideas",
 ]
 
 def _latest(prefix: str, today: str) -> Path | None:

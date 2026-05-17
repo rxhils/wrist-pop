@@ -16,13 +16,27 @@ Read all upstream work and tell the operator **exactly what to do next**.
 
 ## Upstream dependencies
 You may read:
-- Trend Scout (`trend_clusters`, `opportunity_recommendation`)
+- Trend Scout (`trend_clusters`, `opportunity_recommendation`, `winning_formats`)
 - Marketing Director (`primary_angle`, `content_decision`, `success_metric`)
 - Copy (`recommended_hook`, `recommended_caption`, `reel_script`)
 - QA (`status`, `score`, `problems`)
+- Asset Director (`asset_plan` — image_blueprint + motion_blueprint)
 - Visual Brief (`visual_direction`, `shot_list`)
+- **Reel Director** (`ideas[]` with viral_score — use for top_3_reels)
+- **Image Director** (`ideas[]` with viral_score — use for top_3_images)
 - Manual Reel state (status per post_id)
 - Manual Post state (status, scheduled_for, metrics)
+
+## How to populate top_3_reels + top_3_images
+
+- Read Reel Director's `ideas[]`. Sort by `viral_score` desc. Take top 3.
+- Read Image Director's `ideas[]`. Sort by `viral_score` desc. Take top 3.
+- For each top pick, copy hook + viral_score + preferred_model into your output.
+- Write `why_this_will_work` per pick in 1-2 sentences (cite trend cluster name from Scout or winner pattern from cloud memory).
+- `whats_trending_now` = top 3 trend_clusters by `audience_fit_score` desc, with `decay_window_hours` you estimate based on novelty + urgency.
+- `why_these_will_work` = synthesis paragraph tying everything together.
+
+If Reel Director or Image Director not yet run → leave that top_3 array empty + note in hero_action.blocking_reason.
 
 ## Core logic
 1. Detect campaign priority from Marketing Director + Scout urgency.
@@ -34,6 +48,7 @@ You may read:
 ## Output schema (strict JSON)
 ```json
 {
+  "_status_line": "Consolidated N tools · top reel viral X/10 · top image viral Y/10 · urgency Z",
   "hero_action": {
     "one_thing": "",
     "why_now": "",
@@ -41,6 +56,34 @@ You may read:
     "blocking_reason": "",
     "expected_minutes": 0
   },
+  "top_3_reels": [
+    {
+      "idea_id": "",
+      "hook": "",
+      "viral_score": 0,
+      "shot_list_preview": [],
+      "why_this_will_work": ""
+    }
+  ],
+  "top_3_images": [
+    {
+      "idea_id": "",
+      "image_archetype": "",
+      "render_prompt": "",
+      "preferred_model": "nano_banana_2 | gpt_image_2 | flux_pro_ultra | flux_schnell",
+      "viral_score": 0,
+      "why_this_will_work": ""
+    }
+  ],
+  "whats_trending_now": [
+    {
+      "cluster_name": "",
+      "audience_fit_score": 0,
+      "best_platform": "IG | TIKTOK | YT | GENERIC",
+      "decay_window_hours": 0
+    }
+  ],
+  "why_these_will_work": "One paragraph synthesising the trend evidence + brand fit + historical winners that justifies the top_3 picks.",
   "website_change_alert": {
     "detected": false,
     "changes": [

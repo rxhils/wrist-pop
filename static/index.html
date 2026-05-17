@@ -168,6 +168,7 @@ function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         {[
+          { id: 'operator', label: 'Operator' },
           { id: 'overview', label: 'Overview' },
           { id: 'console', label: 'Console' },
           { id: 'reels', label: 'Reels' },
@@ -2452,6 +2453,231 @@ function FormRow({ label, children }) {
   );
 }
 
+// ───────────────────────── Operator (Orchestrator) ─────────────────────────
+function OperatorView() {
+  const [intent, setIntent] = useState('');
+  const [refs, setRefs] = useState([]);          // [{path, url}]
+  const [runId, setRunId] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [session, setSession] = useState(null);
+  const [running, setRunning] = useState(false);
+  const [error, setError] = useState('');
+  const pollRef = useRef(null);
+
+  const handleRefUpload = async (files) => {
+    if (!files || !files.length) return;
+    // create session first if not yet
+    let rid = runId;
+    if (!rid) {
+      try {
+        const r = await apiPost('/api/orchestrator/session', { intent: intent || '(pending)' });
+        rid = r.run_id;
+        setRunId(rid);
+      } catch (e) { setError(e.message); return; }
+    }
+    for (const file of Array.from(files)) {
+      const fd = new FormData();
+      fd.append('file', file);
+      try {
+        const r = await fetch(`/api/orchestrator/upload?run_id=${rid}`, { method: 'POST', body: fd });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || 'upload failed');
+        setRefs(prev => [...prev, data]);
+      } catch (e) { setError('upload: ' + e.message); }
+    }
+  };
+
+  const launch = async () => {
+    if (!intent.trim()) { setError('intent required'); return; }
+    setError('');
+    setEvents([]);
+    setSession(null);
+    setRunning(true);
+    try {
+      const body = { intent, refs: refs.map(r => r.path), run_id: runId };
+      const r = await apiPost('/api/orchestrator/run', body);
+      const rid = r.run_id;
+      setRunId(rid);
+      // Start polling session events every 1.5s
+      pollRef.current = setInterval(async () => {
+        try {
+          const s = await apiGet(`/api/orchestrator/session/${rid}`);
+          setEvents(s.events || []);
+          if (s.session) {
+            setSession(s.session);
+            // Stop polling when session.json written (orchestrator done OR blocked)
+            clearInterval(pollRef.current);
+            pollRef.current = null;
+            setRunning(false);
+          }
+        } catch (e) { /* keep polling */ }
+      }, 1500);
+    } catch (e) {
+      setError(e.message);
+      setRunning(false);
+    }
+  };
+
+  useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
+
+  const tools = (session?.tools_run) || [];
+  const brief = session?.final_brief;
+  const totalCost = session?.total_cost_usd ?? 0;
+
+  return (
+    <div style={{ padding: 18, display: 'grid', gridTemplateRows: 'auto 1fr', gap: 14, minHeight: 0, background: HF.bg }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div>
+          <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 28, color: HF.text, lineHeight: 1 }}>
+            Operator <span style={{ color: HF.accent }}>Console</span>
+          </div>
+          <div style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textFaint, letterSpacing: '.12em', textTransform: 'uppercase', marginTop: 6 }}>
+            orchestrator · type intent · drop refs · run
+          </div>
+        </div>
+        <span style={{ flex: 1 }} />
+        {totalCost > 0 && (
+          <span style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim }}>session: <span style={{ color: HF.accent }}>${totalCost.toFixed(3)}</span></span>
+        )}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: 14, minHeight: 0 }}>
+        {/* LEFT: intent + refs + launch */}
+        <div style={{ padding: 14, borderRadius: 8, background: HF.surface, border: `1px solid ${HF.border}`, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div>
+            <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>INTENT</div>
+            <textarea
+              value={intent}
+              onChange={e => setIntent(e.target.value)}
+              rows={5}
+              placeholder="e.g. give me 3 launch reels for Monochrome focused on the 40.35mm spec"
+              style={{ width: '100%', padding: '8px 10px', borderRadius: 4, background: '#0a0a0a', color: HF.text, border: `1px solid ${HF.border}`, fontFamily: HF.body, fontSize: 12, resize: 'vertical', boxSizing: 'border-box' }}
+            />
+          </div>
+          <div>
+            <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>REFERENCES (optional)</div>
+            <input type="file" accept="image/*" multiple onChange={e => handleRefUpload(e.target.files)} style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim }} />
+            {refs.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4, marginTop: 8 }}>
+                {refs.map((r, i) => (
+                  <img key={i} src={r.url} style={{ width: '100%', borderRadius: 3, border: `1px solid ${HF.borderSoft}` }} />
+                ))}
+              </div>
+            )}
+          </div>
+          {error && (
+            <div style={{ padding: 6, fontFamily: HF.mono, fontSize: 10.5, color: HF.err, background: 'rgba(255,90,90,.06)', borderRadius: 4 }}>{error}</div>
+          )}
+          <IconBtn tone="accent" onClick={launch} disabled={running || !intent.trim()}>
+            {running ? '… orchestrating' : '▶ Run Orchestrator'}
+          </IconBtn>
+          {runId && (
+            <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, marginTop: 4 }}>run_id: {runId}</div>
+          )}
+        </div>
+
+        {/* RIGHT: live stream + brief */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minHeight: 0 }}>
+          {/* Live status strip */}
+          <div style={{ padding: 10, borderRadius: 8, background: HF.surface, border: `1px solid ${HF.border}`, maxHeight: 280, overflowY: 'auto' }}>
+            <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>LIVE STREAM</div>
+            {events.length === 0 && !running && (
+              <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint, padding: 10, textAlign: 'center' }}>no session yet · type an intent and run</div>
+            )}
+            {events.map((ev, i) => {
+              const t = ev.type;
+              if (t === 'session_start') return <div key={i} style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.accent, marginBottom: 4 }}>▶ session started · refs: {ev.refs_count}</div>;
+              if (t === 'operator_message') return <div key={i} style={{ fontFamily: HF.body, fontSize: 12, color: HF.text, fontStyle: 'italic', marginBottom: 3 }}>→ {ev.message}</div>;
+              if (t === 'tool_start') return <div key={i} style={{ fontFamily: HF.mono, fontSize: 10.5, color: HF.textDim, marginBottom: 3 }}>· running {ev.tool}…</div>;
+              if (t === 'tool_done') {
+                const ok = ev.ok;
+                return (
+                  <div key={i} style={{ fontFamily: HF.mono, fontSize: 10.5, marginBottom: 3, color: ok ? HF.ok : HF.err }}>
+                    {ok ? '✓' : '✗'} {ev.tool} — <span style={{ color: HF.textDim }}>{ev.status_line}</span> <span style={{ color: HF.textFaint }}>(${(ev.cost_usd || 0).toFixed(3)} · {ev.latency_s}s)</span>
+                  </div>
+                );
+              }
+              if (t === 'done') return <div key={i} style={{ fontFamily: HF.mono, fontSize: 11, color: HF.ok, marginTop: 6 }}>[DONE] {ev.status_line}</div>;
+              if (t === 'blocked') return <div key={i} style={{ fontFamily: HF.mono, fontSize: 11, color: HF.err, marginTop: 6 }}>[BLOCKED] {ev.reason}</div>;
+              return null;
+            })}
+          </div>
+
+          {/* Final brief panel */}
+          <div style={{ padding: 14, borderRadius: 8, background: HF.surface, border: `1px solid ${HF.border}`, flex: 1, overflowY: 'auto' }}>
+            <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 8 }}>CONSOLIDATED BRIEF</div>
+            {!brief && (
+              <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint, padding: 20, textAlign: 'center' }}>brief appears when orchestrator finishes</div>
+            )}
+            {brief && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {brief.do_this_first && (
+                  <div style={{ padding: 12, background: 'rgba(245,231,74,.06)', border: `1px solid ${HF.accent}`, borderRadius: 6 }}>
+                    <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, letterSpacing: '.14em', marginBottom: 4 }}>DO THIS FIRST</div>
+                    <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 15, color: HF.text }}>{brief.do_this_first}</div>
+                  </div>
+                )}
+                {Array.isArray(brief.top_3_reels) && brief.top_3_reels.length > 0 && (
+                  <div>
+                    <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>★ TOP 3 REELS</div>
+                    {brief.top_3_reels.map((r, i) => (
+                      <div key={i} style={{ padding: 10, marginBottom: 6, borderRadius: 5, background: HF.bg, border: `1px solid ${HF.borderSoft}` }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                          <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent }}>{r.idea_id}</span>
+                          <span style={{ flex: 1 }} />
+                          <span style={{ fontFamily: HF.mono, fontSize: 10, color: r.viral_score >= 8 ? HF.ok : HF.accent, fontWeight: 700 }}>{r.viral_score}/10</span>
+                        </div>
+                        <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 14, color: HF.text, marginBottom: 4 }}>"{r.hook}"</div>
+                        {r.why_this_will_work && <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5 }}>{r.why_this_will_work}</div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {Array.isArray(brief.top_3_images) && brief.top_3_images.length > 0 && (
+                  <div>
+                    <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>★ TOP 3 IMAGES</div>
+                    {brief.top_3_images.map((im, i) => (
+                      <div key={i} style={{ padding: 10, marginBottom: 6, borderRadius: 5, background: HF.bg, border: `1px solid ${HF.borderSoft}` }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                          <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent }}>{im.idea_id}</span>
+                          <Pill>{im.image_archetype}</Pill>
+                          <Pill>{im.preferred_model}</Pill>
+                          <span style={{ flex: 1 }} />
+                          <span style={{ fontFamily: HF.mono, fontSize: 10, color: im.viral_score >= 8 ? HF.ok : HF.accent, fontWeight: 700 }}>{im.viral_score}/10</span>
+                        </div>
+                        <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textDim, lineHeight: 1.5, marginBottom: 4, padding: 6, background: HF.surface2, borderRadius: 3 }}>{im.render_prompt}</div>
+                        {im.why_this_will_work && <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5 }}>{im.why_this_will_work}</div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {Array.isArray(brief.whats_trending_now) && brief.whats_trending_now.length > 0 && (
+                  <div>
+                    <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>TRENDING NOW</div>
+                    {brief.whats_trending_now.map((t, i) => (
+                      <div key={i} style={{ padding: 6, marginBottom: 3, background: HF.surface2, borderRadius: 4, fontFamily: HF.body, fontSize: 11, color: HF.textDim, display: 'flex', gap: 6 }}>
+                        <Pill tone="accent">{t.best_platform}</Pill>
+                        <span style={{ color: HF.text, flex: 1 }}>{t.cluster_name}</span>
+                        <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}>fit {t.audience_fit_score}/10 · decay {t.decay_window_hours}h</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {brief.why_these_will_work && (
+                  <div style={{ padding: 10, background: HF.bg, borderLeft: `2px solid ${HF.accent}`, borderRadius: 4 }}>
+                    <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>WHY THESE WILL WORK</div>
+                    <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.text, lineHeight: 1.5 }}>{brief.why_these_will_work}</div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ───────────────────────── Outputs viewer ─────────────────────────
 function OutputsView({}) {
   const [files, setFiles] = useState([]);
@@ -3604,6 +3830,8 @@ function App() {
           onPick={pickAgent}
           progress={running ? progress : null}
         />
+
+        {view === 'operator' && <OperatorView />}
 
         {view === 'overview' && (
           <PipelineOverview statuses={statuses} onPickAgent={pickAgent} lastRunInfo={lastRunInfo} />

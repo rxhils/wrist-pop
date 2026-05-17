@@ -170,6 +170,24 @@ AGENTS: dict[str, dict[str, Any]] = {
         "outputs": ["reel_ideas"],
         "prompt_file": "reel_director.md",
     },
+    "image_director": {
+        "label": "Image Director",
+        "tier": "reels",
+        "stage": 13,
+        "script": "run_image_director.py",
+        "kind": "llm",
+        "outputs": ["image_ideas"],
+        "prompt_file": "image_director.md",
+    },
+    "orchestrator": {
+        "label": "Orchestrator",
+        "tier": "operator",
+        "stage": 0,
+        "script": "run_orchestrator.py",
+        "kind": "llm",
+        "outputs": ["orchestrator_session"],
+        "prompt_file": "orchestrator.md",
+    },
 }
 
 JOBS: dict[str, dict[str, Any]] = {}
@@ -258,6 +276,125 @@ def health() -> dict:
 @app.get("/api/agents")
 def list_agents() -> dict:
     return {"agents": [{"key": k, **v} for k, v in AGENTS.items()]}
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Orchestrator (top-level agentic operator chat)
+# ─────────────────────────────────────────────────────────────────────────
+ORCH_DIR = OUT_DIR / "orchestrator"
+
+
+class OrchestratorIntentReq(BaseModel):
+    intent: str
+    refs: list[str] | None = None       # paths (relative to outputs/) of uploaded references
+    run_id: str | None = None
+
+
+@app.post("/api/orchestrator/session")
+def orchestrator_session_create(req: OrchestratorIntentReq) -> dict:
+    """Create a new orchestrator session record (intent + refs). Does NOT run it yet."""
+    import uuid as _uuid
+    from datetime import datetime as _dt
+    run_id = req.run_id or f"orch_{_dt.utcnow().strftime('%Y%m%d-%H%M%S')}_{_uuid.uuid4().hex[:6]}"
+    sdir = ORCH_DIR / run_id
+    (sdir / "references").mkdir(parents=True, exist_ok=True)
+    (sdir / "intent.txt").write_text(req.intent, encoding="utf-8")
+    return {"run_id": run_id, "intent_path": str((sdir / "intent.txt").relative_to(ROOT)),
+            "refs_dir": str((sdir / "references").relative_to(ROOT))}
+
+
+@app.post("/api/orchestrator/upload")
+async def orchestrator_upload_ref(run_id: str, file: UploadFile = File(...)) -> dict:
+    """Upload one reference image into outputs/orchestrator/<run_id>/references/."""
+    sdir = ORCH_DIR / run_id / "references"
+    sdir.mkdir(parents=True, exist_ok=True)
+    safe = "".join(c if c.isalnum() or c in ".-_" else "_" for c in file.filename or "ref.png")[:80]
+    name = f"{int(time.time())}_{safe}"
+    dest = sdir / name
+    data = await file.read()
+    dest.write_bytes(data)
+    rel = str(dest.relative_to(OUT_DIR)).replace("\\", "/")
+    return {"path": rel, "url": f"/api/outputs/{rel}", "size_bytes": len(data)}
+
+
+@app.get("/api/orchestrator/sessions")
+def orchestrator_sessions_list(limit: int = 20) -> dict:
+    """List recent orchestrator sessions (most recent first)."""
+    ORCH_DIR.mkdir(parents=True, exist_ok=True)
+    items = []
+    for sub in sorted(ORCH_DIR.iterdir(), key=lambda p: p.stat().st_mtime, reverse=True):
+        if not sub.is_dir():
+            continue
+        sf = sub / "session.json"
+        intent_f = sub / "intent.txt"
+        items.append({
+            "run_id": sub.name,
+            "has_session": sf.exists(),
+            "intent": intent_f.read_text(encoding="utf-8")[:200] if intent_f.exists() else None,
+            "mtime": sub.stat().st_mtime,
+        })
+        if len(items) >= limit:
+            break
+    return {"sessions": items, "count": len(items)}
+
+
+@app.get("/api/orchestrator/session/{run_id}")
+def orchestrator_session_get(run_id: str) -> dict:
+    """Return the session record + live status events for a given run."""
+    sdir = ORCH_DIR / run_id
+    if not sdir.exists():
+        raise HTTPException(404, f"session {run_id} not found")
+    session = None
+    if (sdir / "session.json").exists():
+        try:
+            session = json.loads((sdir / "session.json").read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    events = []
+    sp = sdir / "status.jsonl"
+    if sp.exists():
+        for line in sp.read_text(encoding="utf-8").splitlines():
+            try:
+                events.append(json.loads(line))
+            except Exception:
+                continue
+    refs = []
+    refs_dir = sdir / "references"
+    if refs_dir.exists():
+        refs = sorted([
+            f"orchestrator/{run_id}/references/{p.name}"
+            for p in refs_dir.iterdir() if p.is_file()
+        ])
+    intent = ""
+    if (sdir / "intent.txt").exists():
+        intent = (sdir / "intent.txt").read_text(encoding="utf-8")
+    return {"run_id": run_id, "intent": intent, "refs": refs, "session": session, "events": events}
+
+
+@app.post("/api/orchestrator/run")
+async def orchestrator_run(req: OrchestratorIntentReq) -> dict:
+    """Kick off an orchestrator run in the background. Returns run_id immediately.
+    Operator polls /session/{run_id} for status events.
+    """
+    import uuid as _uuid
+    from datetime import datetime as _dt
+    import threading
+    run_id = req.run_id or f"orch_{_dt.utcnow().strftime('%Y%m%d-%H%M%S')}_{_uuid.uuid4().hex[:6]}"
+
+    def _go():
+        try:
+            from run_orchestrator import run_session
+            run_session(intent=req.intent, refs=req.refs or [], run_id=run_id)
+        except Exception as e:
+            sdir = ORCH_DIR / run_id
+            sdir.mkdir(parents=True, exist_ok=True)
+            (sdir / "session.json").write_text(
+                json.dumps({"blocked": str(e)[:300], "run_id": run_id}, indent=2),
+                encoding="utf-8",
+            )
+
+    threading.Thread(target=_go, daemon=True).start()
+    return {"run_id": run_id, "status": "started"}
 
 
 @app.get("/api/brand-snapshot")
