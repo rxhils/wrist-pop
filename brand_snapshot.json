@@ -1,6 +1,6 @@
 {
   "source": "https://popwriststudio.com/",
-  "fetched_at": "2026-05-16T17:44:26Z",
+  "fetched_at": "2026-05-16T19:00:45Z",
   "website_status": "LIVE",
   "brand_name": "Pop Wrist Studio",
   "product_name": "Cradle Adapter V1",
@@ -21,5 +21,11 @@
     "material": "FKM rubber",
     "crown_notch_count": 2
   },
-  "notes": []
+  "notes": [],
+  "website_change_alert": {
+    "detected": false,
+    "checked_at": "2026-05-16T19:00:45Z",
+    "previous_fetched_at": "2026-05-16T18:44:02Z",
+    "changes": []
+  }
 }

@@ -3,144 +3,180 @@
   "briefs": [
     {
       "status": "OK",
-      "post_id": "2026-05-16-REEL-ATIONS",
+      "post_id": "2026-05-16-REEL-516-03",
       "visual_direction": {
         "style": "HERO",
         "mood": "Precision-engineered, premium, understated confidence",
-        "reference_energy": "Apple product launches (clean, minimal, high-detail)",
-        "color_bias": "Monochrome base with selective colourway pops (#C9A84C accent for text/graphics)",
-        "motion_style": "Smooth, deliberate camera moves (push-ins, slow reveals); no handheld shake; crisp cuts"
+        "reference_energy": "Apple product launch films (e.g., MacBook Pro 'Shot on iPhone') — clean, high-contrast, slow-motion detail shots",
+        "color_bias": "Neutral greys with selective gold (#C9A84C) for spec callouts and CTA",
+        "motion_style": "Slow push-ins, macro sweeps, and precise cuts. No handheld shakiness. Minimal transitions (cuts only)."
       },
       "shot_list": [
         {
           "shot_no": 1,
           "shot_type": "MACRO",
-          "subject": "Cradle Adapter V1 (Monochrome) with Royal Pop case partially inserted",
-          "action": "Slow push-in to reveal 40.35mm case diameter and 0.7mm retaining lip",
-          "framing": "Extreme close-up, side view, centered on adapter-case interface",
-          "duration_hint": "2s",
-          "must_capture": "40.35mm case diameter, 0.7mm retaining lip, FKM rubber texture (reference IMG-01 for composition)"
+          "subject": "Cradle Adapter V1 (Monochrome) holding Royal Pop case, side view",
+          "action": "Slow push-in from medium to extreme close-up, focusing on the 0.7mm retaining lip and 40.35mm socket contact point",
+          "framing": "Centered, shallow depth of field (DOF < 1mm). Royal Pop case partially inserted into adapter, lip visible",
+          "duration_hint": "3s (0:00–0:03)",
+          "must_capture": "40.35mm socket, 0.7mm retaining lip, FKM rubber texture. Use IMG-01 as reference for composition and lighting. Add HERO_PUSH_IN motion (10% zoom over 3s).",
+          "asset_id": "IMG-01"
         },
         {
           "shot_no": 2,
-          "shot_type": "CLOSE",
-          "subject": "Exploded technical diagram of Cradle Adapter V1",
-          "action": "Animated callouts for 40.35mm, 0.7mm lip, 22mm lugs, FKM material (SPEC_CALLOUT_MOTION)",
-          "framing": "Full-frame, isometric view",
-          "duration_hint": "4s",
-          "must_capture": "All labeled components (reference IMG-02 for vector source)"
+          "shot_type": "MACRO",
+          "subject": "Exploded view of adapter specs with caliper measurements",
+          "action": "Orthographic sweep from top to side view, caliper jaws closing on 0.7mm lip",
+          "framing": "Flat lay, grid background (1mm spacing). Caliper jaws must be sharp and realistic",
+          "duration_hint": "3s (0:03–0:06)",
+          "must_capture": "40.35mm socket diameter, 0.7mm lip thickness, 22mm lug width. Use IMG-02 as reference. Add SPEC_CALLOUT_MOTION (caliper jaws animate to 0.7mm).",
+          "asset_id": "IMG-02"
         },
         {
           "shot_no": 3,
-          "shot_type": "MEDIUM",
-          "subject": "Royal Pop case snapping into Cradle Adapter V1 (Monochrome)",
-          "action": "Slow-motion snap (0.5x speed) to emphasize secure fit",
-          "framing": "Side profile, adapter slightly tilted to show retaining lip engagement",
-          "duration_hint": "3s",
-          "must_capture": "Retaining lip locking mechanism, FKM rubber compression"
+          "shot_type": "MACRO",
+          "subject": "Extreme close-up of FKM rubber texture and 0.7mm lip edge",
+          "action": "Raking light sweep (45° angle) to highlight micro-shadows in FKM grain",
+          "framing": "10x magnification, DOF < 0.5mm. Lip edge facing camera with slight tilt",
+          "duration_hint": "3s (0:06–0:09)",
+          "must_capture": "FKM rubber grain, 0.7mm lip edge, crown notch geometry. Use IMG-03 as reference. Add MACRO_SWEEP motion (light source moves 10° during shot).",
+          "asset_id": "IMG-03"
         },
         {
           "shot_no": 4,
-          "shot_type": "WIDE",
-          "subject": "All five colourways (Monochrome, Arctic Blue, Cobalt Orange, Green Eight, Otto Rosso)",
-          "action": "Quick zoom-out from Monochrome to reveal full grid (COLOUR_REVEAL)",
-          "framing": "5x1 grid, top-down view, consistent shadows",
-          "duration_hint": "3s",
-          "must_capture": "All five verified colourways, consistent FKM texture (reference IMG-03 for layout)"
+          "shot_type": "CLOSE",
+          "subject": "Royal Pop case clicking into Cradle Adapter V1 (Monochrome)",
+          "action": "Slow-motion (120fps) of case insertion, focus on lip engagement",
+          "framing": "Side view, shallow DOF. Case angled 15° forward for lip visibility",
+          "duration_hint": "2s (0:09–0:11)",
+          "must_capture": "Satisfying 'click' moment, 0.7mm lip securing the case. No reference asset — must be newly shot. Use hard side lighting to emphasize texture.",
+          "asset_id": "NEW_SHOT_01"
         },
         {
           "shot_no": 5,
-          "shot_type": "OVER-SHOULDER",
-          "subject": "Royal Pop on wrist with Cradle Adapter V1 (Monochrome)",
-          "action": "Smooth transition from pocket (hand holding case) to wrist (strap secured)",
-          "framing": "30-degree wrist angle, watch face slightly tilted",
-          "duration_hint": "4s",
-          "must_capture": "Wrist integration, strap alignment, retaining lip visibility (reference IMG-04 for pose)"
+          "shot_type": "MEDIUM",
+          "subject": "Cradle Adapter V1 (Monochrome) on wrist with standard 22mm strap",
+          "action": "Static shot, wrist angled to show lug width and strap compatibility",
+          "framing": "Wrist centered, adapter parallel to camera. Strap must be visible but not distracting",
+          "duration_hint": "2s (0:12–0:14)",
+          "must_capture": "22mm lug width, FKM rubber on wrist. No reference asset — must be newly shot. Use neutral grey background (RGB 120,120,120).",
+          "asset_id": "NEW_SHOT_02"
+        },
+        {
+          "shot_no": 6,
+          "shot_type": "WIDE",
+          "subject": "All five colourways in a single frame",
+          "action": "Quick montage (1s per colourway), push-in to Monochrome",
+          "framing": "Grid layout (2x3), Monochrome centered. Each adapter angled 30° to show lip",
+          "duration_hint": "5s (0:15–0:20)",
+          "must_capture": "Monochrome, Arctic Blue, Cobalt Orange, Green Eight, Otto Rosso. Use IMG-04 as reference. Add COLOURWAY_MONTAGE motion (1s per colourway, 10% zoom on Monochrome).",
+          "asset_id": "IMG-04"
+        },
+        {
+          "shot_no": 7,
+          "shot_type": "CLOSE",
+          "subject": "Cradle Adapter V1 (Monochrome) with Pre-Order Now CTA",
+          "action": "Static shot, adapter centered with gold (#C9A84C) CTA text overlay",
+          "framing": "Top-down view, adapter filling 80% of frame. Text safe area top 20%",
+          "duration_hint": "3s (0:21–0:24)",
+          "must_capture": "Adapter in Monochrome, clean background (RGB 10,10,10). No reference asset — must be newly shot. Use flat lighting to avoid shadows on text.",
+          "asset_id": "NEW_SHOT_03"
         }
       ],
       "edit_plan": [
         {
           "sequence_no": 1,
-          "edit_instruction": "Open with Shot 1 (MACRO push-in). Overlay text: '40.35mm exact' (top-left, #F0EDE8, 48pt). Hold for 2s.",
-          "on_screen_text": "40.35mm exact",
+          "edit_instruction": "Open with Shot 1 (HERO_PUSH_IN). Overlay hook text: '40.35mm. 0.7mm. Exact fit.' (gold #C9A84C, centered top 20%). Hold for 3s.",
+          "on_screen_text": "40.35mm. 0.7mm. Exact fit.",
           "transition": "CUT"
         },
         {
           "sequence_no": 2,
-          "edit_instruction": "Cut to Shot 1 (continued). Replace text with '0.7mm retaining lip' (top-center, #F0EDE8, 48pt). Hold for 1s.",
-          "on_screen_text": "0.7mm retaining lip",
+          "edit_instruction": "Cut to Shot 2 (SPEC_CALLOUT_MOTION). Overlay text: '40.35mm socket' (left) and '0.7mm retaining lip' (right). Sync caliper jaws to '0.7mm' text appearance. Hold for 3s.",
+          "on_screen_text": "40.35mm socket | 0.7mm retaining lip",
           "transition": "CUT"
         },
         {
           "sequence_no": 3,
-          "edit_instruction": "Cut to Shot 1 (continued). Replace text with '22mm lug width' (top-right, #F0EDE8, 48pt). Hold for 1s. Cut to Shot 2 (technical diagram).",
-          "on_screen_text": "22mm lug width",
-          "transition": "CUT"
-        },
-        {
-          "sequence_no": 4,
-          "edit_instruction": "Shot 2: Animate callouts sequentially (40.35mm → 0.7mm → 22mm → FKM rubber). Overlay text: 'FKM rubber' (bottom-center, #C9A84C, 40pt). Hold final frame for 1s.",
+          "edit_instruction": "Cut to Shot 3 (MACRO_SWEEP). Overlay text: 'FKM rubber' (bottom center). Hold for 3s.",
           "on_screen_text": "FKM rubber",
           "transition": "CUT"
         },
         {
-          "sequence_no": 5,
-          "edit_instruction": "Cut to Shot 3 (snap-in). No text. Sound design: subtle 'click' on snap. Hold for 2s.",
+          "sequence_no": 4,
+          "edit_instruction": "Cut to Shot 4 (click-in shot). No text. Audio: subtle 'click' sound effect. Hold for 2s.",
           "on_screen_text": "",
           "transition": "CUT"
         },
         {
+          "sequence_no": 5,
+          "edit_instruction": "Cut to Shot 5 (wrist shot). Overlay text: '22mm lug width' (bottom center). Hold for 2s.",
+          "on_screen_text": "22mm lug width",
+          "transition": "CUT"
+        },
+        {
           "sequence_no": 6,
-          "edit_instruction": "Cut to Shot 4 (colourway grid). Overlay text: '5 colourways' (bottom-center, #F0EDE8, 40pt). Quick zoom-out effect (0.5s). Hold final frame for 1s.",
-          "on_screen_text": "5 colourways",
+          "edit_instruction": "Cut to Shot 6 (COLOURWAY_MONTAGE). Overlay text: 'Five colourways' (top center). Cycle through colourways at 1s intervals. Push-in to Monochrome at 0:18. Hold Monochrome for 1s.",
+          "on_screen_text": "Five colourways",
           "transition": "CUT"
         },
         {
           "sequence_no": 7,
-          "edit_instruction": "Cut to Shot 5 (pocket-to-wrist transition). Overlay text: 'Pocket to wrist in seconds' (top-center, #F0EDE8, 40pt). Smooth whip transition from pocket to wrist.",
-          "on_screen_text": "Pocket to wrist in seconds",
-          "transition": "WHIP"
-        },
-        {
-          "sequence_no": 8,
-          "edit_instruction": "Final frame: Static wrist shot (Shot 5). Overlay text: 'Pre-Order Now' (center, #C9A84C, 60pt) + website URL (bottom, #F0EDE8, 32pt). Hold for 3s. Fade to black.",
-          "on_screen_text": "Pre-Order Now\npopwriststudio.com",
-          "transition": "DISSOLVE"
+          "edit_instruction": "Cut to Shot 7 (CTA shot). Overlay text: 'Pre-Order Now' (gold #C9A84C, centered) + 'First batch only.' (white, below). Hold for 3s. Add subtle zoom (5%) for emphasis.",
+          "on_screen_text": "Pre-Order Now\nFirst batch only.",
+          "transition": "NONE"
         }
       ],
       "asset_requirements": [
         {
-          "asset_id": "IMG-01",
-          "required_for": "Shot 1 (MACRO push-in), Shot 3 (snap-in)",
-          "notes": "Render HERO_PUSH_IN animation (0.5s push-in) for Shot 1. Ensure 40.35mm and 0.7mm lip are clearly visible."
+          "type": "NEW_SHOT",
+          "id": "NEW_SHOT_01",
+          "description": "Slow-motion (120fps) of Royal Pop case clicking into Cradle Adapter V1 (Monochrome). Side view, hard side lighting. Focus on lip engagement. 2s duration.",
+          "purpose": "Satisfying proof of fit and security."
         },
         {
-          "asset_id": "IMG-02",
-          "required_for": "Shot 2 (technical diagram)",
-          "notes": "Provide vector source for SPEC_CALLOUT_MOTION. Animate callouts sequentially (0.5s per label)."
+          "type": "NEW_SHOT",
+          "id": "NEW_SHOT_02",
+          "description": "Cradle Adapter V1 (Monochrome) on wrist with standard 22mm strap. Medium shot, neutral grey background. 2s duration.",
+          "purpose": "Demonstrate strap compatibility."
         },
         {
-          "asset_id": "IMG-03",
-          "required_for": "Shot 4 (colourway grid)",
-          "notes": "Render COLOUR_REVEAL animation (0.5s zoom-out from Monochrome to full grid)."
+          "type": "NEW_SHOT",
+          "id": "NEW_SHOT_03",
+          "description": "Cradle Adapter V1 (Monochrome) top-down view for CTA. Clean background (RGB 10,10,10). 3s duration.",
+          "purpose": "CTA frame with text overlay."
         },
         {
-          "asset_id": "IMG-04",
-          "required_for": "Shot 5 (pocket-to-wrist transition)",
-          "notes": "Shoot 10s of 60fps b-roll for slow-motion snap and wrist transition. Ensure retaining lip is visible in wrist shot."
+          "type": "REUSE_IMAGE",
+          "id": "IMG-01",
+          "motion": "HERO_PUSH_IN (10% zoom over 3s).",
+          "purpose": "Hook shot."
         },
         {
-          "asset_id": "NEW-01",
-          "required_for": "Sound design",
-          "notes": "Record/subtle 'click' sound for snap-in (Shot 3). Use high-quality, non-distracting SFX."
+          "type": "REUSE_IMAGE",
+          "id": "IMG-02",
+          "motion": "SPEC_CALLOUT_MOTION (caliper jaws animate to 0.7mm).",
+          "purpose": "Proof of dimensions."
+        },
+        {
+          "type": "REUSE_IMAGE",
+          "id": "IMG-03",
+          "motion": "MACRO_SWEEP (light source moves 10° during shot).",
+          "purpose": "Material detail."
+        },
+        {
+          "type": "REUSE_IMAGE",
+          "id": "IMG-04",
+          "motion": "COLOURWAY_MONTAGE (1s per colourway, 10% zoom on Monochrome).",
+          "purpose": "Showcase colour options."
         }
       ],
-      "cover_frame_direction": "Shot 1 (MACRO push-in) at 1.5s mark (retaining lip fully visible). Overlay text: '40.35mm. 0.7mm. 22mm. Exact fit.' (top 20%, #F0EDE8, 48pt).",
-      "subtitle_style": "Centered, #F0EDE8, 28pt, semi-bold, 90% opacity black background. Max 2 lines per subtitle.",
-      "handoff_for_manual_reel": "1. Prioritize crisp focus on 0.7mm retaining lip and 40.35mm case diameter. 2. Use provided vector assets for technical diagram animation. 3. Match on-screen text exactly to 'on_screen_text' array. 4. Ensure FKM rubber texture is visible in all shots. 5. End with 3s hold on CTA frame (website URL + 'Pre-Order Now'). 6. Total runtime: 18s (target 0:15-0:30).",
+      "cover_frame_direction": "Use Shot 1 (IMG-01 with HERO_PUSH_IN motion). Frame must show 40.35mm socket, 0.7mm lip, and FKM texture. Overlay hook text: '40.35mm. 0.7mm. Exact fit.' (gold #C9A84C, top 20%).",
+      "subtitle_style": "Gold #C9A84C, Futura Medium, 24pt, centered, drop shadow (black, 50% opacity, 2px offset). Max 2 lines per subtitle. Sync to voiceover or on-screen text.",
+      "handoff_for_manual_reel": "Shoot in 4K 60fps (slow-motion shots at 120fps). Use tripod for all shots. Lighting: hard side light for texture, flat light for specs. Backgrounds: neutral grey (RGB 120,120,180) or black (RGB 0,0,0). Avoid reflections on FKM rubber. Edit in 9:16 (1080x1920). Audio: subtle 'click' sound effect for insertion shot. Music: minimalist electronic (e.g., 'Aperture' by Hammock).",
       "website_truth": {
         "website_status": "LIVE",
-        "fetched_at": "2026-05-16T17:54:28Z",
+        "fetched_at": "2026-05-16T19:00:45Z",
         "verified_brand_name": "Pop Wrist Studio",
         "verified_product_name": "Cradle Adapter V1",
         "verified_cta": "Pre-Order Now",
@@ -156,10 +192,10 @@
         "manual_override_applied": false
       },
       "_meta": {
-        "campaign_id": "PW-20260516-VARIATIONS",
+        "campaign_id": "PW-CAM-20260516-03",
         "format": "REEL",
         "campaign_stage": "WAITLIST",
-        "primary_angle_title": "40.35mm exact. 5 colourways, one fit."
+        "primary_angle_title": "40.35mm exact. 0.7mm lip. FKM rubber."
       },
       "_visual_status": "PASS"
     }

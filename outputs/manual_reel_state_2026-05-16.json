@@ -2,14 +2,14 @@
   "date": "2026-05-16",
   "items": [
     {
-      "post_id": "2026-05-16-REEL-ATIONS",
+      "post_id": "2026-05-16-REEL-516-03",
       "visual_brief_path": "outputs\\visual_brief_2026-05-16.json",
       "status": "WAITING",
       "exported_file": null,
-      "production_eta_minutes": 59,
+      "production_eta_minutes": 66,
       "blocker_reason": null,
       "notes": "",
-      "updated_at": "2026-05-16T12:27:26.190588Z"
+      "updated_at": "2026-05-16T19:04:18.085797Z"
     }
   ]
 }

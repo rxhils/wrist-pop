@@ -1,0 +1,21 @@
+{
+  "post_id": "adhoc-32e955",
+  "shot_no": 1,
+  "take": 2,
+  "model": "ltx_draft",
+  "label": "LTX-Video 0.9 (draft)",
+  "video_path": "renders/adhoc-32e955_s1_ltx_draft_t2.mp4",
+  "video_url": "https://v3b.fal.media/files/b/0a9a77ec/cB2sY00hPZVNeT9ndRGze_tmpv3eyigwy.mp4",
+  "prompt": "x",
+  "init_image_path": null,
+  "init_image_url": null,
+  "duration_s": 15,
+  "aspect": "9:16",
+  "negative_prompt": null,
+  "cost_usd": 0.02,
+  "latency_s": 130.6,
+  "wall_time_s": 151.6,
+  "request_id": null,
+  "created_at": "2026-05-16T17:54:29Z",
+  "size_bytes": 4002380
+}

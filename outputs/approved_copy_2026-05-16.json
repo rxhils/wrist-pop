@@ -3,88 +3,91 @@
   "pieces": [
     {
       "status": "OK",
-      "post_id": "2026-05-16-REEL-ATIONS",
+      "post_id": "2026-05-16-REEL-516-03",
       "hook_options": [
-        "40.35mm. 0.7mm. 22mm. Exact fit.",
-        "Five colours. One adapter. Zero compromise.",
-        "Royal Pop. Now on your wrist."
+        "40.35mm. 0.7mm. Exact fit.",
+        "FKM rubber. Built for Royal Pop.",
+        "No guesswork. Just precision."
       ],
-      "recommended_hook": "40.35mm. 0.7mm. 22mm. Exact fit.",
+      "recommended_hook": "40.35mm. 0.7mm. Exact fit.",
       "hook_archetype": "SPEC",
       "reel_script": {
-        "duration_target": "0:15-0:30",
+        "duration_target": "15-30s",
         "beats": [
           {
             "time": "0:00",
-            "line": "40.35mm. 0.7mm. 22mm.",
+            "line": "40.35mm. 0.7mm. Exact fit.",
             "purpose": "HOOK"
           },
           {
-            "time": "0:02",
-            "line": "Exact fit for Royal Pop.",
-            "purpose": "HOOK"
-          },
-          {
-            "time": "0:04",
-            "line": "No guesswork. No slippage.",
+            "time": "0:03",
+            "line": "The Cradle Adapter V1 matches the Royal Pop’s case.",
             "purpose": "BODY"
           },
           {
             "time": "0:06",
-            "line": "FKM rubber. Engineered for durability.",
+            "line": "0.7mm retaining lip. Secure. Scratch-free.",
             "purpose": "PROOF"
           },
           {
-            "time": "0:08",
-            "line": "Five colourways. One adapter.",
-            "purpose": "BODY"
-          },
-          {
-            "time": "0:10",
-            "line": "Monochrome. Arctic Blue. Cobalt Orange.",
+            "time": "0:09",
+            "line": "FKM rubber. Durable. Premium feel.",
             "purpose": "PROOF"
           },
           {
             "time": "0:12",
+            "line": "22mm lug width. Standard straps fit.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:15",
+            "line": "Five colourways. One perfect fit.",
+            "purpose": "BODY"
+          },
+          {
+            "time": "0:18",
+            "line": "Monochrome. Arctic Blue. Cobalt Orange.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:21",
             "line": "Green Eight. Otto Rosso.",
             "purpose": "PROOF"
           },
           {
-            "time": "0:14",
-            "line": "Pocket watch to wrist in seconds.",
-            "purpose": "BODY"
-          },
-          {
-            "time": "0:16",
-            "line": "Pre-Order Now. Limited colourways.",
+            "time": "0:24",
+            "line": "Pre-Order Now. First batch only.",
             "purpose": "CTA"
           }
         ]
       },
       "on_screen_text": [
-        "40.35mm exact",
+        "40.35mm socket",
         "0.7mm retaining lip",
-        "22mm lug width",
         "FKM rubber",
-        "5 colourways"
+        "22mm lug width",
+        "Five colourways"
       ],
       "caption_options": [
         {
           "label": "A",
-          "caption": "40.35mm. 0.7mm. 22mm. Three numbers. One adapter built only for the Royal Pop.\n\nThe Cradle Adapter V1 is engineered for the exact 40.35mm case, with a 0.7mm retaining lip and 22mm lug width. FKM rubber. Five premium colourways—Monochrome, Arctic Blue, Cobalt Orange, Green Eight, Otto Rosso.\n\nPre-Order Now to secure yours. Limited stock.\n\n#ProjectWristPop #RoyalPop #WatchAdapter #EngineeringPrecision\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+          "caption": "40.35mm. 0.7mm. Exact fit for the Royal Pop.\n\n• 40.35mm inner socket (precise case fit)\n• 0.7mm retaining lip (secure, scratch-free)\n• FKM rubber (durable, premium feel)\n• 22mm lug width (standard strap compatibility)\n• Five colourways: Monochrome, Arctic Blue, Cobalt Orange, Green Eight, Otto Rosso\n\nPre-Order Now. First batch only.\n\n#PopWristStudio #RoyalPop #WatchAdapter #PrecisionEngineering\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
         },
         {
           "label": "B",
-          "caption": "Your Royal Pop wasn’t made for this. Until now.\n\nCradle Adapter V1: 40.35mm exact fit, 0.7mm lip, 22mm lugs. FKM rubber. Five colourways—each designed to match the Royal Pop’s premium finish.\n\nPre-Order Now. Limited colourways available.\n\n#WristPop #WatchAccessories #PrecisionEngineering #NoCompromises\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+          "caption": "Your Royal Pop wasn’t made for the wrist. Until now.\n\nThe Cradle Adapter V1 is engineered for one watch: the Royal Pop. Exact 40.35mm socket, 0.7mm retaining lip, and FKM rubber for durability and premium feel. Five colourways. One perfect fit.\n\nPre-Order Now. First batch only.\n\n#PopWristStudio #WatchAccessories #EngineeredForPrecision\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
         }
       ],
       "recommended_caption": "A",
       "cta": "Pre-Order Now",
-      "legal_safety_notes": [],
-      "handoff_note_for_qa": "Recommended caption A for its direct alignment with the primary angle (specs + colourways) and stronger emphasis on engineering precision. Caption B is more emotive but slightly softer on proof points. Both pass character limits and hook validation.",
+      "legal_safety_notes": [
+        "Disclaimer included in caption as per website truth.",
+        "No affiliation implied with Swatch or AP."
+      ],
+      "handoff_note_for_qa": "Recommended caption A for its direct spec-focused approach, aligning with the engineering-first lead angle. Line 1 is concise and stands alone, while bullet points improve readability for technical details.",
       "caption_validation": {
-        "option_a_line1_chars": 78,
-        "option_b_line1_chars": 47,
+        "option_a_line1_chars": 47,
+        "option_b_line1_chars": 46,
         "option_a_passes": true,
         "option_b_passes": true,
         "recommended_hook_word_count": 6,
@@ -92,7 +95,7 @@
       },
       "website_truth": {
         "website_status": "LIVE",
-        "fetched_at": "2026-05-16T17:54:28Z",
+        "fetched_at": "2026-05-16T19:00:45Z",
         "verified_brand_name": "Pop Wrist Studio",
         "verified_product_name": "Cradle Adapter V1",
         "verified_cta": "Pre-Order Now",
@@ -108,10 +111,10 @@
         "manual_override_applied": false
       },
       "_meta": {
-        "campaign_id": "PW-20260516-VARIATIONS",
+        "campaign_id": "PW-CAM-20260516-03",
         "format": "REEL",
         "campaign_stage": "WAITLIST",
-        "primary_angle_title": "40.35mm exact. 5 colourways, one fit."
+        "primary_angle_title": "40.35mm exact. 0.7mm lip. FKM rubber."
       },
       "_gate_status": "PASS",
       "_gate_attempts": 1,
@@ -122,36 +125,36 @@
           "auto_fix_applied": [],
           "soft_status": "PASS",
           "soft_score": {
-            "brand_fit": 9,
-            "clarity": 10,
-            "conversion_strength": 9,
-            "legal_safety": 10,
-            "novelty": 8
+            "brand_fit": 95,
+            "clarity": 98,
+            "conversion_strength": 96,
+            "legal_safety": 100,
+            "novelty": 88
           },
           "soft_problems": []
         }
       ],
       "_auto_fix_applied": [],
       "_qa_score": {
-        "brand_fit": 9,
-        "clarity": 10,
-        "conversion_strength": 9,
-        "legal_safety": 10,
-        "novelty": 8
+        "brand_fit": 95,
+        "clarity": 98,
+        "conversion_strength": 96,
+        "legal_safety": 100,
+        "novelty": 88
       },
       "_qa_approved_elements": [
-        "Hook: '40.35mm. 0.7mm. 22mm. Exact fit.'",
-        "Reel script beats (all lines ≤ 15 words, no hype language)",
-        "On-screen text array (matches must-show requirements)",
-        "Caption A (line 1: 78 chars, passes validation)",
-        "Caption B (line 1: 47 chars, passes validation)",
-        "Recommended caption A (direct alignment with primary angle)",
-        "CTA: 'Pre-Order Now' (exact match to website truth)",
-        "Legal disclaimer included in both captions",
-        "All colourways listed match website truth",
-        "Specs verified: 40.35mm, 0.7mm lip, 22mm lug, FKM rubber, 5 colourways"
+        "Reel script beats (timing, purpose, and content align with creative direction)",
+        "Hook options and recommended hook (spec-first, concise, and aligned with known winners)",
+        "On-screen text array (covers all must-show elements)",
+        "Caption A (direct, spec-focused, and legally compliant)",
+        "Caption B (alternative narrative with emotional hook, also compliant)",
+        "Recommended caption A (justified by handoff note)",
+        "CTA wording (exact match to website truth)",
+        "Legal disclaimer (included in both captions)",
+        "Colourways (only verified ones used)",
+        "Spec accuracy (all specs match website truth)"
       ],
-      "_qa_visual_instruction": "Use the reel script beats as the shot list. Prioritize macro shots of the 0.7mm retaining lip and 40.35mm measurement. Showcase all five colourways in a quick, high-energy montage. End with a smooth transition from pocket to wrist. Ensure on-screen text overlays match the 'on_screen_text' array exactly."
+      "_qa_visual_instruction": "Ensure macro shots of the 40.35mm socket, 0.7mm retaining lip, and FKM rubber texture are captured with high contrast against a neutral background. Include a satisfying click-in shot of the Royal Pop into the adapter. Montage of the five colourways should be quick (1–2s total)."
     }
   ],
   "_stats": {

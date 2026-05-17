@@ -1,93 +1,45 @@
 {
   "hero_action": {
-    "one_thing": "Film Shot 1 (MACRO) for 2026-05-16-REEL-ATIONS today — reference IMG-01 composition.",
-    "why_now": "Reel production is the only blocker before posting. All copy and visual briefs are approved. Competitor momentum on Royal Pop wrist conversions is accelerating ahead of the Swatch × AP announcement (expected today).",
-    "urgency": "CRITICAL",
-    "blocking_reason": "",
-    "expected_minutes": 60
+    "one_thing": "Export Reel 2026-05-16-REEL-516-03 and upload for scheduling",
+    "why_now": "Reel is the primary waitlist driver; delay loses momentum after Swatch × AP launch hype",
+    "urgency": "HIGH",
+    "blocking_reason": "Reel not yet exported; post cannot go live",
+    "expected_minutes": 70
   },
   "website_change_alert": {
     "detected": false,
     "changes": []
   },
   "campaign_status": {
-    "current_focus": "2026-05-16-REEL-ATIONS — precision-engineered fit + colourway variation",
+    "current_focus": "Engineering‑first Reel to capture waitlist sign‑ups",
     "campaign_stage": "WAITLIST",
-    "urgency": "CRITICAL"
+    "urgency": "HIGH"
   },
-  "today_priority": "Film and export the reel to meet the 2026-05-16 Swatch × AP announcement window. Post immediately after export.",
-  "approved_deliverables": [
-    {
-      "post_id": "2026-05-16-REEL-ATIONS",
-      "angle": "40.35mm exact. 5 colourways, one fit.",
-      "format": "REEL",
-      "status": "APPROVED",
-      "cta": "Pre-Order Now",
-      "next_step": "Post on Instagram Reel and TikTok once reel is exported."
-    }
-  ],
+  "today_priority": "Produce and export the approved Reel, then schedule it on Instagram and TikTok",
+  "approved_deliverables": [],
   "blocked_items": [
     {
-      "post_id": "2026-05-16-REEL-ATIONS",
+      "post_id": "2026-05-16-REEL-516-03",
       "stage": "MANUAL_REEL",
-      "reason": "Reel not yet filmed or exported.",
-      "required_fix": "Film Shot 1 (MACRO) and remaining shots per visual brief. Export reel with approved script and on-screen text."
+      "reason": "Reel production pending export",
+      "required_fix": "Render the Reel per Visual Brief (66 min ETA) and upload the file to the asset library"
     }
   ],
   "manual_reel_actions": [
     {
-      "post_id": "2026-05-16-REEL-ATIONS",
-      "action": "Film all 5 shots per visual brief (reference IMG-01 to IMG-04).",
-      "priority": "CRITICAL",
-      "deadline": "2026-05-16T18:00:00Z"
-    },
-    {
-      "post_id": "2026-05-16-REEL-ATIONS",
-      "action": "Export reel with approved script, on-screen text, and edit plan (15-30s duration).",
-      "priority": "CRITICAL",
-      "deadline": "2026-05-16T19:00:00Z"
+      "post_id": "2026-05-16-REEL-516-03",
+      "action": "Start export now; expected completion ~66 minutes"
     }
   ],
-  "manual_post_actions": [
-    {
-      "post_id": "2026-05-16-REEL-ATIONS",
-      "action": "Post on Instagram Reel and TikTok immediately after reel export.",
-      "platforms": [
-        "Instagram Reel",
-        "TikTok"
-      ],
-      "caption": "Use recommended_caption A from approved copy.",
-      "priority": "CRITICAL",
-      "deadline": "2026-05-16T20:00:00Z"
-    }
-  ],
+  "manual_post_actions": [],
   "next_3_actions": [
-    "Film Shot 1 (MACRO) for 2026-05-16-REEL-ATIONS (reference IMG-01).",
-    "Film remaining 4 shots per visual brief.",
-    "Export reel with approved script and on-screen text."
+    "Start Reel export (66 min ETA)",
+    "Upload exported Reel and attach approved copy (caption A)",
+    "Schedule Reel for Instagram Reel and TikTok launch within the next 2 hours"
   ],
   "do_not_do": [
-    "Post the reel before filming/exporting.",
-    "Use unapproved hooks or captions.",
-    "Deviate from the visual brief or shot list.",
-    "Mention Swatch or AP affiliation."
+    "Post any content before the Reel export is complete",
+    "Use language implying Swatch or Audemars Piguet affiliation"
   ],
-  "success_condition": "Reel 2026-05-16-REEL-ATIONS posted on Instagram and TikTok by 2026-05-16T20:00:00Z with approved caption and visuals. Waitlist sign-ups increase by 30% within 24 hours.",
-  "website_truth": {
-    "website_status": "LIVE",
-    "fetched_at": "2026-05-16T17:54:28Z",
-    "verified_brand_name": "Pop Wrist Studio",
-    "verified_product_name": "Cradle Adapter V1",
-    "verified_cta": "Pre-Order Now",
-    "verified_colourways": [
-      "Monochrome",
-      "Arctic Blue",
-      "Cobalt Orange",
-      "Green Eight",
-      "Otto Rosso"
-    ],
-    "verified_disclaimer": "Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet.",
-    "website_override_applied": false,
-    "manual_override_applied": false
-  }
+  "success_condition": "Reel exported, posted with approved copy, and generates 500+ waitlist sign‑ups within 24 hours"
 }
