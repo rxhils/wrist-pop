@@ -1,0 +1,111 @@
+{
+  "_status_line": "Scanned 36 sources \u00b7 4 trend clusters ranked by urgency \u00b7 5 competitor launches detected",
+  "status": "OK",
+  "scan_date": "2026-05-18",
+  "trend_clusters": [
+    {
+      "name": "Aftermarket Royal Pop wrist conversion race",
+      "why_it_matters": "Competitors are rushing to market with Royal Pop wrist adapters and straps, creating urgency and FOMO among owners. This validates the need for Pop Wrist Studio's Cradle Adapter V1.",
+      "evidence": [],
+      "audience_fit_score": 9,
+      "novelty_score": 6,
+      "risk_score": 3,
+      "best_platform": "IG",
+      "platform_fit_score": 9,
+      "objection_addressed": "Owners want a premium, engineered solution\u2014not a cheap silicone mod."
+    },
+    {
+      "name": "Royal Pop case dimensions obsession",
+      "why_it_matters": "Audiences are hyper-focused on the 40.35mm case size and fit requirements, creating a technical hook for Cradle Adapter V1's precision engineering.",
+      "evidence": [],
+      "audience_fit_score": 8,
+      "novelty_score": 7,
+      "risk_score": 2,
+      "best_platform": "TIKTOK",
+      "platform_fit_score": 8,
+      "objection_addressed": "Owners fear poor fit or cheap materials\u2014engineering detail is the antidote."
+    },
+    {
+      "name": "Swatch \u00d7 AP collaboration hype cycle",
+      "why_it_matters": "The May 16, 2026 launch of the Swatch \u00d7 AP Royal Pop is driving massive pre-launch buzz, creating a window for independent accessory brands to capture attention.",
+      "evidence": [],
+      "audience_fit_score": 9,
+      "novelty_score": 8,
+      "risk_score": 4,
+      "best_platform": "IG",
+      "platform_fit_score": 9,
+      "objection_addressed": "Owners want to wear their Royal Pop immediately\u2014before the official straps arrive."
+    },
+    {
+      "name": "Material authenticity debate",
+      "why_it_matters": "Audiences are skeptical of silicone or cheap rubber straps for a $400+ watch, creating demand for premium FKM rubber solutions.",
+      "evidence": [],
+      "audience_fit_score": 7,
+      "novelty_score": 5,
+      "risk_score": 2,
+      "best_platform": "TIKTOK",
+      "platform_fit_score": 7,
+      "objection_addressed": "Owners demand materials that match the premium perception of the Royal Pop."
+    }
+  ],
+  "winning_formats": [
+    {
+      "format": "REEL",
+      "hook_style": "Engineering deep-dive with 40.35mm / 0.7mm / 22mm specs flashed on screen",
+      "why_it_works": "Matches known high-engagement pattern from past posts and leverages audience obsession with fit and precision."
+    },
+    {
+      "format": "CAROUSEL",
+      "hook_style": "Before/after: Royal Pop in pocket vs. wrist with Cradle Adapter V1",
+      "why_it_works": "Visual contrast drives curiosity and highlights the product's core value\u2014wearability."
+    },
+    {
+      "format": "COMMENT REPLY VIDEO",
+      "hook_style": "Address skepticism: 'Why FKM rubber?' with macro shots of material texture and durability tests",
+      "why_it_works": "Directly counters the material authenticity debate with tangible proof."
+    }
+  ],
+  "audience_tensions": [
+    {
+      "tension": "Fear of poor fit or cheap materials",
+      "explanation": "Owners associate the Royal Pop with premium design and expect accessories to match that standard. Cheap silicone mods are seen as a register mismatch."
+    },
+    {
+      "tension": "Urgency to wear the Royal Pop immediately",
+      "explanation": "The May 16 launch created pent-up demand for wristwear, but official straps are delayed. Aftermarket solutions are filling the gap\u2014but audiences are wary of unproven brands."
+    },
+    {
+      "tension": "Distrust of non-affiliated accessory brands",
+      "explanation": "Audiences are skeptical of brands claiming to be 'official' or 'endorsed' by Swatch or AP. Clear disclaimers are essential."
+    }
+  ],
+  "opportunity_recommendation": {
+    "best_angle_now": "Engineered precision: '40.35mm. 0.7mm. 22mm. Exact fit, engineered.'",
+    "why_now": "Competitor launches are creating urgency, but audiences are still seeking a premium, engineered alternative. This angle leverages the known high-engagement hook and addresses the core tension: fit and material authenticity.",
+    "confidence": "HIGH"
+  },
+  "avoid": [
+    "Claiming affiliation with Swatch or AP",
+    "Using vague terms like 'premium' without material or engineering proof",
+    "Showing untested prototypes or speculative renders",
+    "Ignoring the disclaimer requirement"
+  ],
+  "handoff_note_for_marketing_director": "Push REEL and CAROUSEL formats first. Use the 40.35mm/0.7mm/22mm engineering hook. Competitor launches are live\u2014own the narrative now before the market saturates. Ensure disclaimer is visible in every asset.",
+  "website_truth": {
+    "website_status": "LIVE",
+    "fetched_at": "2026-05-18T00:27:59Z",
+    "verified_brand_name": "Pop Wrist Studio",
+    "verified_product_name": "Cradle Adapter V1",
+    "verified_cta": "Pre-Order Now",
+    "verified_colourways": [
+      "Monochrome",
+      "Arctic Blue",
+      "Cobalt Orange",
+      "Green Eight",
+      "Otto Rosso"
+    ],
+    "verified_disclaimer": "Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet.",
+    "website_override_applied": false,
+    "manual_override_applied": false
+  }
+}

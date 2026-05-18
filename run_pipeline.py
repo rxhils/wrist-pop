@@ -26,7 +26,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 STAGES = [
     "scout", "strategist", "writer", "gate", "asset_director", "visual",
-    "manual_reel", "manual_post", "output_director",
+    "manual_reel", "manual_post", "output_director", "session_summary",
 ]
 # Off-chain agents — runnable via --only but not in the default sequence
 EXTRA_STAGES = ["scheduler", "render_image", "render_video", "reel_director"]
@@ -74,6 +74,9 @@ def _run(name: str) -> int:
     elif name == "reel_director":
         from run_reel_director import main as rd_main
         rc = rd_main()
+    elif name == "session_summary":
+        from run_session_summary import main as ss_main
+        rc = ss_main()
     else:
         raise ValueError(f"unknown stage: {name}")
     elapsed = time.time() - start

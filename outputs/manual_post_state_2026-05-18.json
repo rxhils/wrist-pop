@@ -1,0 +1,23 @@
+{
+  "date": "2026-05-18",
+  "items": [
+    {
+      "post_id": "2026-05-18-REEL-518-05",
+      "platforms": [
+        "Instagram Reel",
+        "TikTok"
+      ],
+      "status": "WAITING",
+      "scheduled_for": null,
+      "posted_at": null,
+      "post_urls": {},
+      "metrics_1h": {},
+      "metrics_24h": {},
+      "winner_candidate": false,
+      "postmortem": "",
+      "notes": "",
+      "reel_state": "WAITING",
+      "updated_at": "2026-05-18T00:30:41.283547Z"
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+{
+  "google_trends_interest": {
+    "error": "pytrends_failed: HTTPSConnectionPool(host='trends.google.com', port=443): Max retries exceeded with url: /trends/api/widgetdata/multiline?req=%7B%22time%22%3A+%222026-05-11T00%5C%5C%3A29%5C%5C%3A26+2026-05-18T00%5C%5C%3A29%5C%5C%3A26%22%2C+%22resolution%22%3A+%22HOUR%22%2C+%22locale%22%3A+%22en-US%22%2C+%22comparisonItem%22%3A+%5B%7B%22geo%22%3A+%7B%7D%2C+%22complexKeywordsRestriction%22%3A+%7B%22keyword%22%3A+%5B%7B%22type%22%3A+%22BROAD%22%2C+%22value%22%3A+%22Royal+Pop%22%7D%5D%7D%7D%2C+%7B%22geo%22%3A+%7B%7D%2C+%22complexKeywordsRestriction%22%3A+%7B%22keyword%22%3A+%5B%7B%22type%22%3A+%22BROAD%22%2C+%22value%22%3A+%22AP+Swatch%22%7D%5D%7D%7D%2C+%7B%22geo%22%3A+%7B%7D%2C+%22complexKeywordsRestriction%22%3A+%7B%22keyword%22%3A+%5B%7B%22type%22%3A+%22BROAD%22%2C+%22value%22%3A+%22Bioceramic+watch%22%7D%5D%7D%7D%5D%2C+%22requestOptions%22%3A+%7B%22property%22%3A+%22%22%2C+%22backend%22%3A+%22CM%22%2C+%22category%22%3A+0%7D%2C+%22userConfig%22%3A+%7B%22userType%22%3A+%22USER_TYPE_SCRAPER%22%7D%7D&token=APO0_qgAAAAAaguu5u0r6TYAznbcpt4FhoHIkGyavjzm&tz=0 (Caused by ResponseError('too many 429 error responses'))"
+  },
+  "google_trends_related_royal_pop": {
+    "error": "related_failed: HTTPSConnectionPool(host='trends.google.com', port=443): Max retries exceeded with url: /trends/api/widgetdata/relatedsearches?req=%7B%22restriction%22%3A+%7B%22geo%22%3A+%7B%7D%2C+%22time%22%3A+%222026-05-11T00%5C%5C%3A29%5C%5C%3A27+2026-05-18T00%5C%5C%3A29%5C%5C%3A27%22%2C+%22originalTimeRangeForExploreUrl%22%3A+%22now+7-d%22%2C+%22complexKeywordsRestriction%22%3A+%7B%22keyword%22%3A+%5B%7B%22type%22%3A+%22BROAD%22%2C+%22value%22%3A+%22Royal+Pop%22%7D%5D%7D%7D%2C+%22keywordType%22%3A+%22QUERY%22%2C+%22metric%22%3A+%5B%22TOP%22%2C+%22RISING%22%5D%2C+%22trendinessSettings%22%3A+%7B%22compareTime%22%3A+%222026-05-04T00%5C%5C%3A29%5C%5C%3A27+2026-05-11T00%5C%5C%3A29%5C%5C%3A27%22%7D%2C+%22requestOptions%22%3A+%7B%22property%22%3A+%22%22%2C+%22backend%22%3A+%22CM%22%2C+%22category%22%3A+0%7D%2C+%22language%22%3A+%22en%22%2C+%22userCountryCode%22%3A+%22GB%22%2C+%22userConfig%22%3A+%7B%22userType%22%3A+%22USER_TYPE_SCRAPER%22%7D%7D&token=APO0_qgAAAAAaguu5wqqEdZ-cvDfDaVSoejChQkwN_iG&tz=0 (Caused by ResponseError('too many 429 error responses'))"
+  },
+  "web_search": {
+    "Royal Pop watch strap": [
+      {
+        "title": "5 Best Swatch x AP Royal Pop Replacement Straps to Make Your",
+        "href": "https://manofmany.com/watches/best-swatch-ap-royal-pop-straps",
+        "body": "They won\u2019t sell awatchstrapseparately (yet), but they will sell you a n officialRoyalPopAccessory lanyard in eight colours."
+      },
+      {
+        "title": "Swatch x Audemars Piguet Royal Pop Wrist Straps | Uncrate",
+        "href": "https://uncrate.com/swatch-x-audemars-piguet-royal-pop-wrist-straps/",
+        "body": "...RoyalPop, apop-art reimagining of theRoyalOak in eight bioceramic colorways, the first question out of every comment section was the same: where's ..."
+      },
+      {
+        "title": "Watch Straps for Audemars Piguet X Swatch Royal Pop - Perpetual",
+        "href": "https://perpetualstraps.com/collections/integrated-wrist-strap-system",
+        "body": "PerpetualStrapsdesigns precision-fit rubberwatchstrapsand accessories. ...strapfor the Omega X Swatch MoonSwatch was engineered for a clean, ..."
+      },
+      {
+        "title": "Royal Pop accessories | Swatch\u00ae",
+        "href": "https://www.swatch.com/accessories/royal-pop-accessories/",
+        "body": "Thewatchesin theRoyalPopCollection from the AP x Swatch collaboration can be worn, and shown off, in all kinds of creative ways, thanks to three ..."
+      },
+      {
+        "title": "\"Turnbull\" Royal Purple Handcrafted Leather Watch",
+        "href": "https://www.basandlokes.com/turnbull-vintage-royal-purple-leather-watch-strap/",
+        "body": "Decrease Quantity of \" Turnbull \" PurpleRoyaleLeatherWatchStrapIncrease Quantity of \" Turnbull \" PurpleRoyaleLeatherWatch..."
+      }
+    ],
+    "AP Swatch wrist conversion": [
+      {
+        "title": "Royal Pop Straps | Audemars Piguet x Swatch | Wristbuddys",
+        "href": "https://wristbuddys.com/collections/royal-pop-straps",
+        "body": "Royal Pop straps Premium straps built for the Audemars Piguet xSwatchRoyal Pop. The Royal Pop is one of the most anticipated watch collaborations in years, featuring eight bold pocket watch designs inspired by the iconic Royal Oak. Our team is hard at work building a dedicated strap range that lets you wear your Royal Pop on thewrist, every day."
+      },
+      {
+        "title": "Swatch Built a Pocket Watch in 2026, The Aftermarket Already Has a Plan",
+        "href": "https://the-gadgeteer.com/2026/05/13/swatch-royal-pop-audemars-piguet-straps-accessories/",
+        "body": "TheAPxSwatchRoyal Pop ships May 16, 2026. Here's every announced, available, and planned third-party strap,wristadapter, and aftermarket fix worth tracking."
+      },
+      {
+        "title": "Watch Straps For Audemars Piguet x Swatch Royal Pop - WIS Watch Straps",
+        "href": "https://wisstraps.com/blogs/watch-blogs/the-first-watch-strap-company-to-produce-straps-for-the-audemars-piguet-swatch-royal-pop-wis-watch-straps",
+        "body": "Audemars PiguetSwatchRoyal Pop strap solution by WIS Watch Straps. Learn how to convert your Royal Pop pocket watch into a wristwatch."
+      },
+      {
+        "title": "AP Swatch Bands \u2014 Royal Pop Wrist Conversion Kit",
+        "href": "https://apswatchbands.com/",
+        "body": "Build your Royal Popwristconversionkit. Choose Universal 24mm orAP-integrated frame, crown cutout position, case color, and band color."
+      },
+      {
+        "title": "Royal Pop Wrist Strap by Helvetus\u00ae: Premium FKM Rubber",
+        "href": "https://helvetus.com/blogs/watch-straps/royal-pop-wrist-strap-helvetus",
+        "body": "A $15 siliconewristconversionon a $400 Royal Pop carryingAP\u00d7Swatchbranding will look wrong for exactly the same reason \u2014 register mismatch. The Royal Pop is genuinely a premium-tier product (hand-wound Sistem51, 15 patents, sapphire crystals, Nivachron balance spring, bioceramic) and it deserves a strap option that matches."
+      }
+    ],
+    "Helvetus Royal Pop strap": [
+      {
+        "title": "Royal Pop Wrist Strap & Case for AP \u00d7 Swatch",
+        "href": "https://helvetus.com/collections/royal-pop-straps",
+        "body": "4 hours ago -Discover premium Helvetus Royal ... Royal Pop into a wearable wristwatch with a precision-fit case,premium FKM rubber strap, and customizable buckle color...."
+      },
+      {
+        "title": "Can You Wear the Royal Pop on Your Wrist? Yes \u2014 And We're Building the Strap to Do It",
+        "href": "https://helvetus.co.uk/blogs/watch-straps/royal-pop-wrist-strap-helvetus",
+        "body": "3 days ago -The short version:Helvetus is actively developing a premium FKM rubber wrist strap solution specifically for the Royal Pop's 40mm bioceramic case head, and we plan to be one of the first specialist brands to ship a quality wrist option globally."
+      },
+      {
+        "title": "Royal Pop Strap & Adapter Kit for AP \u00d7 Swatch | Helvetus\u00ae",
+        "href": "https://helvetus.com/products/royal-pop-adapter-kit-rubber-strap",
+        "body": "2 days ago -Wear your Audemars Piguet \u00d7 Swatch Royal Pop. Helvetus adapter kit with interchangeable rubber strap in 20+ colours. Lifetime warranty. Free shipping."
+      },
+      {
+        "title": "Audemars Piguet x Swatch \"Royal Pop\" Officially Confirmed: Everything We Know About the May 16 Launch",
+        "href": "https://helvetus.com/blogs/watch-straps/audemars-piguet-swatch-royal-pop-confirmed",
+        "body": "1 week ago -Helvetus has been makingpremium aftermarket straps for the actual AP Royal Oak familyfor years, and once the Royal Pop's case dimensions are confirmed on May 16, we'll be among the first specialists to produce compatible strap options."
+      },
+      {
+        "title": "The Royal Pop Is Here, And Nobody Saw This Coming: 8 Pocket Watches, Sistem51, $400",
+        "href": "https://helvetus.co.uk/blogs/watch-straps/royal-pop-revealed-8-pocket-watches-guide",
+        "body": "4 days ago -For owners of the actual AP Royal Oak family, the Royal Pop launch is genuinely good news. Increased Royal Oak design awareness translates to renewed interest in the entire integrated-bracelet sport-luxury category, including the aftermarket strap options that work with Royal Oak references. Helvetus has been making premium aftermarket straps for the Royal Oak family for years, and the Royal Pop moment is likely to drive new attention to aftermarket strap options for the original watch reference."
+      }
+    ],
+    "Wristbuddys Royal Pop": [
+      {
+        "title": "RoyalPopStraps | Audemars Piguet x Swatch |Wristbuddys",
+        "href": "https://wristbuddys.com/collections/royal-pop-straps",
+        "body": "Our team is hard at work building a dedicated strap range that lets you wear yourRoyalPopon thewrist, every day. Note:Wristbuddysis not affiliated with Audemars Piguet or Swatch."
+      },
+      {
+        "title": "RoyalPopAccessories: Straps, Adapters, and Mods Worth Knowing",
+        "href": "https://the-gadgeteer.com/2026/05/13/swatch-royal-pop-audemars-piguet-straps-accessories/",
+        "body": "Wristbuddyshas opened aRoyalPoplanding page with nothing on it.WristbuddysRubber Strap For AP x SwatchRoyalPopColorsWristbuddys, the Stockholm-based strap maker..."
+      },
+      {
+        "title": "These Companies Want to Turn the Swatch x APRoyalPopInto an...",
+        "href": "https://mikeshouts.com/swatch-ap-royal-pop-wristwatch-conversion/",
+        "body": "Pricing for these upcomingRoyalPopaccessories is still to be announced. Watch Straps for AP x SwatchRoyalPopby Delugs. Images: Delugs/Wristbuddys."
+      },
+      {
+        "title": "5 Best Swatch x APRoyalPopReplacement Straps to... | Man of Many",
+        "href": "https://manofmany.com/watches/best-swatch-ap-royal-pop-straps",
+        "body": "The second theRoyalPopdropped, they announced \u201cProject WristPop.\u201d With this project, they\u2019re developing a \u201ccase-strap\u201d system that acts as a secure cradle for the 40mm bioceramic..."
+      },
+      {
+        "title": "Wristbuddyswatch straps - Overview, Straps, Coupons... | Strap Hunter",
+        "href": "https://www.straphunter.com/wristbuddys",
+        "body": "Wristbuddyscurved-end rubber strap for Tudor Black Bay 58 blue. What types of straps doesWristbuddyssell?Wristbuddysproduces and sells two-piece rubber and leather straps."
+      }
+    ],
+    "Wisstraps Royal Pop": [
+      {
+        "title": "Watch Straps For Audemars Piguet x Swatch Royal Pop \u2013 WIS ...",
+        "href": "https://wisstraps.com/blogs/watch-blogs/the-first-watch-strap-company-to-produce-straps-for-the-audemars-piguet-swatch-royal-pop-wis-watch-straps",
+        "body": "5 days ago \u00b7Audemars Piguet SwatchRoyalPopstrap solution by WIS Watch Straps. Learn how to convert yourRoyalPoppocket watch into a wristwatch."
+      },
+      {
+        "title": "Royal Pop Straps | Accessories for the Audemars Piguet \u00d7 ...",
+        "href": "https://royalpop-straps.com/",
+        "body": "Shop the ultimate collection of Audemars Piguet \u00d7 SwatchRoyalPopaccessories. Precision-fitted straps, wrist case adapters, protective cases, and bracelets designed exclusively for the 40mm BioceramicRoyalPop. Free international shipping."
+      },
+      {
+        "title": "Royal Pop Straps | Audemars Piguet x Swatch | Wristbuddys",
+        "href": "https://wristbuddys.com/collections/royal-pop-straps",
+        "body": "RoyalPopstraps Premium straps built for the Audemars Piguet x SwatchRoyalPop. TheRoyalPopis one of the most anticipated watch collaborations in years, featuring eight bold pocket watch designs inspired by the iconicRoyalOak. Our team is hard at work building a dedicated strap range that lets you wear yourRoyalPopon the wrist, every day."
+      },
+      {
+        "title": "YES \u2014 we\u2019re making straps for the AP x Swatch Royal Pop ...",
+        "href": "https://www.facebook.com/wisstraps/videos/yes-were-making-straps-for-the-ap-x-swatch-royal-pop-collabthis-is-exactly-why-w/3957665264364733/",
+        "body": "We already have 3 different strap designs in the works for theRoyalPop, with more details and color options coming soon. No official release date just yet, but everything is moving into production as quickly as possible. Stay tuned and be the first to know when they drop! #royalpopstraps #wisstraps#royalpop #ap #apxswatch #swatch"
+      },
+      {
+        "title": "Royal Pop Accessories: Straps, Adapters, and Mods Worth Knowing",
+        "href": "https://the-gadgeteer.com/2026/05/13/swatch-royal-pop-audemars-piguet-straps-accessories/",
+        "body": "5 days ago \u00b7The AP x SwatchRoyalPopships May 16, 2026. Here's every announced, available, and planned third-party strap, wrist adapter, and aftermarket fix worth tracking."
+      }
+    ],
+    "Delugs Royal Pop": [
+      {
+        "title": "After Princess Margaret, the deluge - or 'Pop Idol', as it is",
+        "href": "https://www.independent.co.uk/voices/commentators/howard-jacobson/after-princess-margaret-the-deluge-or-pop-idol-as-it-is-often-called-9245344.html",
+        "body": "After Princess Margaret, thedeluge- or 'PopIdol', as it is often called ... royalty was substance beyond question once, when divinity did hedge a ..."
+      },
+      {
+        "title": "Royal Blue Alcantara Signature Strap \u2013 Delugs",
+        "href": "https://delugs.com/products/royal-blue-alcantara-leather-signature-watch-strap",
+        "body": "I purchased theRoyalblue Alcantara strap and let me tell you it is amazing! The quality is such class and the colorpops! Great customer service as ..."
+      },
+      {
+        "title": "Royal Blue Alcantara Signature Strap \u2013 Delugs",
+        "href": "https://delugs.com/collections/mission-to-neptune-straps/products/royal-blue-alcantara-leather-signature-watch-strap",
+        "body": "I purchased theRoyalblue Alcantara strap and let me tell you it is amazing! The quality is such class and the colorpops! Great customer service as ..."
+      },
+      {
+        "title": "AI Promised the Audemars Piguet x Swatch Wristwatch. China Will",
+        "href": "https://www.wired.com/story/ai-ruined-the-audemars-piguet-x-swatch-collaboration-china-could-save-it/",
+        "body": "Kuan saysDelugsis making a case-strap system, not a single strap, as theRoyalPops case isn t designed to take one."
+      },
+      {
+        "title": "Apres Moi Le Deluge: Avro Lancaster BIII Special Dam Buster in",
+        "href": "https://imodeler.com/2026/02/apres-moi-le-deluge-avro-lancaster-biii-special-dam-buster-in-1-48-by-hk/",
+        "body": "Apres Moi LeDeluge: Avro Lancaster BIII Special Dam ... That's why I used the 3d pilot set and the Look ip, which just made the whole areapop."
+      }
+    ]
+  },
+  "news_search": [
+    {
+      "date": "2026-05-16T00:29:45+00:00",
+      "title": "Why Audemars Piguet\u2019s Swatch Collaboration Is Dividing The Watch Industry",
+      "body": "Swatchand Audemars Piguet reveal theRoyal Pop, a collection of eight pocket watches that are...",
+      "url": "https://www.yahoo.com/lifestyle/articles/haute-horlogerie-collide-pop-culture-133656153.html",
+      "image": "https://media.zenfs.com/en/forbes_contributor_845/60a3c29fd38ba670860f4cf47af2cb8a",
+      "source": "Forbes\u00b7 via Yahoo News"
+    },
+    {
+      "date": "2026-05-14T00:29:45+00:00",
+      "title": "It Sounds Like the Swatch x AP Royal Pop Is Getting a Strap After All",
+      "body": "I don\u2019t expectSwatchto offerRoyal Popstraps for a number of reasons. For one, Audemars Piguet is...",
+      "url": "https://shopping.yahoo.com/style/accessories/articles/sounds-swatch-x-ap-royal-184202823.html",
+      "image": "https://media.zenfs.com/en/gear_patrol_593/d86002c48af2df49ef78e56bef05e2cf",
+      "source": "Gear Patrol\u00b7 via Yahoo Shopping"
+    },
+    {
+      "date": "2026-05-17T17:29:45+00:00",
+      "title": "Swatch and Audemars Piguet Collaboration: Here's What It Looks Like",
+      "body": "\u201cAt the core...a hand-wound caliber and finished with a dash ofPopArt. And to top it all off the.....",
+      "url": "https://shopping.yahoo.com/style/accessories/articles/swatch-audemars-piguet-collaboration-heres-175706862.html",
+      "image": "https://media.zenfs.com/en/complex_131/1984a4e0739d51b47321efdda18cdaba",
+      "source": "Complex\u00b7 via Yahoo Shopping"
+    },
+    {
+      "date": "2026-05-12T00:29:45+00:00",
+      "title": "Swatch x AP Release Date Confirmed\u2014How To Get One",
+      "body": "Swatchand Audemars Piguet (AP) have officially confirmed one of the most anticipatedwatchdrops of 2026, with the new \u201cRoyal Pop\u201d collaboration set to ...",
+      "url": "https://shopping.yahoo.com/style/accessories/articles/swatch-x-ap-release-date-061056217.html",
+      "image": "https://media.zenfs.com/en/men_s_journal_718/0a49020f959ce2f629ea134127c64500",
+      "source": "Men's Journal\u00b7 via Yahoo Shopping"
+    },
+    {
+      "date": "2026-05-13T00:29:45+00:00",
+      "title": "Swatch x Audemars Piguet Royal Pop: $400 Pocket Watch",
+      "body": "After a week of teaser ads andwatch-forum guessing,Swatchand Audemars Piguet have made it...",
+      "url": "https://the-gadgeteer.com/2026/05/12/swatch-x-audemars-piguet-royal-pop-collection/",
+      "image": "https://s.yimg.com/am/60d/c4b9b88e6c245195efa1af51a8490251",
+      "source": "The Gadgeteer"
+    },
+    {
+      "date": "2026-05-17T00:29:45+00:00",
+      "title": "Where to Buy the AP x Swatch Royal Pop ($400 Boutique-Only Release)",
+      "body": "Boutique-only May 16 release. Eight Bioceramic pocket watches at $400 (hours/minutes)or$420 (small...",
+      "url": "https://the-gadgeteer.com/2026/05/16/where-to-buy-ap-swatch-royal-pop/",
+      "image": "https://s.yimg.com/am/60d/446f9463d0847d026777d371a6a79e5d",
+      "source": "The Gadgeteer"
+    }
+  ],
+  "reddit_search": {
+    "_skipped": "REDDIT_CLIENT_ID + REDDIT_CLIENT_SECRET not set"
+  },
+  "youtube_search": {
+    "_skipped": "GOOGLE_API_KEY not set"
+  },
+  "_sources_used": {
+    "web": "ddg_web",
+    "news": "ddg_news",
+    "reddit": "skipped"
+  }
+}

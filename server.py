@@ -188,6 +188,15 @@ AGENTS: dict[str, dict[str, Any]] = {
         "outputs": ["orchestrator_session"],
         "prompt_file": "orchestrator.md",
     },
+    "session_summary": {
+        "label": "Session Summary",
+        "tier": "marketing",
+        "stage": 10,
+        "script": "run_session_summary.py",
+        "kind": "llm",
+        "outputs": ["session_summary"],
+        "prompt_file": "session_summary.md",
+    },
 }
 
 JOBS: dict[str, dict[str, Any]] = {}

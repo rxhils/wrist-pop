@@ -1,0 +1,87 @@
+{
+  "_status_line": "Consolidated 1 reel idea · 0 top images · urgency HIGH · 1 blocker identified",
+  "hero_action": {
+    "one_thing": "Provide missing image_ideas artifact for Reel 2026-05-18-REEL-518-05.",
+    "why_now": "Without image ideas we cannot finalize top_3_images or complete visual assets for the waitlist reel.",
+    "urgency": "HIGH",
+    "blocking_reason": "image_ideas artifact not found",
+    "expected_minutes": 15
+  },
+  "top_3_reels": [
+    {
+      "idea_id": "REEL_1",
+      "hook": "Your Royal Pop wasn’t made for this.",
+      "viral_score": null,
+      "shot_list_preview": [
+        "Wrist shot: Royal Pop in Cradle Adapter V1, awkward angle, crown digging into wrist",
+        "Close-up: 40.35mm inner socket aligning with Royal Pop case",
+        "Macro: 0.7mm retaining lip snapping into place",
+        "Wrist shot: Royal Pop now flush on wrist, no gap",
+        "Macro: FKM rubber texture, fingers pressing"
+      ],
+      "why_this_will_work": "Aligns with the top trend cluster “Aftermarket Royal Pop wrist conversion race” (audience_fit 9) and uses the proven spec‑driven hook style that drives high IG engagement."
+    }
+  ],
+  "top_3_images": [],
+  "whats_trending_now": [
+    {
+      "cluster_name": "Aftermarket Royal Pop wrist conversion race",
+      "audience_fit_score": 9,
+      "best_platform": "IG",
+      "decay_window_hours": 48
+    },
+    {
+      "cluster_name": "Swatch × AP collaboration hype cycle",
+      "audience_fit_score": 9,
+      "best_platform": "IG",
+      "decay_window_hours": 72
+    },
+    {
+      "cluster_name": "Royal Pop case dimensions obsession",
+      "audience_fit_score": 8,
+      "best_platform": "TIKTOK",
+      "decay_window_hours": 36
+    }
+  ],
+  "why_these_will_work": "The reel idea leverages the strongest audience‑fit trend (conversion race) and the high‑urgency hype around the upcoming Swatch × AP launch, delivering a spec‑focused hook that matches the brand’s engineering‑led tone. Coupled with the precise visual brief, it promises the rapid conversion needed for waitlist sign‑ups.",
+  "website_change_alert": {
+    "detected": false,
+    "changes": []
+  },
+  "campaign_status": {
+    "current_focus": "Finalize visual assets for spec‑driven waitlist reel",
+    "campaign_stage": "WAITLIST",
+    "urgency": "HIGH"
+  },
+  "today_priority": "Obtain image_ideas artifact, then generate top_3_images and feed Visual Brief to production.",
+  "approved_deliverables": [
+    {
+      "post_id": "2026-05-18-REEL-518-05",
+      "angle": "40.35mm exact. 0.7mm lip. FKM rubber. No drilling.",
+      "format": "REEL",
+      "status": "APPROVED",
+      "cta": "Pre-Order Now",
+      "next_step": "Await image ideas to complete asset creation."
+    }
+  ],
+  "blocked_items": [
+    {
+      "post_id": "2026-05-18-REEL-518-05",
+      "stage": "IMAGE_IDEAS",
+      "reason": "Missing image_ideas artifact prevents top image selection and final asset pack.",
+      "required_fix": "Supply image_ideas JSON with at least 5 ideas, each containing viral_score and render_prompt."
+    }
+  ],
+  "manual_reel_actions": [],
+  "manual_post_actions": [],
+  "next_3_actions": [
+    "Request image_ideas artifact from upstream team.",
+    "Once received, run Image Director to rank ideas and fill top_3_images.",
+    "Update Visual Brief with any new shots and hand off to production (estimated 50 min)."
+  ],
+  "do_not_do": [
+    "Publish the reel before confirming image assets.",
+    "Assume colourway list includes the missing five colours; only use website‑listed colours."
+  ],
+  "success_condition": "Image ideas received, top_3_images selected, and final reel exported with approved copy and visual brief, ready for scheduled posting within 2 hours."
+}

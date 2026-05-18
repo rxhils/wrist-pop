@@ -1,0 +1,354 @@
+{
+  "date": "2026-05-18",
+  "plans": [
+    {
+      "_status_line": "Planned 5 stills + 5 motion clips · locked hero HERO_PUSH_IN · prioritised spec-driven assets · ready for Visual Brief",
+      "status": "OK",
+      "post_id": "2026-05-18-REEL-518-05",
+      "campaign_angle": "40.35mm exact. 0.7mm lip. FKM rubber. No drilling.",
+      "asset_strategy": {
+        "primary_goal": "Demonstrate engineering precision and material authenticity in 7 seconds to drive Pre-Order Now conversions.",
+        "content_type": "REEL",
+        "creative_priority": "Spec-driven visuals that prove exact fit, FKM material, and no-drill/no-glue installation.",
+        "why_this_asset_mix_wins": "Minimum viable set of 5 stills and 5 motion clips delivers all proof points (40.35mm, 0.7mm, FKM, no-drill) in under 7 seconds, matching the reel script beats and hook archetype."
+      },
+      "image_blueprint": [
+        {
+          "image_id": "IMG-01",
+          "image_type": "HERO",
+          "role": "HOOK",
+          "priority": "REQUIRED",
+          "subject": "Cradle Adapter V1 (Monochrome) mounted on Royal Pop case, side view, wrist context implied.",
+          "purpose": "Establish product identity and transformation (watch to wrist).",
+          "composition": "Rule of thirds, product centred, shallow depth of field, wrist barely visible at edge.",
+          "lighting": "Soft diffused key light from top-left, subtle rim light to separate adapter from case.",
+          "background": "Neutral gradient (light grey to off-white), no texture.",
+          "product_pose": "Adapter fully seated on Royal Pop case, crown notches aligned, strap loop visible.",
+          "must_show": [
+            "40.35mm socket fit",
+            "0.7mm retaining lip",
+            "FKM rubber texture",
+            "strap integration"
+          ],
+          "must_avoid": [
+            "Competitor products",
+            "drill/glue tools",
+            "overly lifestyle context"
+          ],
+          "text_safe_area": "Top 20% and bottom 20% reserved for on-screen text (hook and CTA).",
+          "reuse_for_video": true,
+          "notes": "This is the hero still for the reel cover and first hook frame. Must feel premium and precise."
+        },
+        {
+          "image_id": "IMG-02",
+          "image_type": "TECHNICAL_BOARD",
+          "role": "PROOF",
+          "priority": "REQUIRED",
+          "subject": "Exploded view of Cradle Adapter V1 with Royal Pop case, annotated with 40.35mm, 0.7mm, and 22mm specs.",
+          "purpose": "Visually prove exact engineering fit without words.",
+          "composition": "Orthographic projection, adapter and case separated by 2cm, specs overlaid as minimalist labels.",
+          "lighting": "Flat even lighting, no shadows, high contrast for labels.",
+          "background": "Pure white, no texture.",
+          "product_pose": "Adapter rotated 15° to show retaining lip, case rotated 15° to show socket.",
+          "must_show": [
+            "40.35mm socket diameter",
+            "0.7mm retaining lip",
+            "22mm lug width",
+            "crown notch alignment"
+          ],
+          "must_avoid": [
+            "3D effects",
+            "perspective distortion",
+            "colourways other than Monochrome"
+          ],
+          "text_safe_area": "None (spec labels are part of the image).",
+          "reuse_for_video": true,
+          "notes": "This still is the core proof asset. Must be clinically clear."
+        },
+        {
+          "image_id": "IMG-03",
+          "image_type": "DETAIL_MACRO",
+          "role": "PROOF",
+          "priority": "REQUIRED",
+          "subject": "Close-up of FKM rubber texture and retaining lip (0.7mm) against Royal Pop case edge.",
+          "purpose": "Prove material authenticity and precision fit.",
+          "composition": "Extreme macro, 1:1 magnification, shallow depth of field (lip in focus, case edge blurred).",
+          "lighting": "Raking light from left to highlight texture, subtle fill to avoid harsh shadows.",
+          "background": "Royal Pop case edge, blurred.",
+          "product_pose": "Adapter seated on case, retaining lip visible as a thin line.",
+          "must_show": [
+            "FKM rubber grain",
+            "0.7mm retaining lip",
+            "case edge contact point"
+          ],
+          "must_avoid": [
+            "Fingerprints",
+            "dust",
+            "overly dramatic lighting"
+          ],
+          "text_safe_area": "None (macro shot).",
+          "reuse_for_video": true,
+          "notes": "This is the FKM proof shot. Must feel tactile and premium."
+        },
+        {
+          "image_id": "IMG-04",
+          "image_type": "WRIST_SHOT",
+          "role": "DESIRE",
+          "priority": "REQUIRED",
+          "subject": "Cradle Adapter V1 (Arctic Blue) on wrist with Royal Pop, showing strap integration and fit.",
+          "purpose": "Demonstrate wearability and transformation.",
+          "composition": "Wrist-centred, watch face visible, adapter and strap in focus, background blurred.",
+          "lighting": "Natural diffused light, subtle catch light in strap.",
+          "background": "Neutral bokeh (light grey), no distractions.",
+          "product_pose": "Adapter fully seated, strap adjusted to show lug width (22mm), crown notch aligned.",
+          "must_show": [
+            "Adapter on wrist",
+            "Royal Pop case",
+            "strap integration",
+            "colourway (Arctic Blue)"
+          ],
+          "must_avoid": [
+            "Overly posed wrist",
+            "competing accessories",
+            "unrealistic skin tones"
+          ],
+          "text_safe_area": "Bottom 20% reserved for CTA text.",
+          "reuse_for_video": true,
+          "notes": "This is the transformation shot. Must feel natural and premium."
+        },
+        {
+          "image_id": "IMG-05",
+          "image_type": "COLOURWAY_CARD",
+          "role": "CTA_SUPPORT",
+          "priority": "USEFUL",
+          "subject": "All 5 live colourways (Monochrome, Arctic Blue, Cobalt Orange, Green Eight, Otto Rosso) in a minimalist grid.",
+          "purpose": "Showcase colour variety to support Pre-Order Now CTA.",
+          "composition": "5 equal squares, each showing adapter on Royal Pop case (side view), no text.",
+          "lighting": "Consistent across all squares, soft diffused key light.",
+          "background": "Pure white, no texture.",
+          "product_pose": "Identical to IMG-01 but in each colourway.",
+          "must_show": [
+            "All 5 verified colourways",
+            "consistent lighting and pose"
+          ],
+          "must_avoid": [
+            "Additional colourways",
+            "inconsistent lighting",
+            "text or labels"
+          ],
+          "text_safe_area": "None (used as a full-frame asset).",
+          "reuse_for_video": false,
+          "notes": "Optional asset. Can be used as a final CTA frame or carousel slide."
+        }
+      ],
+      "motion_blueprint": [
+        {
+          "video_id": "VID-01",
+          "source_image_id": "IMG-01",
+          "video_type": "HERO_PUSH_IN",
+          "role": "HOOK",
+          "priority": "REQUIRED",
+          "platform": "IG_REEL",
+          "aspect_ratio": "9:16",
+          "duration_seconds": 2,
+          "subject_motion": "Adapter and Royal Pop case remain static.",
+          "background_motion": "Subtle zoom-out (10%) to create depth.",
+          "camera_motion": "Slow push-in (20% over 2s) to emphasise product.",
+          "transition_in": "Cut from black.",
+          "transition_out": "Cut to VID-02.",
+          "prompt": "Premium product shot of Cradle Adapter V1 (Monochrome) mounted on Royal Pop case, side view, wrist context implied. Slow push-in camera motion, subtle zoom-out background, shallow depth of field, soft diffused lighting. No text, no distractions.",
+          "negative_prompt": "Blurry, low resolution, distorted perspective, harsh shadows, floating objects, text overlays, chaotic motion, unrealistic colours, competitor products.",
+          "depends_on_assets": [
+            "IMG-01"
+          ],
+          "notes": "This is the hero motion clip. Must feel stable and premium. Sync with hook line: '40.35mm. 0.7mm. FKM. No drilling.'"
+        },
+        {
+          "video_id": "VID-02",
+          "source_image_id": "IMG-02",
+          "video_type": "SPEC_CALLOUT_MOTION",
+          "role": "PROOF",
+          "priority": "REQUIRED",
+          "platform": "IG_REEL",
+          "aspect_ratio": "9:16",
+          "duration_seconds": 2,
+          "subject_motion": "Spec labels (40.35mm, 0.7mm, 22mm) animate in sequentially (0.3s each) with a subtle glow.",
+          "background_motion": "Static.",
+          "camera_motion": "Static.",
+          "transition_in": "Cut from VID-01.",
+          "transition_out": "Cut to VID-03.",
+          "prompt": "Exploded view of Cradle Adapter V1 with Royal Pop case, orthographic projection, pure white background. Spec labels (40.35mm, 0.7mm, 22mm) animate in sequentially with a subtle glow effect. No camera motion, no background motion, high contrast for labels.",
+          "negative_prompt": "Blurry, low resolution, distorted perspective, chaotic motion, floating objects, text overlays outside labels, unrealistic colours.",
+          "depends_on_assets": [
+            "IMG-02"
+          ],
+          "notes": "Sync with script line: 'Engineered for the Royal Pop’s exact case.'"
+        },
+        {
+          "video_id": "VID-03",
+          "source_image_id": "IMG-03",
+          "video_type": "MACRO_SWEEP",
+          "role": "PROOF",
+          "priority": "REQUIRED",
+          "platform": "IG_REEL",
+          "aspect_ratio": "9:16",
+          "duration_seconds": 1.5,
+          "subject_motion": "Static (FKM rubber texture and retaining lip).",
+          "background_motion": "Static.",
+          "camera_motion": "Slow horizontal sweep (15° left to right) to reveal texture and lip detail.",
+          "transition_in": "Cut from VID-02.",
+          "transition_out": "Cut to VID-04.",
+          "prompt": "Extreme macro shot of FKM rubber texture and retaining lip (0.7mm) against Royal Pop case edge. Slow horizontal camera sweep (15° left to right), shallow depth of field, raking light to highlight texture. No background motion, no subject motion.",
+          "negative_prompt": "Blurry, low resolution, distorted perspective, chaotic motion, floating objects, text overlays, unrealistic colours, harsh shadows.",
+          "depends_on_assets": [
+            "IMG-03"
+          ],
+          "notes": "Sync with script line: '0.7mm retaining lip locks it secure.'"
+        },
+        {
+          "video_id": "VID-04",
+          "source_image_id": "IMG-04",
+          "video_type": "WRIST_FIT_DEMO",
+          "role": "PROOF",
+          "priority": "REQUIRED",
+          "platform": "IG_REEL",
+          "aspect_ratio": "9:16",
+          "duration_seconds": 1.5,
+          "subject_motion": "Wrist rotates 10° left to right to show strap integration and fit.",
+          "background_motion": "Static.",
+          "camera_motion": "Static.",
+          "transition_in": "Cut from VID-03.",
+          "transition_out": "Cut to VID-05.",
+          "prompt": "Cradle Adapter V1 (Arctic Blue) on wrist with Royal Pop, showing strap integration and fit. Wrist rotates 10° left to right to demonstrate fit and strap adjustment. Natural diffused lighting, neutral bokeh background, shallow depth of field.",
+          "negative_prompt": "Blurry, low resolution, distorted perspective, chaotic motion, floating objects, text overlays, unrealistic skin tones, overly posed wrist.",
+          "depends_on_assets": [
+            "IMG-04"
+          ],
+          "notes": "Sync with script line: 'FKM rubber. No scratches. No glue.'"
+        },
+        {
+          "video_id": "VID-05",
+          "source_image_id": "IMG-01",
+          "video_type": "COVER_TO_MOTION_TRANSITION",
+          "role": "CTA",
+          "priority": "REQUIRED",
+          "platform": "IG_REEL",
+          "aspect_ratio": "9:16",
+          "duration_seconds": 1,
+          "subject_motion": "Adapter and Royal Pop case remain static.",
+          "background_motion": "Static.",
+          "camera_motion": "Static.",
+          "transition_in": "Cut from VID-04.",
+          "transition_out": "Hold for CTA text overlay.",
+          "prompt": "Premium product shot of Cradle Adapter V1 (Monochrome) mounted on Royal Pop case, side view. Static camera, static subject, static background. Designed for 'Pre-Order Now' CTA text overlay.",
+          "negative_prompt": "Blurry, low resolution, distorted perspective, motion, floating objects, text overlays (except CTA), unrealistic colours.",
+          "depends_on_assets": [
+            "IMG-01"
+          ],
+          "notes": "This is the final CTA frame. Must be clean and stable for text overlay. Sync with script line: 'Pre-Order Now.'"
+        }
+      ],
+      "asset_dependencies": [
+        {
+          "asset_id": "VID-01",
+          "depends_on": "IMG-01",
+          "reason": "HERO_PUSH_IN motion clip requires the hero still as source."
+        },
+        {
+          "asset_id": "VID-02",
+          "depends_on": "IMG-02",
+          "reason": "SPEC_CALLOUT_MOTION requires the technical board still for spec labels."
+        },
+        {
+          "asset_id": "VID-03",
+          "depends_on": "IMG-03",
+          "reason": "MACRO_SWEEP requires the macro still for texture and lip detail."
+        },
+        {
+          "asset_id": "VID-04",
+          "depends_on": "IMG-04",
+          "reason": "WRIST_FIT_DEMO requires the wrist shot still for fit demonstration."
+        },
+        {
+          "asset_id": "VID-05",
+          "depends_on": "IMG-01",
+          "reason": "COVER_TO_MOTION_TRANSITION reuses the hero still for CTA frame."
+        }
+      ],
+      "missing_assets": [],
+      "build_order": [
+        {
+          "step": 1,
+          "action": "Produce IMG-01 (HERO) and IMG-02 (TECHNICAL_BOARD).",
+          "why_first": "These are the core hook and proof assets. Required for VID-01 and VID-02."
+        },
+        {
+          "step": 2,
+          "action": "Produce VID-01 (HERO_PUSH_IN) and VID-02 (SPEC_CALLOUT_MOTION).",
+          "why_first": "These clips deliver the hook and first proof points. Can be edited into a 4-second rough cut for early testing."
+        },
+        {
+          "step": 3,
+          "action": "Produce IMG-03 (DETAIL_MACRO) and IMG-04 (WRIST_SHOT).",
+          "why_first": "Required for VID-03 and VID-04, which complete the proof and desire beats."
+        },
+        {
+          "step": 4,
+          "action": "Produce VID-03 (MACRO_SWEEP) and VID-04 (WRIST_FIT_DEMO).",
+          "why_first": "Complete the 7-second reel body. Sync with script lines 0:04–0:05."
+        },
+        {
+          "step": 5,
+          "action": "Produce VID-05 (COVER_TO_MOTION_TRANSITION) and IMG-05 (COLOURWAY_CARD).",
+          "why_first": "Final CTA frame and optional colourway support. Can be added post-launch if time is tight."
+        }
+      ],
+      "minimum_viable_asset_set": {
+        "images_required": [
+          "IMG-01",
+          "IMG-02",
+          "IMG-03",
+          "IMG-04"
+        ],
+        "videos_required": [
+          "VID-01",
+          "VID-02",
+          "VID-03",
+          "VID-04",
+          "VID-05"
+        ],
+        "can_publish_without_optional_assets": true
+      },
+      "handoff_for_visual_brief": {
+        "recommended_sequence": [
+          "VID-01",
+          "VID-02",
+          "VID-03",
+          "VID-04",
+          "VID-05"
+        ],
+        "cover_asset": "VID-01 (first frame of HERO_PUSH_IN)",
+        "hero_asset": "VID-01",
+        "cta_asset": "VID-05",
+        "editing_note": "Sync motion clips with reel script beats. Use on-screen text from Copy piece (40.35mm, 0.7mm lip, FKM rubber, No drilling, Pre-Order Now). Keep cuts tight (1.5–2s per clip). End on VID-05 with CTA text overlay."
+      },
+      "website_truth": {
+        "website_status": "LIVE",
+        "fetched_at": "2026-05-18T00:27:59Z",
+        "verified_brand_name": "Pop Wrist Studio",
+        "verified_product_name": "Cradle Adapter V1",
+        "verified_cta": "Pre-Order Now",
+        "verified_colourways": [
+          "Monochrome",
+          "Arctic Blue",
+          "Cobalt Orange",
+          "Green Eight",
+          "Otto Rosso"
+        ],
+        "verified_disclaimer": "Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet.",
+        "website_override_applied": false,
+        "manual_override_applied": false
+      }
+    }
+  ]
+}

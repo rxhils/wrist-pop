@@ -1,0 +1,76 @@
+{
+  "run_id": "orch_20260518-002728_47de78",
+  "intent": "give me 3 reel ideas for the blue colour ",
+  "reference_paths": [
+    "orchestrator/orch_20260518-002728_47de78/references/1779064048_a93525f6-3141-4463-8069-7d83f1d54c87.png"
+  ],
+  "started_at": "Scanned 36 sources · 4 trend clusters ranked by urgency · 5 competitor launches identified",
+  "finished_at": "2026-05-18T00:28:34Z",
+  "tools_run": [
+    {
+      "tool": "scout",
+      "args": {},
+      "status_line": "Scanned 36 sources · 4 trend clusters ranked by urgency · 5 competitor launches identified",
+      "ok": true,
+      "cost_usd": 0.005,
+      "latency_s": 24.4,
+      "artifact_path": "outputs\\trend_report_2026-05-18.json",
+      "turn": 1
+    },
+    {
+      "tool": "director",
+      "args": {
+        "colourway": "Arctic Blue",
+        "trend_cluster": "Royal Pop wrist conversion rush",
+        "reference_trend_evidence": [
+          "https://delugs.com/pages/swatch-ap-royal-pop-wristwatch-straps"
+        ]
+      },
+      "status_line": "BLOCKED — bad args",
+      "ok": false,
+      "cost_usd": 0.0,
+      "latency_s": 0.0,
+      "artifact_path": null,
+      "turn": 2
+    },
+    {
+      "tool": "director",
+      "args": {
+        "colourway": "Arctic Blue",
+        "trend_cluster": "Royal Pop wrist conversion rush"
+      },
+      "status_line": "BLOCKED — bad args",
+      "ok": false,
+      "cost_usd": 0.0,
+      "latency_s": 0.0,
+      "artifact_path": null,
+      "turn": 3
+    },
+    {
+      "tool": "copy",
+      "args": {
+        "colourway": "Arctic Blue",
+        "focus_specs": [
+          "inner_socket_mm:40.35",
+          "retaining_lip_mm:0.7",
+          "cradle_depth_mm:6.2"
+        ],
+        "tone": "premium, engineering-led, concise",
+        "cta": "Pre-Order Now",
+        "disclaimer": "Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+      },
+      "status_line": "BLOCKED — bad args",
+      "ok": false,
+      "cost_usd": 0.0,
+      "latency_s": 0.0,
+      "artifact_path": null,
+      "turn": 4
+    }
+  ],
+  "total_cost_usd": 0.005,
+  "total_latency_s": 24.4,
+  "wall_seconds": null,
+  "blocked": "Error code: 429 - {'object': 'error', 'message': 'Rate limit exceeded', 'type': 'rate_limited', 'param': None, 'code': '1300', 'raw_status_code': 429}",
+  "final_brief": null,
+  "session_summary": null
+}

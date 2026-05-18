@@ -98,6 +98,13 @@ AGENT_CONFIG = {
         "max_tokens": 4096,
         "description": "Top-level agent: reads operator intent, plans sub-agent calls, streams progress, consolidates final brief.",
     },
+    "session_summary": {
+        "provider": "mistral",
+        "model":    "mistral-large-latest",
+        "temperature": 0.35,
+        "max_tokens": 16384,
+        "description": "Final agent of the day. Reads every artifact + writes comprehensive narrative + structured digest + promotes self-learning seeds to cloud.",
+    },
 }
 
 

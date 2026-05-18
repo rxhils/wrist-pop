@@ -1,0 +1,165 @@
+{
+  "date": "2026-05-18",
+  "briefs": [
+    {
+      "_status_line": "Built 5-shot reel blueprint · aligned to Copy beats · reused 4 assets · cover frame locked",
+      "status": "OK",
+      "post_id": "2026-05-18-REEL-518-05",
+      "visual_direction": {
+        "style": "HERO",
+        "mood": "Precision",
+        "reference_energy": "Apple Watch Studio launch films — clean, clinical, confident",
+        "color_bias": "#C9A84C accent on specs only, otherwise monochrome + FKM rubber",
+        "motion_style": "Slow push-ins on proof shots, whip transitions, no handheld shake"
+      },
+      "shot_list": [
+        {
+          "shot_no": 1,
+          "shot_type": "MEDIUM",
+          "subject": "Cradle Adapter V1 (Monochrome) mounted on Royal Pop case, side view",
+          "action": "Static, shallow depth of field, wrist implied at edge",
+          "framing": "Rule of thirds, product centred, wrist barely visible",
+          "duration_hint": "2s (hook hold)",
+          "must_capture": "IMG-01 (HERO still), 40.35mm socket fit, 0.7mm retaining lip, FKM rubber texture, strap integration"
+        },
+        {
+          "shot_no": 2,
+          "shot_type": "MACRO",
+          "subject": "Exploded view: Cradle Adapter V1 separated from Royal Pop case, specs annotated",
+          "action": "Static orthographic projection, labels visible",
+          "framing": "Adapter and case separated by 2cm, rotated 15° each",
+          "duration_hint": "2s (proof hold)",
+          "must_capture": "IMG-02 (TECHNICAL_BOARD), 40.35mm socket diameter, 0.7mm retaining lip, 22mm lug width"
+        },
+        {
+          "shot_no": 3,
+          "shot_type": "MACRO",
+          "subject": "Extreme close-up: FKM rubber texture and 0.7mm retaining lip against case edge",
+          "action": "Static, 1:1 magnification, lip in focus",
+          "framing": "Raking light from left, case edge blurred",
+          "duration_hint": "1.5s (proof detail)",
+          "must_capture": "IMG-03 (DETAIL_MACRO), FKM rubber grain, 0.7mm lip, case contact point"
+        },
+        {
+          "shot_no": 4,
+          "shot_type": "CLOSE",
+          "subject": "Cradle Adapter V1 (Arctic Blue) on wrist with Royal Pop, strap integration",
+          "action": "Static, wrist-centred, watch face visible",
+          "framing": "Natural light, background blurred",
+          "duration_hint": "1.5s (desire)",
+          "must_capture": "IMG-04 (WRIST_SHOT), strap integration, no-drill fit"
+        },
+        {
+          "shot_no": 5,
+          "shot_type": "MEDIUM",
+          "subject": "Cradle Adapter V1 (Monochrome) on wrist, slow push-in to adapter",
+          "action": "Slow zoom (1.5s), focus on adapter",
+          "framing": "Wrist centred, adapter fills frame by end",
+          "duration_hint": "1s (CTA setup)",
+          "must_capture": "Reuse IMG-01 composition, FKM texture, strap loop"
+        }
+      ],
+      "edit_plan": [
+        {
+          "sequence_no": 1,
+          "edit_instruction": "Open on Shot 1 (IMG-01). Hold 2s. Overlay text: '40.35mm. 0.7mm. FKM. No drilling.' (top 20%)",
+          "on_screen_text": "40.35mm. 0.7mm. FKM. No drilling.",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 2,
+          "edit_instruction": "Cut to Shot 2 (IMG-02). Hold 2s. Overlay text: 'Engineered for the Royal Pop’s exact case.' (bottom 20%)",
+          "on_screen_text": "Engineered for the Royal Pop’s exact case.",
+          "transition": "WHIP (left to right)"
+        },
+        {
+          "sequence_no": 3,
+          "edit_instruction": "Cut to Shot 3 (IMG-03). Hold 1.5s. Overlay text: '0.7mm retaining lip locks it secure.' (bottom 20%)",
+          "on_screen_text": "0.7mm retaining lip locks it secure.",
+          "transition": "CUT"
+        },
+        {
+          "sequence_no": 4,
+          "edit_instruction": "Cut to Shot 4 (IMG-04). Hold 1.5s. Overlay text: 'FKM rubber. No scratches. No glue.' (top 20%)",
+          "on_screen_text": "FKM rubber. No scratches. No glue.",
+          "transition": "DISSOLVE"
+        },
+        {
+          "sequence_no": 5,
+          "edit_instruction": "Cut to Shot 5. Slow push-in (1s). Overlay text: 'Pre-Order Now.' (bottom 20%, #C9A84C). Hold 1s.",
+          "on_screen_text": "Pre-Order Now.",
+          "transition": "NONE (end frame)"
+        }
+      ],
+      "asset_requirements": [
+        {
+          "asset_id": "IMG-01",
+          "type": "HERO still",
+          "role": "Hook + cover frame",
+          "status": "REUSE"
+        },
+        {
+          "asset_id": "IMG-02",
+          "type": "TECHNICAL_BOARD still",
+          "role": "Proof",
+          "status": "REUSE"
+        },
+        {
+          "asset_id": "IMG-03",
+          "type": "DETAIL_MACRO still",
+          "role": "Proof",
+          "status": "REUSE"
+        },
+        {
+          "asset_id": "IMG-04",
+          "type": "WRIST_SHOT still",
+          "role": "Desire",
+          "status": "REUSE"
+        },
+        {
+          "asset_id": "VID-05",
+          "type": "Slow push-in (1.5s)",
+          "role": "CTA setup",
+          "status": "SHOOT NEW",
+          "notes": "Reuse IMG-01 composition, add slow zoom to adapter. FKM texture must remain sharp."
+        }
+      ],
+      "cover_frame_direction": "Use Shot 1 (IMG-01) frame. Crop 9:16, text-safe top 20% for hook. Ensure 40.35mm socket and retaining lip are visible.",
+      "subtitle_style": "Helvetica Neue Bold, 24pt, #F0EDE8, centre-aligned, drop shadow (1px, #0D0D0D, 70% opacity). No background box.",
+      "handoff_for_manual_reel": "Shoot VID-05 only. Edit sequence per edit_plan. Export 1080×1920, 24fps, H.264. Add subtitles. Deliver to Asset Director by 2026-05-18 18:00 UTC.",
+      "website_truth": {
+        "website_status": "LIVE",
+        "fetched_at": "2026-05-18T00:27:59Z",
+        "verified_brand_name": "Pop Wrist Studio",
+        "verified_product_name": "Cradle Adapter V1",
+        "verified_cta": "Pre-Order Now",
+        "verified_colourways": [
+          "Monochrome",
+          "Arctic Blue",
+          "Cobalt Orange",
+          "Green Eight",
+          "Otto Rosso"
+        ],
+        "verified_disclaimer": "Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet.",
+        "website_override_applied": false,
+        "manual_override_applied": false
+      },
+      "_meta": {
+        "campaign_id": "CMP-20260518-05",
+        "format": "REEL",
+        "campaign_stage": "WAITLIST",
+        "primary_angle_title": "40.35mm exact. 0.7mm lip. FKM rubber. No drilling."
+      },
+      "_validation_notes": [
+        "edit_plan[1].transition 'WHIP (LEFT TO RIGHT)' not in ['CUT', 'DISSOLVE', 'NONE', 'WHIP']",
+        "edit_plan[4].transition 'NONE (END FRAME)' not in ['CUT', 'DISSOLVE', 'NONE', 'WHIP']"
+      ],
+      "_visual_status": "FLAG"
+    }
+  ],
+  "_stats": {
+    "total": 1,
+    "pass": 0,
+    "flag": 1
+  }
+}

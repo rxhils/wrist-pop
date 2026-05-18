@@ -167,13 +167,14 @@ const AGENT_META = {
   manual_reel:     { name: 'Manual Reel',        glyph: '▥', group: 'marketing', desc: 'Human production step — film + edit + export', stage: 7 },
   manual_post:     { name: 'Manual Post',        glyph: '▧', group: 'marketing', desc: 'Human publishing step — schedule + post + log metrics', stage: 8 },
   output_director: { name: 'Output Director',    glyph: '◐', group: 'marketing', desc: 'Operator console · synthesises everything into next-action list', stage: 9 },
+  session_summary: { name: 'Session Summary',    glyph: '◉', group: 'marketing', desc: 'Final chronicler · reads all artifacts · promotes self-learning seeds', stage: 10 },
   scheduler:       { name: 'Scheduler',          glyph: '▤', group: 'tools',     desc: 'UK posting windows + Notion payload (optional)', stage: 9 },
   render_image:    { name: 'Image Render',       glyph: '▦', group: 'render',    desc: 'FLUX.1 / SDXL via ComfyUI (optional)', stage: 10 },
   render_video:    { name: 'Video Render',       glyph: '▩', group: 'render',    desc: 'LTX-Video via ComfyUI (optional)', stage: 11 },
   reel_director:   { name: 'Reel Director',      glyph: '◑', group: 'reels',     desc: 'Generates 5 ranked reel/TikTok ideas from full pipeline output', stage: 12 },
 };
 
-const PIPELINE_IDS = ['scout', 'strategist', 'writer', 'gate', 'asset_director', 'visual', 'manual_reel', 'manual_post', 'output_director'];
+const PIPELINE_IDS = ['scout', 'strategist', 'writer', 'gate', 'asset_director', 'visual', 'manual_reel', 'manual_post', 'output_director', 'session_summary'];
 const TOOLS_IDS = ['scheduler'];
 const RENDER_IDS = ['render_image', 'render_video'];
 const REEL_IDS = ['reel_director'];
@@ -350,7 +351,7 @@ function HFSidebar({ activeId, statuses, onPick, progress }) {
 }
 
 // ───────────────────────── Agent header ─────────────────────────
-const LLM_AGENT_IDS = new Set(['scout', 'strategist', 'writer', 'gate', 'asset_director', 'visual', 'output_director', 'reel_director']);
+const LLM_AGENT_IDS = new Set(['scout', 'strategist', 'writer', 'gate', 'asset_director', 'visual', 'output_director', 'reel_director', 'session_summary']);
 
 function HFAgentHeader({ agentId, status, onRun, running, agentsConfig, onAgentConfigUpdate }) {
   const agent = AGENT_META[agentId];
@@ -522,6 +523,7 @@ const OUTPUT_FILE_BY_AGENT = {
   manual_reel:     'manual_reel_state',
   manual_post:     'manual_post_state',
   output_director: 'operator_console',
+  session_summary: 'session_summary',
   reel_director:   'reel_ideas',
   scheduler:       'schedule',
 };
@@ -742,8 +744,120 @@ function AgentOutputView({ agentId, data }) {
     case 'manual_post':     return <ManualPostOutput data={data} />;
     case 'output_director': return <OutputDirectorOutput data={data} />;
     case 'reel_director':   return <ReelIdeasOutput data={data} />;
+    case 'session_summary': return <SessionSummaryOutput data={data} />;
     default: return <RawJSON data={data} />;
   }
+}
+
+function SessionSummaryOutput({ data }) {
+  if (!data || data._errors) {
+    return <RawJSON data={data} />;
+  }
+  const ph = data.pipeline_health || {};
+  const wa = data.winning_assets || {};
+  const kd = data.key_decisions || [];
+  const gaps = data.contradictions_or_gaps || [];
+  const seeds = data.self_learning_seeds || [];
+  const next3 = data.operator_next_3 || [];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {data.campaign_thread && (
+        <div style={{ padding: 14, borderRadius: 8, background: 'rgba(245,231,74,.06)', border: `1px solid ${HF.accent}` }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, letterSpacing: '.14em', marginBottom: 6 }}>CAMPAIGN THREAD</div>
+          <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 17, color: HF.text, lineHeight: 1.35 }}>{data.campaign_thread}</div>
+        </div>
+      )}
+      {Object.keys(ph).length > 0 && (
+        <div style={{ padding: 10, background: HF.surface2, borderRadius: 6 }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>PIPELINE HEALTH</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 8, fontFamily: HF.mono, fontSize: 10.5 }}>
+            <div><span style={{ color: HF.textFaint }}>agents:</span> <span style={{ color: HF.text }}>{ph.agents_run}</span></div>
+            <div><span style={{ color: HF.textFaint }}>passes 1st:</span> <span style={{ color: HF.ok }}>{ph.passes_first_attempt}</span></div>
+            <div><span style={{ color: HF.textFaint }}>retries:</span> <span style={{ color: HF.text }}>{ph.retries}</span></div>
+            <div><span style={{ color: HF.textFaint }}>blocked:</span> <span style={{ color: ph.blocked_items > 0 ? HF.err : HF.text }}>{ph.blocked_items}</span></div>
+            <div><span style={{ color: HF.textFaint }}>cost:</span> <span style={{ color: HF.accent }}>${(ph.total_cost_usd_estimate || 0).toFixed(3)}</span></div>
+            <div><span style={{ color: HF.textFaint }}>duration:</span> <span style={{ color: HF.text }}>{ph.duration_estimate_minutes}m</span></div>
+          </div>
+        </div>
+      )}
+      {(wa.top_reel || wa.top_image) && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          {wa.top_reel && (
+            <div style={{ padding: 10, background: HF.bg, border: `1px solid ${HF.borderSoft}`, borderRadius: 6 }}>
+              <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>★ TOP REEL</div>
+              <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.accent }}>{wa.top_reel.idea_id} · {wa.top_reel.viral_score}/10</div>
+              <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 13, color: HF.text, marginTop: 4 }}>"{wa.top_reel.hook}"</div>
+              {wa.top_reel.why_picked && <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, marginTop: 4 }}>{wa.top_reel.why_picked}</div>}
+            </div>
+          )}
+          {wa.top_image && (
+            <div style={{ padding: 10, background: HF.bg, border: `1px solid ${HF.borderSoft}`, borderRadius: 6 }}>
+              <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>★ TOP IMAGE</div>
+              <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.accent }}>{wa.top_image.idea_id} · {wa.top_image.archetype} · {wa.top_image.viral_score}/10</div>
+              {wa.top_image.why_picked && <div style={{ fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, marginTop: 4 }}>{wa.top_image.why_picked}</div>}
+            </div>
+          )}
+        </div>
+      )}
+      {wa.hero_action_from_console && (
+        <div style={{ padding: 10, borderRadius: 6, background: 'rgba(245,231,74,.04)', borderLeft: `3px solid ${HF.accent}` }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, letterSpacing: '.14em', marginBottom: 3 }}>HERO ACTION</div>
+          <div style={{ fontFamily: HF.body, fontSize: 12, color: HF.text }}>{wa.hero_action_from_console}</div>
+        </div>
+      )}
+      {kd.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 6 }}>KEY DECISIONS</div>
+          {kd.map((d, i) => (
+            <div key={i} style={{ padding: 8, marginBottom: 4, background: HF.surface2, borderRadius: 4, fontFamily: HF.body, fontSize: 11, color: HF.textDim, lineHeight: 1.5 }}>
+              <strong style={{ color: HF.accent, fontFamily: HF.mono, fontSize: 9.5 }}>{d.stage}</strong> — <span style={{ color: HF.text }}>{d.decision}</span>
+              {d.evidence && <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, marginTop: 2 }}>evidence: {d.evidence}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+      {gaps.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.err, letterSpacing: '.14em', marginBottom: 6 }}>⚠ CONTRADICTIONS / GAPS</div>
+          {gaps.map((g, i) => (
+            <div key={i} style={{ padding: 8, marginBottom: 4, background: 'rgba(255,90,90,.04)', borderLeft: `2px solid ${HF.err}`, borderRadius: 3, fontFamily: HF.body, fontSize: 11, color: HF.textDim, lineHeight: 1.5 }}>
+              <strong style={{ color: HF.err, fontFamily: HF.mono, fontSize: 9.5 }}>{g.type}</strong> — {g.details}
+              {(g.stage_a || g.stage_b) && <span style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint }}> [{g.stage_a} ↔ {g.stage_b}]</span>}
+            </div>
+          ))}
+        </div>
+      )}
+      {next3.length > 0 && (
+        <div style={{ padding: 12, background: 'rgba(245,231,74,.06)', border: `1px solid ${HF.accent}`, borderRadius: 6 }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.accent, letterSpacing: '.14em', marginBottom: 6 }}>NEXT 3 ACTIONS</div>
+          {next3.map((a, i) => (
+            <div key={i} style={{ display: 'flex', gap: 8, padding: '4px 0', fontFamily: HF.body, fontSize: 12, color: HF.text, lineHeight: 1.5 }}>
+              <span style={{ color: HF.accent, fontFamily: HF.mono, fontSize: 10, minWidth: 18 }}>{i + 1}.</span>
+              <span>{a}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {seeds.length > 0 && (
+        <div>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>SELF-LEARNING SEEDS</div>
+          {seeds.map((s, i) => (
+            <div key={i} style={{ padding: 6, marginBottom: 3, background: HF.surface2, borderRadius: 3, fontFamily: HF.body, fontSize: 10.5, color: HF.textDim, lineHeight: 1.5 }}>
+              {s.promote_to_cloud && <Pill tone="accent" style={{ marginRight: 4 }}>★ promoted</Pill>}
+              <strong style={{ color: HF.text }}>{s.seed_type}</strong>: {s.value}
+              {s.reason && <div style={{ fontStyle: 'italic', color: HF.textFaint, marginTop: 2 }}>{s.reason}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+      {data.what_to_do_tomorrow && (
+        <div style={{ padding: 12, background: HF.surface2, borderLeft: `2px solid ${HF.accent}`, borderRadius: 4 }}>
+          <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, letterSpacing: '.14em', marginBottom: 4 }}>TOMORROW'S FOCUS</div>
+          <div style={{ fontFamily: HF.body, fontSize: 11.5, color: HF.text, lineHeight: 1.6 }}>{data.what_to_do_tomorrow}</div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 const REEL_STATE_COLOR = {

@@ -162,6 +162,12 @@ def output_director() -> dict:
     return _wrap("output_director", runner, "operator_console")
 
 
+def session_summary() -> dict:
+    """Run Session Summary — final chronicler. Promotes self_learning_seeds to cloud."""
+    from run_session_summary import main as runner
+    return _wrap("session_summary", runner, "session_summary")
+
+
 def reel_director() -> dict:
     """Run Reel Director — generates 5 ranked reel ideas."""
     from run_reel_director import main as runner
@@ -197,6 +203,7 @@ TOOL_CATALOG = {
     "reel_director":    {"args": [], "produces": "reel_ideas",         "cost": 0.015, "layer": "creative_council"},
     "image_director":   {"args": ["refs"], "produces": "image_ideas",  "cost": 0.015, "layer": "creative_council"},
     "output_director":  {"args": [], "produces": "operator_console",   "cost": 0.010, "layer": "synthesis"},
+    "session_summary":  {"args": [], "produces": "session_summary",    "cost": 0.012, "layer": "synthesis"},
 }
 
 
@@ -215,6 +222,7 @@ def dispatch(tool_name: str, args: dict | None = None) -> dict:
         "reel_director": reel_director,
         "image_director": image_director,
         "output_director": output_director,
+        "session_summary": session_summary,
     }
     fn = fn_map.get(tool_name)
     if not fn:
