@@ -6,7 +6,7 @@
 <title>Royal Pop Studio · Agent Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body { margin: 0; padding: 0; background: #0b0b0b; color: #ededed; font-family: 'Inter Tight', system-ui, sans-serif; }
   * { box-sizing: border-box; }
@@ -22,6 +22,9 @@
     background: #0b0b0b; color: #8a8a8a; font-family: 'JetBrains Mono', monospace; font-size: 12px;
     z-index: 9999; transition: opacity .3s; letter-spacing: 0.14em; text-transform: uppercase;
   }
+  body[data-theme="light"] #boot { background: #fafaf8; color: #9a9490; font-family: 'DM Mono', monospace; }
+  body[data-theme="light"] { background: #fafaf8 !important; }
+  body { background: #0b0b0b; }
 </style>
 </head>
 <body>
@@ -36,16 +39,52 @@
 const { useState, useEffect, useRef, useCallback } = React;
 
 // ───────────────────────── Design tokens ─────────────────────────
-const HF = {
-  bg: '#0b0b0b', surface: '#141414', surface2: '#1b1b1b',
-  border: '#262626', borderSoft: '#1f1f1f',
-  text: '#ededed', textDim: '#8a8a8a', textFaint: '#5a5a5a',
-  accent: '#f5e74a', accentInk: '#0b0b0b',
-  ok: '#3fb27f', err: '#ff5a5a',
-  mono: '"JetBrains Mono", ui-monospace, monospace',
-  body: '"Inter Tight", system-ui, sans-serif',
-  serif: '"Instrument Serif", serif',
+// ───────────────────────── Theme system ─────────────────────────
+// Two themes: dark (default) + light (from pop-wrist-studio-framework.jsx)
+// HF is a Proxy that reads from current _activeTheme. Toggling re-renders via App state.
+const THEMES = {
+  dark: {
+    bg: '#0b0b0b', surface: '#141414', surface2: '#1b1b1b',
+    border: '#262626', borderSoft: '#1f1f1f',
+    text: '#ededed', textDim: '#8a8a8a', textFaint: '#5a5a5a',
+    accent: '#f5e74a', accentInk: '#0b0b0b',
+    accent2: '#7BA3F5', accent2Ink: '#0b0b0b',
+    ok: '#3fb27f', err: '#ff5a5a',
+    mono: '"JetBrains Mono", ui-monospace, monospace',
+    body: '"Inter Tight", system-ui, sans-serif',
+    serif: '"Instrument Serif", serif',
+  },
+  light: {
+    // From pop-wrist-studio-framework.jsx — white + orange + blue
+    bg: '#fafaf8', surface: '#ffffff', surface2: '#f4f2ef',
+    border: '#e8e4df', borderSoft: '#efece7',
+    text: '#1a1714', textDim: '#4a4540', textFaint: '#9a9490',
+    accent: '#f4632a', accentInk: '#ffffff',         // orange
+    accent2: '#1a4fd6', accent2Ink: '#ffffff',        // blue
+    ok: '#1d9e75', err: '#dc2626',
+    mono: '"DM Mono", "JetBrains Mono", ui-monospace, monospace',
+    body: '"Outfit", system-ui, sans-serif',
+    serif: '"DM Serif Display", "Instrument Serif", serif',
+  },
 };
+
+let _activeTheme = (typeof localStorage !== 'undefined' && localStorage.getItem('pws_theme')) || 'dark';
+const HF = new Proxy({}, {
+  get: (_t, key) => THEMES[_activeTheme][key],
+  ownKeys: () => Object.keys(THEMES[_activeTheme]),
+  getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+});
+
+function _setActiveTheme(name) {
+  if (THEMES[name]) {
+    _activeTheme = name;
+    try { localStorage.setItem('pws_theme', name); } catch {}
+    document.body && document.body.setAttribute('data-theme', name);
+  }
+}
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => document.body.setAttribute('data-theme', _activeTheme));
+}
 
 const API = '';  // same-origin (served from FastAPI)
 
@@ -140,7 +179,7 @@ const RENDER_IDS = ['render_image', 'render_video'];
 const REEL_IDS = ['reel_director'];
 
 // ───────────────────────── Top bar ─────────────────────────
-function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }) {
+function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView, themeName, onToggleTheme }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', gap: 14,
@@ -195,6 +234,17 @@ function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView }
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <IconBtn tone="accent" size="sm" onClick={onRunAll} disabled={running}>▶ Run all</IconBtn>
         <IconBtn tone="danger" size="sm" onClick={onStop} disabled={!running}>■ Stop</IconBtn>
+        <button
+          onClick={onToggleTheme}
+          title={`Theme: ${themeName} · click to swap`}
+          style={{
+            padding: '6px 10px', borderRadius: 6,
+            background: 'transparent', border: `1px solid ${HF.border}`,
+            color: HF.textDim, fontFamily: HF.mono, fontSize: 11,
+            cursor: 'pointer', letterSpacing: '.04em',
+          }}>
+          {themeName === 'dark' ? '☼ light' : '☾ dark'}
+        </button>
       </div>
 
       <div style={{ flex: 1 }} />
@@ -479,6 +529,83 @@ function _todayStr() {
   return d.toISOString().slice(0, 10);
 }
 
+// ───────────────────────── Expandable output modal ─────────────────────────
+// Wraps any content; on click opens full-screen modal with bigger fonts.
+function ExpandableCard({ title, subtitle, children, modalChildren = null, hint = 'click to expand' }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+  return (
+    <>
+      <div
+        onClick={() => setOpen(true)}
+        style={{ cursor: 'pointer', position: 'relative' }}
+        title={hint}>
+        {children}
+        <div style={{
+          position: 'absolute', top: 6, right: 6,
+          fontFamily: HF.mono, fontSize: 9, color: HF.textFaint,
+          padding: '2px 6px', borderRadius: 3, background: HF.surface2,
+          border: `1px solid ${HF.borderSoft}`, opacity: 0.7,
+          pointerEvents: 'none',
+        }}>⤢ expand</div>
+      </div>
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9000,
+            background: 'rgba(0,0,0,0.65)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '4vh 4vw',
+          }}>
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              width: '100%', maxWidth: 1100, maxHeight: '92vh',
+              background: HF.surface, border: `1px solid ${HF.border}`,
+              borderRadius: 12, overflow: 'hidden',
+              display: 'flex', flexDirection: 'column',
+              boxShadow: '0 20px 60px rgba(0,0,0,.4)',
+            }}>
+            <div style={{
+              padding: '14px 22px', borderBottom: `1px solid ${HF.borderSoft}`,
+              display: 'flex', alignItems: 'center', gap: 12,
+            }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: HF.serif, fontStyle: 'italic', fontSize: 20, color: HF.text }}>{title}</div>
+                {subtitle && <div style={{ fontFamily: HF.mono, fontSize: 10, color: HF.textFaint, letterSpacing: '.12em', marginTop: 3 }}>{subtitle}</div>}
+              </div>
+              <button
+                onClick={() => setOpen(false)}
+                style={{
+                  padding: '6px 14px', borderRadius: 5,
+                  background: HF.bg, border: `1px solid ${HF.border}`,
+                  color: HF.textDim, fontFamily: HF.mono, fontSize: 11,
+                  cursor: 'pointer', letterSpacing: '.1em',
+                }}>✕ close · ESC</button>
+            </div>
+            <div style={{
+              flex: 1, overflowY: 'auto', padding: 24,
+              fontSize: '1.05em', lineHeight: 1.65,
+            }}>
+              {modalChildren || children}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 function PreviewPanel({ agentId, refreshSignal }) {
   const [tab, setTab] = useState('output');  // 'output' | 'prompt'
   const [outputData, setOutputData] = useState(null);
@@ -586,7 +713,13 @@ function PreviewPanel({ agentId, refreshSignal }) {
           <div style={{ fontFamily: HF.mono, fontSize: 11, color: HF.textFaint }}>loading…</div>
         )}
         {tab === 'output' && outputData && (
-          <AgentOutputView agentId={agentId} data={outputData} />
+          <ExpandableCard
+            title={`${agentId} output`}
+            subtitle={outputFile || ''}
+            hint="click to expand to full screen"
+          >
+            <AgentOutputView agentId={agentId} data={outputData} />
+          </ExpandableCard>
         )}
       </div>
     </div>
@@ -1768,9 +1901,11 @@ function ConsoleView({ refreshSignal, onRunDirector, running }) {
         </div>
       )}
       {data && (
-        <div style={{ padding: 18, borderRadius: 10, background: HF.surface, border: `1px solid ${HF.border}` }}>
-          <OutputDirectorOutput data={data} />
-        </div>
+        <ExpandableCard title="Operator Console" subtitle={file || ''} hint="click to expand">
+          <div style={{ padding: 18, borderRadius: 10, background: HF.surface, border: `1px solid ${HF.border}` }}>
+            <OutputDirectorOutput data={data} />
+          </div>
+        </ExpandableCard>
       )}
     </div>
   );
@@ -2011,7 +2146,11 @@ function ReelsView({ refreshSignal, onRunReels, running, onSendToRender }) {
           No reel ideas yet. Run the marketing pipeline, then ▶ Generate 5 Ideas.
         </div>
       )}
-      {data && <ReelIdeasOutput data={data} onSendToRender={onSendToRender} />}
+      {data && (
+        <ExpandableCard title="Reel Ideas Deck" subtitle={file || ''} hint="click to expand">
+          <ReelIdeasOutput data={data} onSendToRender={onSendToRender} />
+        </ExpandableCard>
+      )}
     </div>
   );
 }
@@ -3598,6 +3737,12 @@ function App() {
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(null);
   const [previewRefresh, setPreviewRefresh] = useState(0);
+  const [themeName, setThemeName] = useState(_activeTheme);
+  const toggleTheme = useCallback(() => {
+    const next = themeName === 'dark' ? 'light' : 'dark';
+    _setActiveTheme(next);
+    setThemeName(next);
+  }, [themeName]);
   const [renderPrefill, setRenderPrefill] = useState(null);
 
   const sendIdeaToRender = useCallback((idea) => {
@@ -3821,6 +3966,8 @@ function App() {
         running={running}
         view={view}
         setView={setView}
+        themeName={themeName}
+        onToggleTheme={toggleTheme}
       />
 
       <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: 0 }}>
