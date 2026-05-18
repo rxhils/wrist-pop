@@ -2,14 +2,14 @@
   "date": "2026-05-18",
   "items": [
     {
-      "post_id": "2026-05-18-REEL-518-05",
+      "post_id": "2026-05-18-REEL-NTRAST",
       "visual_brief_path": "outputs\\visual_brief_2026-05-18.json",
       "status": "WAITING",
       "exported_file": null,
-      "production_eta_minutes": 50,
+      "production_eta_minutes": 64,
       "blocker_reason": null,
       "notes": "",
-      "updated_at": "2026-05-18T00:30:41.275095Z"
+      "updated_at": "2026-05-18T12:46:12.066341Z"
     }
   ]
 }

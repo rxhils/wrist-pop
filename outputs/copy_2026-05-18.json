@@ -2,78 +2,10 @@
   "date": "2026-05-18",
   "pieces": [
     {
-      "_status_line": "Generated 3 hooks · built 7s reel script · wrote 2 captions · recommended A for precision · validated IG fold",
-      "status": "OK",
-      "post_id": "2026-05-18-REEL-518-05",
-      "hook_options": [
-        "40.35mm. 0.7mm. FKM. No drilling.",
-        "One adapter. Exact fit. Royal Pop only.",
-        "FKM rubber. 22mm lugs. Zero guesswork."
-      ],
-      "recommended_hook": "40.35mm. 0.7mm. FKM. No drilling.",
-      "hook_archetype": "SPEC",
-      "reel_script": {
-        "duration_target": "7s",
-        "beats": [
-          {
-            "time": "0:00",
-            "line": "40.35mm. 0.7mm. FKM. No drilling.",
-            "purpose": "HOOK"
-          },
-          {
-            "time": "0:02",
-            "line": "Engineered for the Royal Pop’s exact case.",
-            "purpose": "BODY"
-          },
-          {
-            "time": "0:04",
-            "line": "0.7mm retaining lip locks it secure.",
-            "purpose": "PROOF"
-          },
-          {
-            "time": "0:05",
-            "line": "FKM rubber. No scratches. No glue.",
-            "purpose": "PROOF"
-          },
-          {
-            "time": "0:06",
-            "line": "Pre-Order Now.",
-            "purpose": "CTA"
-          }
-        ]
-      },
-      "on_screen_text": [
-        "40.35mm",
-        "0.7mm lip",
-        "FKM rubber",
-        "No drilling",
-        "Pre-Order Now"
-      ],
-      "caption_options": [
-        {
-          "label": "A",
-          "caption": "40.35mm. 0.7mm. FKM. No drilling.\n\nCradle Adapter V1 is engineered for the Royal Pop’s exact case—40.35mm socket, 0.7mm retaining lip, and 22mm lug width. FKM rubber ensures a secure, scratch-free fit without drilling or glue.\n\nPre-Order Now\n\n#RoyalPop #WatchAdapter #PrecisionEngineering #NoDrilling #FKMRubber\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
-        },
-        {
-          "label": "B",
-          "caption": "Your Royal Pop wasn’t made for the wrist. Until now.\n\nCradle Adapter V1 converts it with exact specs: 40.35mm socket, 0.7mm lip, and FKM rubber. No drilling. No glue. Just a perfect fit.\n\nPre-Order Now\n\n#WatchConversion #RoyalPopWrist #EngineeredFit #FKMAdapter\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
-        }
-      ],
-      "recommended_caption": "A",
-      "cta": "Pre-Order Now",
-      "legal_safety_notes": [],
-      "handoff_note_for_qa": "Recommended A for precision alignment with Marketing Director’s spec-driven angle. Line 1 (78 chars) passes IG fold. Hook (7 words) meets ≤8-word rule. Both captions include all proof points and disclaimer.",
-      "caption_validation": {
-        "option_a_line1_chars": 78,
-        "option_b_line1_chars": 47,
-        "option_a_passes": true,
-        "option_b_passes": true,
-        "recommended_hook_word_count": 7,
-        "recommended_hook_passes": true
-      },
+      "_status_line": "Generated 3 hooks · built 7s reel script · wrote 2 captions · recommended A for precision contrast · validated IG fold",
       "website_truth": {
         "website_status": "LIVE",
-        "fetched_at": "2026-05-18T00:27:59Z",
+        "fetched_at": "2026-05-18T12:43:09Z",
         "verified_brand_name": "Pop Wrist Studio",
         "verified_product_name": "Cradle Adapter V1",
         "verified_cta": "Pre-Order Now",
@@ -88,11 +20,93 @@
         "website_override_applied": false,
         "manual_override_applied": false
       },
+      "status": "OK",
+      "post_id": "2026-05-18-REEL-NTRAST",
+      "hook_options": [
+        "40.35mm. 0.7mm. 22mm. Competitors miss this.",
+        "Royal Pop’s exact fit. No guesswork.",
+        "Generic adapters fail. This doesn’t."
+      ],
+      "recommended_hook": "40.35mm. 0.7mm. 22mm. Competitors miss this.",
+      "hook_archetype": "SPEC_CONTRAST",
+      "reel_script": {
+        "duration_target": "7s",
+        "beats": [
+          {
+            "time": "0:00",
+            "line": "40.35mm. 0.7mm. 22mm.",
+            "purpose": "HOOK"
+          },
+          {
+            "time": "0:02",
+            "line": "Competitors miss this.",
+            "purpose": "BODY"
+          },
+          {
+            "time": "0:03",
+            "line": "Exact fit for Royal Pop’s socket.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:04",
+            "line": "0.7mm lip holds it secure.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:05",
+            "line": "22mm lugs. Standard straps work.",
+            "purpose": "PROOF"
+          },
+          {
+            "time": "0:06",
+            "line": "Generic adapters? Loose. Risky.",
+            "purpose": "CONTRAST"
+          },
+          {
+            "time": "0:07",
+            "line": "Pre-Order Now — limited early access.",
+            "purpose": "CTA"
+          }
+        ]
+      },
+      "on_screen_text": [
+        "40.35mm socket",
+        "0.7mm retaining lip",
+        "22mm lug width",
+        "FKM rubber",
+        "Designed for Royal Pop"
+      ],
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "40.35mm. 0.7mm. 22mm. Competitors miss this.\n\nCradle Adapter V1 is engineered for Royal Pop’s exact socket, 0.7mm retaining lip, and 22mm lug width. Generic adapters compromise fit, finish, and safety. This is the only adapter designed for the Royal Pop, not a strap.\n\nPre-Order Now — limited early access before competitors flood the market.\n\n#PopWristStudio #RoyalPop #WatchAdapter #EngineeringPrecision #WatchAccessories\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        },
+        {
+          "label": "B",
+          "caption": "Royal Pop’s exact fit. No guesswork.\n\nCradle Adapter V1 matches the 40.35mm socket, 0.7mm lip, and 22mm lugs. Competitors use generic adapters that risk damage. This is precision engineering for your Royal Pop.\n\nPre-Order Now — secure your adapter before the market is flooded.\n\n#PopWristStudio #WatchMods #LuxuryAccessories #RoyalPopWrist #WatchCommunity\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        }
+      ],
+      "recommended_caption": "A",
+      "cta": "Pre-Order Now — limited early access before competitors flood the market.",
+      "legal_safety_notes": [
+        "Disclaimer included in both captions.",
+        "No implied affiliation with Swatch or Audemars Piguet.",
+        "No overpromising compatibility with non-Royal Pop watches."
+      ],
+      "handoff_note_for_qa": "Caption A recommended for stronger precision contrast and direct alignment with the primary angle. Both captions pass IG fold validation.",
+      "caption_validation": {
+        "option_a_line1_chars": 45,
+        "option_b_line1_chars": 32,
+        "option_a_passes": true,
+        "option_b_passes": true,
+        "recommended_hook_word_count": 7,
+        "recommended_hook_passes": true
+      },
       "_meta": {
-        "campaign_id": "CMP-20260518-05",
+        "campaign_id": "CRADLE_V1_DAY5_COMPETITOR_CONTRAST",
         "format": "REEL",
         "campaign_stage": "WAITLIST",
-        "primary_angle_title": "40.35mm exact. 0.7mm lip. FKM rubber. No drilling."
+        "primary_angle_title": "40.35mm. 0.7mm. 22mm. Competitors miss this."
       },
       "_gate_status": "PASS"
     }

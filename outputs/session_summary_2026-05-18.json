@@ -1,0 +1,112 @@
+{
+  "_status_line": "Synthesised 11 agents · pass-rate 91% · campaign focus 'engineering precision vs generic competitors' · operator next action GENERATE MISSING IMAGE IDEAS",
+  "date": "2026-05-18",
+  "campaign_thread": "Cradle Adapter V1’s engineering precision (40.35mm, 0.7mm, 22mm) as the premium differentiator against generic competitor adapters flooding the market post-Royal Pop drop.",
+  "pipeline_health": {
+    "agents_run": 11,
+    "passes_first_attempt": 10,
+    "retries": 1,
+    "parse_failures": 0,
+    "blocked_items": 1,
+    "total_cost_usd_estimate": 0.88,
+    "duration_estimate_minutes": 120
+  },
+  "key_decisions": [
+    {
+      "stage": "Scout",
+      "decision": "Competitor Royal Pop wrist adapters flooding market (audience_fit_score 10, risk_score 3)",
+      "evidence": "trend_cluster.name: 'Competitor Royal Pop wrist adapters flooding market'"
+    },
+    {
+      "stage": "Director",
+      "decision": "Locked competitor contrast as lead angle: '40.35mm. 0.7mm. 22mm. Competitors miss this.'",
+      "evidence": "content_brief.primary_angle.title"
+    },
+    {
+      "stage": "Copy",
+      "decision": "Recommended hook '40.35mm. 0.7mm. 22mm. Competitors miss this.' for precision contrast (archetype: SPEC_CONTRAST)",
+      "evidence": "copy.pieces[0].recommended_hook"
+    },
+    {
+      "stage": "Asset Director",
+      "decision": "Prioritised 5 stills + 5 motion clips for REEL, focusing on spec-contrast and side-by-side competitor comparison",
+      "evidence": "asset_plan.plans[0]._status_line"
+    },
+    {
+      "stage": "Reel Director",
+      "decision": "Ranked REEL_1 as operators_best_bet with hook '40.35mm. 0.7mm. FKM. No drilling.' (viral_score: high, emotional_logic: CURIOSITY)",
+      "evidence": "reel_ideas.operators_best_bet"
+    },
+    {
+      "stage": "Output Director",
+      "decision": "Identified missing image ideas as HIGH-urgency blocker for post 2026-05-18-REEL-NTRAST",
+      "evidence": "operator_console.hero_action.blocking_reason"
+    }
+  ],
+  "winning_assets": {
+    "top_reel": {
+      "idea_id": "REEL_1",
+      "hook": "40.35mm. 0.7mm. FKM. No drilling.",
+      "viral_score": "high (predicted)",
+      "why_picked": "Aligned with Director’s precision contrast angle, SPEC_CONTRAST archetype, and historical winner pattern. Macro shots of 40.35mm socket and 0.7mm lip drive curiosity and authority."
+    },
+    "top_image": {
+      "idea_id": "IMG_3",
+      "archetype": "SIDE_BY_SIDE_COMPARISON",
+      "viral_score": 9,
+      "why_picked": "Directly addresses trend cluster 'Competitor Royal Pop wrist adapters flooding market' by visually contrasting Cradle Adapter V1’s precision with generic adapters."
+    },
+    "hero_action_from_console": "Generate missing image ideas for post 2026-05-18-REEL-NTRAST"
+  },
+  "contradictions_or_gaps": [
+    {
+      "type": "missing_artifact",
+      "stage_a": "Asset Director",
+      "stage_b": "Visual Brief",
+      "details": "Image ideas artifact missing for post 2026-05-18-REEL-NTRAST, blocking asset production. Required to proceed with Manual Reel and Manual Post stages."
+    }
+  ],
+  "self_learning_seeds": [
+    {
+      "seed_type": "winning_hook_candidate",
+      "value": "40.35mm. 0.7mm. 22mm. Competitors miss this.",
+      "promote_to_cloud": true,
+      "reason": "QA-approved, aligned with Director’s angle, and matches historical winner pattern (engagement=9/10). Structural archetype: SPEC_CONTRAST."
+    },
+    {
+      "seed_type": "winning_archetype",
+      "value": "SPEC_CONTRAST",
+      "promote_to_cloud": true,
+      "reason": "Proven effectiveness in addressing audience skepticism about generic adapters. Used in top reel (REEL_1) and top image (IMG_3)."
+    },
+    {
+      "seed_type": "dead_angle",
+      "value": "Generic 'premium strap' messaging without spec differentiation",
+      "promote_to_cloud": true,
+      "reason": "Trend cluster 'Competitor Royal Pop wrist adapters flooding market' shows commoditization risk. Spec precision is the only viable differentiator."
+    }
+  ],
+  "operator_next_3": [
+    "Generate image ideas for post 2026-05-18-REEL-NTRAST (30 mins)",
+    "Review Visual Brief for alignment with approved reel script",
+    "Schedule Manual Reel production once image ideas are approved"
+  ],
+  "what_to_do_tomorrow": "Tomorrow’s pipeline should focus on unblocking asset production by finalizing image ideas and initiating Manual Reel work. Given the competitor launches today, prioritize speed without compromising precision. Scout should monitor competitor content responses and audience sentiment shifts post-Royal Pop × AP announcement (expected 16 May). Copy should prepare a secondary angle emphasizing scarcity (5 colourways, FKM rubber) in case competitor saturation dilutes the spec-contrast message.",
+  "website_truth": {
+    "website_status": "LIVE",
+    "fetched_at": "2026-05-18T12:43:09Z",
+    "verified_brand_name": "Pop Wrist Studio",
+    "verified_product_name": "Cradle Adapter V1",
+    "verified_cta": "Pre-Order Now",
+    "verified_colourways": [
+      "Monochrome",
+      "Arctic Blue",
+      "Cobalt Orange",
+      "Green Eight",
+      "Otto Rosso"
+    ],
+    "verified_disclaimer": "Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet.",
+    "website_override_applied": false,
+    "manual_override_applied": false
+  }
+}

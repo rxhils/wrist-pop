@@ -1,0 +1,431 @@
+{
+  "_status_line": "Generated 5 reel ideas · ranked by engagement · operators_best_bet REEL_1 · aligned to brand truth and pipeline state",
+  "status": "OK",
+  "scan_date": "2026-05-18",
+  "informed_by": {
+    "primary_angle_title": "40.35mm exact. 0.7mm lip. FKM rubber. No drilling.",
+    "trend_cluster_used": "Aftermarket Royal Pop wrist conversion race",
+    "historical_winner_used": "40.35mm. 0.7mm. 22mm. Exact fit, engineered."
+  },
+  "operators_best_bet": "REEL_1",
+  "ideas": [
+    {
+      "idea_id": "REEL_1",
+      "rank": 1,
+      "hook_archetype": "SPEC",
+      "opening_shot_type": "MACRO",
+      "emotional_logic": "CURIOSITY",
+      "duration_target": "15s",
+      "hook": "40.35mm. 0.7mm. FKM. No drilling.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Extreme macro: Cradle Adapter V1 inner socket aligning with Royal Pop case edge",
+          "voiceover_or_caption_line": "40.35mm. 0.7mm. FKM. No drilling.",
+          "on_screen_text": "40.35mm",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Macro: 0.7mm retaining lip snapping into place",
+          "voiceover_or_caption_line": "Engineered for the Royal Pop’s exact case.",
+          "on_screen_text": "0.7mm lip",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:06",
+          "shot": "Macro: FKM rubber texture under raking light",
+          "voiceover_or_caption_line": "FKM rubber. No scratches. No glue.",
+          "on_screen_text": "FKM rubber",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:09",
+          "shot": "Wrist shot: Royal Pop flush on wrist, no gap",
+          "voiceover_or_caption_line": "Secure. Scratch-free. Perfect fit.",
+          "on_screen_text": "No drilling",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:12",
+          "shot": "Close-up: Cradle Adapter V1 (Monochrome) on wrist, strap integration",
+          "voiceover_or_caption_line": "Pre-Order Now.",
+          "on_screen_text": "Pre-Order Now",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Macro shot of 0.7mm retaining lip snapping into place, sharp focus, raking light",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "40.35mm. 0.7mm. FKM. No drilling.\n\nCradle Adapter V1 is engineered for the Royal Pop’s exact case—40.35mm socket, 0.7mm retaining lip, and 22mm lug width. FKM rubber ensures a secure, scratch-free fit without drilling or glue.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPop #FKMRubber #PrecisionEngineering #NoDrilling #WatchAdapter #EngineeredFit #WatchConversion #40mmCase #22mmLugs #SwatchAccessory #WatchMod #WatchCommunity #LuxuryAccessories\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        },
+        {
+          "label": "B",
+          "caption": "Your Royal Pop wasn’t made for the wrist. Until now.\n\nCradle Adapter V1 converts it with exact specs: 40.35mm socket, 0.7mm lip, and FKM rubber. No drilling. No glue. Just a perfect fit.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPopWrist #EngineeredFit #FKMAdapter #WatchMod #PrecisionEngineering #NoDrilling #WatchCommunity #LuxuryAccessories\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#RoyalPop",
+        "#FKMRubber",
+        "#PrecisionEngineering",
+        "#NoDrilling",
+        "#WatchAdapter",
+        "#EngineeredFit",
+        "#WatchConversion",
+        "#40mmCase",
+        "#22mmLugs",
+        "#SwatchAccessory",
+        "#WatchMod",
+        "#WatchCommunity",
+        "#LuxuryAccessories"
+      ],
+      "cta": "Pre-Order Now",
+      "production_effort_score": 3,
+      "expected_engagement_score": 9,
+      "why_this_wins": "Directly leverages the proven spec-driven hook pattern (40.35mm / 0.7mm / FKM) that scored 9/10 engagement in past posts. Aligns with the top trend cluster (Aftermarket Royal Pop wrist conversion race) and addresses the primary audience tension: exact fit without damage.",
+      "what_could_kill_it": "Overused spec language without fresh visual execution. Macro shots must be razor-sharp to convey precision."
+    },
+    {
+      "idea_id": "REEL_2",
+      "rank": 2,
+      "hook_archetype": "CONTRAST",
+      "opening_shot_type": "SPLIT_SCREEN",
+      "emotional_logic": "FOMO",
+      "duration_target": "15s",
+      "hook": "This vs. this. One fits.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Split-screen: Left—Royal Pop on generic silicone strap (awkward fit, gap). Right—Royal Pop on Cradle Adapter V1 (flush, no gap)",
+          "voiceover_or_caption_line": "This vs. this. One fits.",
+          "on_screen_text": "Generic strap vs. Cradle Adapter V1",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Close-up: Generic strap slipping off case edge",
+          "voiceover_or_caption_line": "Generic straps slip. Crown digs in.",
+          "on_screen_text": "Slip risk",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:06",
+          "shot": "Macro: Cradle Adapter V1 0.7mm lip locking into place",
+          "voiceover_or_caption_line": "0.7mm lip locks it secure.",
+          "on_screen_text": "0.7mm lip",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:09",
+          "shot": "Wrist shot: Royal Pop on Cradle Adapter V1, strap integration",
+          "voiceover_or_caption_line": "FKM rubber. No scratches. No glue.",
+          "on_screen_text": "FKM rubber",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:12",
+          "shot": "Close-up: Cradle Adapter V1 (Arctic Blue) on wrist, watch face visible",
+          "voiceover_or_caption_line": "Pre-Order Now.",
+          "on_screen_text": "Pre-Order Now",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Split-screen: Left—Royal Pop on generic strap (gap visible). Right—Royal Pop on Cradle Adapter V1 (flush fit)",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "This vs. this. One fits.\n\nGeneric straps slip. Crown digs in. Cradle Adapter V1 locks secure with a 0.7mm retaining lip and FKM rubber—no drilling, no glue, just a perfect fit.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPop #NoSlip #FKMRubber #WatchAdapter #EngineeredFit #WatchMod #LuxuryAccessories\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        },
+        {
+          "label": "B",
+          "caption": "Your Royal Pop deserves better than a generic strap.\n\nCradle Adapter V1: 0.7mm lip, FKM rubber, exact fit. No slip. No scratches. No glue.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPopWrist #NoSlip #FKMAdapter #WatchCommunity\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#RoyalPop",
+        "#NoSlip",
+        "#FKMRubber",
+        "#WatchAdapter",
+        "#EngineeredFit",
+        "#WatchMod",
+        "#LuxuryAccessories",
+        "#WatchConversion",
+        "#22mmLugs",
+        "#SwatchAccessory",
+        "#WatchCommunity",
+        "#PrecisionEngineering",
+        "#NoDrilling"
+      ],
+      "cta": "Pre-Order Now",
+      "production_effort_score": 4,
+      "expected_engagement_score": 8,
+      "why_this_wins": "Contrast format is highly shareable and taps into FOMO (generic straps vs. engineered solution). Aligns with the trend cluster “Aftermarket Royal Pop wrist conversion race” and addresses the objection: “Why pay more for an adapter?”",
+      "what_could_kill_it": "Generic strap must be visibly inferior (gap, slip) to make the contrast effective. Avoid overused “before/after” tropes."
+    },
+    {
+      "idea_id": "REEL_3",
+      "rank": 3,
+      "hook_archetype": "AESTHETIC",
+      "opening_shot_type": "TIME_LAPSE",
+      "emotional_logic": "ASPIRATION",
+      "duration_target": "15s",
+      "hook": "Royal Pop, reimagined.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Time-lapse: Royal Pop case being placed into Cradle Adapter V1 (Monochrome), strap attached, wrist shot",
+          "voiceover_or_caption_line": "Royal Pop, reimagined.",
+          "on_screen_text": "Royal Pop, reimagined",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Close-up: Cradle Adapter V1 (Arctic Blue) on wrist, watch face visible",
+          "voiceover_or_caption_line": "Designed for the wrist. Engineered for the case.",
+          "on_screen_text": "Designed for the wrist",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:06",
+          "shot": "Macro: FKM rubber texture, fingers pressing",
+          "voiceover_or_caption_line": "FKM rubber. Premium. Secure.",
+          "on_screen_text": "FKM rubber",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:09",
+          "shot": "Wrist shot: Cradle Adapter V1 (Cobalt Orange) on wrist, dynamic angle",
+          "voiceover_or_caption_line": "Five colourways. One perfect fit.",
+          "on_screen_text": "5 colourways",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:12",
+          "shot": "Close-up: Cradle Adapter V1 (Green Eight) on wrist, strap integration",
+          "voiceover_or_caption_line": "Pre-Order Now.",
+          "on_screen_text": "Pre-Order Now",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Time-lapse midpoint: Royal Pop case being placed into Cradle Adapter V1, strap partially attached",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "Royal Pop, reimagined.\n\nDesigned for the wrist. Engineered for the case. Cradle Adapter V1 converts your Royal Pop with FKM rubber, 0.7mm retaining lip, and 22mm lug width—no drilling, no glue, just a perfect fit.\n\nFive colourways available.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPop #WatchDesign #FKMRubber #LuxuryAccessories #WatchMod #WatchCommunity #EngineeredFit\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        },
+        {
+          "label": "B",
+          "caption": "Your Royal Pop wasn’t made for the wrist. We fixed that.\n\nCradle Adapter V1: FKM rubber, 0.7mm lip, exact fit. Five colourways. One perfect solution.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPopWrist #WatchDesign #FKMAdapter #LuxuryAccessories\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#RoyalPop",
+        "#WatchDesign",
+        "#FKMRubber",
+        "#LuxuryAccessories",
+        "#WatchMod",
+        "#WatchCommunity",
+        "#EngineeredFit",
+        "#WatchConversion",
+        "#22mmLugs",
+        "#SwatchAccessory",
+        "#PrecisionEngineering",
+        "#NoDrilling",
+        "#FiveColourways"
+      ],
+      "cta": "Pre-Order Now",
+      "production_effort_score": 3,
+      "expected_engagement_score": 8,
+      "why_this_wins": "Aesthetic-driven hooks resonate with design-led accessory buyers and collectors. Time-lapse format is visually engaging and showcases the product’s versatility (five colourways).",
+      "what_could_kill_it": "Time-lapse must be smooth and dynamic. Avoid static shots that dilute the “reimagined” narrative."
+    },
+    {
+      "idea_id": "REEL_4",
+      "rank": 4,
+      "hook_archetype": "PROBLEM",
+      "opening_shot_type": "WRIST",
+      "emotional_logic": "DESIRE",
+      "duration_target": "15s",
+      "hook": "Your Royal Pop is digging into your wrist.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Wrist shot: Royal Pop on generic strap, crown visibly digging into wrist",
+          "voiceover_or_caption_line": "Your Royal Pop is digging into your wrist.",
+          "on_screen_text": "Crown digging in",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Close-up: Cradle Adapter V1 (Monochrome) inner socket aligning with case",
+          "voiceover_or_caption_line": "40.35mm socket. Exact fit.",
+          "on_screen_text": "40.35mm",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:06",
+          "shot": "Macro: 0.7mm retaining lip snapping into place",
+          "voiceover_or_caption_line": "0.7mm lip locks it secure.",
+          "on_screen_text": "0.7mm lip",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:09",
+          "shot": "Wrist shot: Royal Pop on Cradle Adapter V1, flush fit, no gap",
+          "voiceover_or_caption_line": "No more digging. No more slipping.",
+          "on_screen_text": "No gap",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:12",
+          "shot": "Close-up: Cradle Adapter V1 (Arctic Blue) on wrist, strap integration",
+          "voiceover_or_caption_line": "Pre-Order Now.",
+          "on_screen_text": "Pre-Order Now",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Wrist shot: Royal Pop on generic strap, crown visibly digging into wrist, discomfort implied",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "Your Royal Pop is digging into your wrist.\n\nCradle Adapter V1 fixes that: 40.35mm socket, 0.7mm retaining lip, and FKM rubber for a secure, scratch-free fit. No drilling. No glue. Just comfort.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPop #NoDigging #FKMRubber #WatchAdapter #EngineeredFit #WatchMod\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        },
+        {
+          "label": "B",
+          "caption": "Stop the dig. Start the fit.\n\nCradle Adapter V1: 40.35mm socket, 0.7mm lip, FKM rubber. No more crown digging. No more slipping.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPopWrist #NoDigging #FKMAdapter #WatchCommunity\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#RoyalPop",
+        "#NoDigging",
+        "#FKMRubber",
+        "#WatchAdapter",
+        "#EngineeredFit",
+        "#WatchMod",
+        "#WatchCommunity",
+        "#LuxuryAccessories",
+        "#22mmLugs",
+        "#SwatchAccessory",
+        "#PrecisionEngineering",
+        "#NoDrilling",
+        "#WatchConversion"
+      ],
+      "cta": "Pre-Order Now",
+      "production_effort_score": 2,
+      "expected_engagement_score": 7,
+      "why_this_wins": "Problem-driven hooks create immediate relatability for Royal Pop owners. Addresses a common pain point (crown digging) and positions Cradle Adapter V1 as the solution.",
+      "what_could_kill_it": "Problem must be visually exaggerated (crown digging) to make the solution feel urgent. Avoid understating the discomfort."
+    },
+    {
+      "idea_id": "REEL_5",
+      "rank": 5,
+      "hook_archetype": "PROOF",
+      "opening_shot_type": "UNBOXING",
+      "emotional_logic": "AUTHORITY",
+      "duration_target": "15s",
+      "hook": "This is how it fits.",
+      "beats": [
+        {
+          "time": "0:00",
+          "shot": "Unboxing: Cradle Adapter V1 (Monochrome) being removed from packaging, held up to camera",
+          "voiceover_or_caption_line": "This is how it fits.",
+          "on_screen_text": "Cradle Adapter V1",
+          "purpose": "HOOK"
+        },
+        {
+          "time": "0:03",
+          "shot": "Close-up: Adapter being placed onto Royal Pop case, 40.35mm socket alignment",
+          "voiceover_or_caption_line": "40.35mm socket. Exact fit.",
+          "on_screen_text": "40.35mm",
+          "purpose": "BODY"
+        },
+        {
+          "time": "0:06",
+          "shot": "Macro: 0.7mm retaining lip snapping into place, fingers pressing",
+          "voiceover_or_caption_line": "0.7mm lip locks it secure.",
+          "on_screen_text": "0.7mm lip",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:09",
+          "shot": "Wrist shot: Royal Pop on Cradle Adapter V1, strap integration, watch face visible",
+          "voiceover_or_caption_line": "FKM rubber. No scratches. No glue.",
+          "on_screen_text": "FKM rubber",
+          "purpose": "PROOF"
+        },
+        {
+          "time": "0:12",
+          "shot": "Close-up: Cradle Adapter V1 (Otto Rosso) on wrist, dynamic angle",
+          "voiceover_or_caption_line": "Pre-Order Now.",
+          "on_screen_text": "Pre-Order Now",
+          "purpose": "CTA"
+        }
+      ],
+      "cover_frame_direction": "Unboxing shot: Cradle Adapter V1 being held up to camera, packaging visible",
+      "caption_options": [
+        {
+          "label": "A",
+          "caption": "This is how it fits.\n\nCradle Adapter V1: 40.35mm socket, 0.7mm retaining lip, and FKM rubber for a secure, scratch-free fit. No drilling. No glue. Just engineering.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPop #EngineeredFit #FKMRubber #WatchAdapter #PrecisionEngineering #NoDrilling\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        },
+        {
+          "label": "B",
+          "caption": "Unbox the fit.\n\nCradle Adapter V1: 40.35mm socket, 0.7mm lip, FKM rubber. Engineered for the Royal Pop. Built for the wrist.\n\nPre-Order Now\n\n#PopWristStudio #CradleAdapterV1 #RoyalPopWrist #EngineeredFit #FKMAdapter #WatchCommunity\n\nNot affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet."
+        }
+      ],
+      "recommended_caption": "A",
+      "hashtag_pack": [
+        "#PopWristStudio",
+        "#CradleAdapterV1",
+        "#RoyalPop",
+        "#EngineeredFit",
+        "#FKMRubber",
+        "#WatchAdapter",
+        "#PrecisionEngineering",
+        "#NoDrilling",
+        "#WatchConversion",
+        "#22mmLugs",
+        "#SwatchAccessory",
+        "#WatchMod",
+        "#WatchCommunity",
+        "#LuxuryAccessories",
+        "#Unboxing"
+      ],
+      "cta": "Pre-Order Now",
+      "production_effort_score": 3,
+      "expected_engagement_score": 7,
+      "why_this_wins": "Unboxing format builds trust and authority, especially for collectors and design-led buyers. Proof-driven hooks (specs + fit demonstration) reinforce the brand’s engineering-led positioning.",
+      "what_could_kill_it": "Unboxing must feel premium and intentional. Avoid generic “here’s the product” shots—focus on the fit demonstration."
+    }
+  ],
+  "execution_note_for_operator": "REEL_1 is the operators_best_bet due to its alignment with the proven spec-driven hook pattern (40.35mm / 0.7mm / FKM) and the top trend cluster (Aftermarket Royal Pop wrist conversion race). Prioritize macro shots for precision and ensure the 0.7mm retaining lip is sharply in focus. All ideas are production-ready with existing assets (colourway samples, Royal Pop case).",
+  "website_truth": {
+    "website_status": "LIVE",
+    "fetched_at": "2026-05-18T00:27:59Z",
+    "verified_brand_name": "Pop Wrist Studio",
+    "verified_product_name": "Cradle Adapter V1",
+    "verified_cta": "Pre-Order Now",
+    "verified_colourways": [
+      "Monochrome",
+      "Arctic Blue",
+      "Cobalt Orange",
+      "Green Eight",
+      "Otto Rosso"
+    ],
+    "verified_disclaimer": "Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet.",
+    "website_override_applied": false,
+    "manual_override_applied": false
+  }
+}

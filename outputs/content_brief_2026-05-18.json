@@ -1,63 +1,8 @@
 {
-  "_status_line": "Adopted Scout\u2019s HIGH-confidence angle \u00b7 locked competitor contrast as supporting \u00b7 decided REEL format \u00b7 briefed Copy for precision hook.",
-  "status": "OK",
-  "campaign_id": "CMP-20260518-05",
-  "campaign_stage": "WAITLIST",
-  "primary_angle": {
-    "title": "40.35mm exact. 0.7mm lip. FKM rubber. No drilling.",
-    "core_message": "The Cradle Adapter V1 is the only wrist conversion kit engineered to the Royal Pop\u2019s exact 40.35 mm case, 0.7 mm retaining lip, and 22 mm lug width\u2014using FKM rubber for a secure, scratch-free fit without drilling or glue.",
-    "why_this_wins": "Matches the proven 'spec-driven' hook pattern while directly addressing Helvetus\u2019s FKM claim. Precision specs (40.35 mm, 0.7 mm) and material (FKM) are the two most credible differentiators against generic straps and cheaper adapters.",
-    "audience": "Royal Pop owners who value engineering precision and material authenticity over generic strap solutions.",
-    "desired_reaction": "\u2018This is the adapter I\u2019ve been waiting for\u2014exact fit, no damage, and premium material.\u2019",
-    "cta": "Pre-Order Now"
-  },
-  "supporting_angle": {
-    "title": "Helvetus built an adapter. We built the kit.",
-    "purpose": "Contrast against Helvetus\u2019s FKM adapter by positioning Cradle Adapter V1 as a complete wrist conversion *kit*\u2014not just an adapter. Addresses today\u2019s \u2018Competitor contrast\u2019 focus while avoiding direct comparison language."
-  },
-  "content_decision": {
-    "format": "REEL",
-    "goal": "Demonstrate engineering precision and material authenticity in 7 seconds to drive waitlist signups.",
-    "hook_direction": "SPEC + MATERIAL",
-    "conversion_role": "First 3 seconds: specs (40.35 mm, 0.7 mm, FKM). Next 4 seconds: no-drill/no-glue fit. End frame: Pre-Order Now CTA."
-  },
-  "creative_direction": {
-    "tone": "Premium, direct, slightly obsessive about fit and finish.",
-    "pace": "Fast cuts (1.5\u20132 seconds per clip) to match spec-driven energy.",
-    "visual_energy": "High\u2014close-ups of adapter fitting Royal Pop case, FKM rubber texture, and crown notch alignment.",
-    "must_show": [
-      "40.35 mm socket measurement",
-      "0.7 mm retaining lip detail",
-      "FKM rubber material close-up",
-      "No-drill/no-glue fit demonstration",
-      "Cradle Adapter V1 on wrist with Royal Pop"
-    ],
-    "must_not_do": [
-      "Show generic straps or competitors\u2019 products",
-      "Use \u2018AP strap\u2019 or \u2018Swatch collab\u2019 language",
-      "Imply official affiliation",
-      "Overpromise colourways (only show live website colours: Monochrome, Arctic Blue, Cobalt Orange, Green Eight, Otto Rosso)"
-    ]
-  },
-  "success_metric": {
-    "primary": "Waitlist signups per 1,000 views (target: 8%).",
-    "secondary": "Comments asking about fit, material, or pre-order timing."
-  },
-  "brief_for_copy": {
-    "script_goal": "Compress the primary angle into a 7-second hook: \u201840.35mm exact. 0.7mm lip. FKM rubber. No drilling.\u2019 Preserve all specs and material. End with \u2018Pre-Order Now.\u2019",
-    "caption_goal": "Reinforce engineering precision and material authenticity. Include disclaimer: \u2018Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet.\u2019",
-    "cta_language": "Pre-Order Now (exact website CTA).",
-    "proof_points_to_include": [
-      "40.35 mm inner socket",
-      "0.7 mm retaining lip",
-      "FKM rubber material",
-      "No drilling or glue required",
-      "22 mm lug width compatibility"
-    ]
-  },
+  "_status_line": "Locked competitor contrast as lead angle \u00b7 adopted Scout HIGH-confidence spec hook \u00b7 decided REEL format \u00b7 briefed Copy for precision contrast.",
   "website_truth": {
     "website_status": "LIVE",
-    "fetched_at": "2026-05-18T00:27:59Z",
+    "fetched_at": "2026-05-18T12:43:09Z",
     "verified_brand_name": "Pop Wrist Studio",
     "verified_product_name": "Cradle Adapter V1",
     "verified_cta": "Pre-Order Now",
@@ -71,5 +16,60 @@
     "verified_disclaimer": "Not affiliated with, endorsed by, or sponsored by Swatch Group Ltd or Audemars Piguet.",
     "website_override_applied": false,
     "manual_override_applied": false
+  },
+  "status": "OK",
+  "campaign_id": "CRADLE_V1_DAY5_COMPETITOR_CONTRAST",
+  "campaign_stage": "WAITLIST",
+  "primary_angle": {
+    "title": "40.35mm. 0.7mm. 22mm. Competitors miss this.",
+    "core_message": "Cradle Adapter V1 is engineered for Royal Pop\u2019s exact 40.35mm socket, 0.7mm retaining lip, and 22mm lug width. Competitors use generic adapters that compromise fit, finish, and safety. This is the only adapter designed for the Royal Pop, not a strap.",
+    "why_this_wins": "Competitor launches are flooding the market with generic adapters. Cradle Adapter V1\u2019s engineering precision (40.35mm, 0.7mm, 22mm) differentiates it as the premium solution, addressing audience tension around fit and safety.",
+    "audience": "Royal Pop owners and watch enthusiasts who prioritize engineering precision and are skeptical of generic adapters.",
+    "desired_reaction": "Acknowledgment of Cradle Adapter V1\u2019s superior fit and engineering. Urgency to join the waitlist before competitors saturate the market with inferior products.",
+    "cta": "Pre-Order Now"
+  },
+  "supporting_angle": {
+    "title": "Royal Pop on wrist: The adapter race is on.",
+    "purpose": "Highlight the viral demand for wrist conversion and position Cradle Adapter V1 as the premium alternative to generic competitors. Addresses the tension between scarcity and accessibility by framing the waitlist as exclusive access to engineering-led design."
+  },
+  "content_decision": {
+    "format": "REEL",
+    "goal": "Contrast Cradle Adapter V1\u2019s engineering precision with generic competitor adapters. Use slow-motion shots to highlight 40.35mm socket, 0.7mm lip, and 22mm lug width. End with a side-by-side comparison of Cradle Adapter V1 and a competitor\u2019s adapter on a Royal Pop.",
+    "hook_direction": "SPEC_CONTRAST",
+    "conversion_role": "Drive waitlist sign-ups by emphasizing Cradle Adapter V1\u2019s superior fit and scarcity."
+  },
+  "creative_direction": {
+    "tone": "Premium, direct, slightly obsessive about fit and finish.",
+    "pace": "Calm, deliberate, with moments of slow-motion precision.",
+    "visual_energy": "High contrast between Cradle Adapter V1\u2019s engineering detail and generic competitor adapters. Minimalist, design-led, with a focus on material and fit.",
+    "must_show": [
+      "40.35mm socket",
+      "0.7mm retaining lip",
+      "22mm lug width",
+      "FKM rubber material",
+      "Side-by-side comparison with competitor adapter"
+    ],
+    "must_not_do": [
+      "Use generic 'Royal Pop strap' language",
+      "Overpromise compatibility",
+      "Use static product shots without engineering detail",
+      "Imply affiliation with Swatch or Audemars Piguet"
+    ]
+  },
+  "success_metric": {
+    "primary": "Waitlist sign-ups (target: 500+ from this campaign)",
+    "secondary": "Engagement rate (likes, comments, shares) and sentiment analysis (positive reactions to engineering precision)"
+  },
+  "brief_for_copy": {
+    "script_goal": "Highlight Cradle Adapter V1\u2019s engineering precision (40.35mm, 0.7mm, 22mm) and contrast it with generic competitor adapters. End with a clear CTA to join the waitlist.",
+    "caption_goal": "Reinforce the engineering precision and scarcity narrative. Include a direct comparison to competitors and a clear CTA to pre-order.",
+    "cta_language": "Pre-Order Now \u2014 limited early access before competitors flood the market.",
+    "proof_points_to_include": [
+      "40.35mm socket (exact fit)",
+      "0.7mm retaining lip (secure hold)",
+      "22mm lug width (standard strap compatibility)",
+      "FKM rubber (premium material)",
+      "Designed for Royal Pop, not a generic strap"
+    ]
   }
 }
