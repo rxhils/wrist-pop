@@ -238,12 +238,14 @@ function HFTopBar({ subtitle, health, onRunAll, onStop, running, view, setView, 
           onClick={onToggleTheme}
           title={`Theme: ${themeName} · click to swap`}
           style={{
-            padding: '6px 10px', borderRadius: 6,
-            background: 'transparent', border: `1px solid ${HF.border}`,
-            color: HF.textDim, fontFamily: HF.mono, fontSize: 11,
-            cursor: 'pointer', letterSpacing: '.04em',
+            padding: '8px 16px', borderRadius: 6,
+            background: '#0aff7a', border: `2px solid #0aff7a`,
+            color: '#062b18', fontFamily: HF.mono, fontSize: 12, fontWeight: 700,
+            cursor: 'pointer', letterSpacing: '.12em',
+            textTransform: 'uppercase',
+            boxShadow: '0 0 12px rgba(10,255,122,0.45)',
           }}>
-          {themeName === 'dark' ? '☼ light' : '☾ dark'}
+          {themeName === 'dark' ? '☼ LIGHT MODE' : '☾ DARK MODE'}
         </button>
       </div>
 
@@ -2708,7 +2710,7 @@ function OperatorView() {
             <div style={{ padding: 6, fontFamily: HF.mono, fontSize: 10.5, color: HF.err, background: 'rgba(255,90,90,.06)', borderRadius: 4 }}>{error}</div>
           )}
           <IconBtn tone="accent" onClick={launch} disabled={running || !intent.trim()}>
-            {running ? '… orchestrating' : '▶ Run Orchestrator'}
+            {running ? '… orchestrating' : (!intent.trim() ? '◌ type intent above first' : '▶ Run Orchestrator')}
           </IconBtn>
           {runId && (
             <div style={{ fontFamily: HF.mono, fontSize: 9, color: HF.textFaint, marginTop: 4 }}>run_id: {runId}</div>
